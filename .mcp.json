@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "blender": {
+      "command": "C:/Users/harag/.local/bin/blender-mcp.exe",
+      "args": [],
+      "env": {
+        "BLENDER_PATH": "C:/Program Files/Blender Foundation/Blender 5.3/blender.exe",
+        "BLENDER_MCP_HOST": "localhost",
+        "BLENDER_MCP_PORT": "9876"
+      }
+    }
+  }
+}

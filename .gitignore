@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# Environments (venv is built inside WSL; recreate from requirements.txt)
+venv/
+.venv/
+.env
+.env.*
+
+# Pipeline output and per-machine runtime data
+out/
+data/calibration.json
+data/orders.db
+
+# Blender
+*.blend1
+*.blend2
+
+# Tooling
+.claude/backup-*/
+.claude/settings.local.json
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Nonilion probe request log (contains real chat text)
+probe/requests.jsonl
+probe/requests.jsonl.1

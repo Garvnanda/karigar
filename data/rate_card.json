@@ -1,0 +1,13 @@
+{
+  "_note": "SAMPLE VALUES for the demo. In Nonilion this lives in the room's knowledge base and the shop owner updates it daily.",
+  "currency": "INR",
+  "as_of": "2026-11-11",
+  "gold_rate_per_g": {"24": 16000, "22": 14730, "18": 12060, "14": 9410},
+  "making_charge_pct": {"ring": 12, "bangle": 9, "pendant": 14},
+  "gst_pct": 3,
+  "stone_rate_per_ct": {"diamond": 25000, "ruby": 15000, "emerald": 12000, "sapphire": 15000},
+  "stone_note": "diamond = lab-grown rate; natural stones quoted separately",
+  "exchange": {"melt_loss_pct": 2.0},
+  "workshop_default_casting_loss_pct": 3.0,
+  "min_finished_weight_g": {"ring": 1.8, "bangle": 6.0, "pendant": 1.2}
+}
