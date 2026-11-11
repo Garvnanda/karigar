@@ -1,0 +1,65 @@
+<template>
+  <style>
+
+  #root { position:absolute; inset:0; color:#F3E9D6; font-family:'EB Garamond', serif; }
+  .stage { position:absolute; inset:0; }
+  .hero { font-family:'Playfair Display', serif; font-weight:900; text-transform:uppercase;
+           letter-spacing:0.02em; color:#F3E9D6; text-align:center; line-height:1.04; }
+  .gold { color:#E0B25A; }
+  .ruby { color:#C24B58; }
+  .emerald { color:#3FA37C; }
+  .mono { font-family:'IBM Plex Mono', monospace; }
+  .kicker { font-family:'IBM Plex Mono', monospace; font-size:28px; letter-spacing:0.28em;
+             text-transform:uppercase; color:#E0B25A; text-align:center; }
+  .lead { font-family:'EB Garamond', serif; font-style:italic; font-size:44px; color:#F3E9D6;
+           text-align:center; }
+  .abs { position:absolute; }
+  .cx { left:0; right:0; }
+  .bubble { position:absolute; border-radius:28px; padding:28px 40px; font-family:'IBM Plex Mono', monospace;
+             font-size:38px; line-height:1.35; }
+  .b-cust { background:#2A211A; color:#F3E9D6; border:2px solid #4A3B2C; }
+  .b-bot { background:#1B1511; color:#F3E9D6; border:2px solid #9C7230; }
+  .who { font-family:'IBM Plex Mono', monospace; font-size:28px; letter-spacing:0.2em; text-transform:uppercase;
+          color:#A89A84; margin-bottom:10px; }
+  .chip { display:inline-block; padding:14px 30px; border-radius:999px; border:2px solid #9C7230;
+           font-family:'IBM Plex Mono', monospace; font-size:28px; color:#F3E9D6; background:#1B1511; }
+
+
+  </style>
+  <div id="root" data-composition-id="s9" data-width="1920" data-height="1080">
+    <div id="s9-stage" class="stage">
+
+      <div id="s9-k" class="kicker abs cx" style="top:110px;color:#3FA37C">When it's unclear</div>
+      <div id="s9-t" class="hero abs cx" style="top:160px;font-size:64px">It asks.</div>
+      <div id="s9-b1" class="bubble b-cust" style="left:300px;top:310px;width:720px"><div class="who">Customer</div><div id="s9-type"><span style="white-space:nowrap"><span class="ch" style="opacity:0">k</span><span class="ch" style="opacity:0">u</span><span class="ch" style="opacity:0">c</span><span class="ch" style="opacity:0">h</span></span> <span style="white-space:nowrap"><span class="ch" style="opacity:0">s</span><span class="ch" style="opacity:0">u</span><span class="ch" style="opacity:0">n</span><span class="ch" style="opacity:0">d</span><span class="ch" style="opacity:0">a</span><span class="ch" style="opacity:0">r</span></span> <span style="white-space:nowrap"><span class="ch" style="opacity:0">s</span><span class="ch" style="opacity:0">a</span></span> <span style="white-space:nowrap"><span class="ch" style="opacity:0">b</span><span class="ch" style="opacity:0">a</span><span class="ch" style="opacity:0">n</span><span class="ch" style="opacity:0">a</span></span> <span style="white-space:nowrap"><span class="ch" style="opacity:0">d</span><span class="ch" style="opacity:0">o</span></span></div></div>
+      <div id="s9-b2" class="bubble b-bot" style="left:520px;top:500px;width:1100px;border-color:#3FA37C">
+        <div class="who" style="color:#3FA37C">Sakhi</div>
+        <div>Aap anguthi, choodi ya pendant mein se kya banwana chahenge?</div>
+      </div>
+      <div id="s9-tr" class="lead abs" style="left:520px;width:1100px;top:770px;text-align:left;color:#A89A84;font-size:36px">A ring, a bangle or a pendant &mdash; which would you like?</div>
+      <div id="s9-opts" class="abs cx" style="top:870px;text-align:center">
+        <span id="s9-o0" class="chip">anguthi</span>&nbsp;&nbsp;<span id="s9-o1" class="chip">choodi</span>&nbsp;&nbsp;<span id="s9-o2" class="chip">pendant</span>
+      </div>
+
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    const S = "#s9-stage";
+    // scene in: slow scale settle (cinematic), out: blur + fade
+    tl.fromTo(S, { opacity: 0, scale: 0.97 }, { opacity: 1, scale: 1, duration: 0.9, ease: "power2.out" }, 0);
+    tl.fromTo("#s9-k", { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "expo.out" }, 0.5);
+    tl.fromTo("#s9-b1", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 0.9);
+    tl.fromTo("#s9-type .ch", { opacity: 0 }, { opacity: 1, duration: 0.01, stagger: { amount: 1.2 } }, 1.2);
+    tl.fromTo("#s9-t", { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.6, ease: "expo.out" }, 3.4);
+    tl.fromTo("#s9-b2", { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.6, ease: "expo.out" }, 3.8);
+    tl.fromTo("#s9-tr", { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.6, ease: "expo.out" }, 5.2);
+    tl.fromTo("#s9-o0", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 6.6);
+    tl.fromTo("#s9-o1", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 6.85);
+    tl.fromTo("#s9-o2", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 7.1);
+    tl.to("#s9-o1", { backgroundColor: "#3FA37C", borderColor: "#3FA37C", color: "#120D0A", scale: 1.08, duration: 0.25, ease: "power2.out" }, 8.6);
+
+    tl.to(S, { opacity: 0, filter: "blur(8px)", duration: 0.5, ease: "power3.in" }, 11.4);
+    window.__timelines["s9"] = tl;
+  </script>
+</template>

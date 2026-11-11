@@ -1,0 +1,67 @@
+<template>
+  <style>
+
+  #root { position:absolute; inset:0; color:#F3E9D6; font-family:'EB Garamond', serif; }
+  .stage { position:absolute; inset:0; }
+  .hero { font-family:'Playfair Display', serif; font-weight:900; text-transform:uppercase;
+           letter-spacing:0.02em; color:#F3E9D6; text-align:center; line-height:1.04; }
+  .gold { color:#E0B25A; }
+  .ruby { color:#C24B58; }
+  .emerald { color:#3FA37C; }
+  .mono { font-family:'IBM Plex Mono', monospace; }
+  .kicker { font-family:'IBM Plex Mono', monospace; font-size:28px; letter-spacing:0.28em;
+             text-transform:uppercase; color:#E0B25A; text-align:center; }
+  .lead { font-family:'EB Garamond', serif; font-style:italic; font-size:44px; color:#F3E9D6;
+           text-align:center; }
+  .abs { position:absolute; }
+  .cx { left:0; right:0; }
+  .bubble { position:absolute; border-radius:28px; padding:28px 40px; font-family:'IBM Plex Mono', monospace;
+             font-size:38px; line-height:1.35; }
+  .b-cust { background:#2A211A; color:#F3E9D6; border:2px solid #4A3B2C; }
+  .b-bot { background:#1B1511; color:#F3E9D6; border:2px solid #9C7230; }
+  .who { font-family:'IBM Plex Mono', monospace; font-size:28px; letter-spacing:0.2em; text-transform:uppercase;
+          color:#A89A84; margin-bottom:10px; }
+  .chip { display:inline-block; padding:14px 30px; border-radius:999px; border:2px solid #9C7230;
+           font-family:'IBM Plex Mono', monospace; font-size:28px; color:#F3E9D6; background:#1B1511; }
+
+
+  </style>
+  <div id="root" data-composition-id="s8" data-width="1920" data-height="1080">
+    <div id="s8-stage" class="stage">
+
+      <div id="s8-k" class="kicker abs cx" style="top:110px;color:#C24B58">When it can't be made</div>
+      <div id="s8-t" class="hero abs cx" style="top:160px;font-size:64px">It says so.</div>
+      <div id="s8-b1" class="bubble b-cust" style="left:260px;top:320px;width:1000px"><div class="who">Customer</div><div id="s8-type"><span style="white-space:nowrap"><span class="ch" style="opacity:0">p</span><span class="ch" style="opacity:0">u</span><span class="ch" style="opacity:0">r</span><span class="ch" style="opacity:0">a</span><span class="ch" style="opacity:0">n</span><span class="ch" style="opacity:0">i</span></span> <span style="white-space:nowrap"><span class="ch" style="opacity:0">2</span><span class="ch" style="opacity:0">2</span><span class="ch" style="opacity:0">K</span></span> <span style="white-space:nowrap"><span class="ch" style="opacity:0">c</span><span class="ch" style="opacity:0">h</span><span class="ch" style="opacity:0">a</span><span class="ch" style="opacity:0">i</span><span class="ch" style="opacity:0">n</span></span> <span style="white-space:nowrap"><span class="ch" style="opacity:0">3</span><span class="ch" style="opacity:0">g</span></span> <span style="white-space:nowrap"><span class="ch" style="opacity:0">s</span><span class="ch" style="opacity:0">e</span></span> <span style="white-space:nowrap"><span class="ch" style="opacity:0">n</span><span class="ch" style="opacity:0">a</span><span class="ch" style="opacity:0">y</span><span class="ch" style="opacity:0">a</span></span> <span style="white-space:nowrap"><span class="ch" style="opacity:0">k</span><span class="ch" style="opacity:0">a</span><span class="ch" style="opacity:0">n</span><span class="ch" style="opacity:0">g</span><span class="ch" style="opacity:0">a</span><span class="ch" style="opacity:0">n</span></span> <span style="white-space:nowrap"><span class="ch" style="opacity:0">b</span><span class="ch" style="opacity:0">a</span><span class="ch" style="opacity:0">n</span><span class="ch" style="opacity:0">a</span><span class="ch" style="opacity:0">o</span></span></div></div>
+      <div id="s8-b2" class="bubble b-bot" style="left:560px;top:520px;width:1100px;border-color:#C24B58">
+        <div class="who" style="color:#C24B58">Jauhari</div>
+        <div style="font-family:'EB Garamond',serif;font-size:42px">That leaves too little gold for a bangle that survives daily wear.</div>
+      </div>
+      <div id="s8-opts" class="abs cx" style="top:800px;text-align:center">
+        <span class="kicker" style="margin-right:18px;color:#A89A84">Closest options</span>
+        <span id="s8-o0" class="chip">a pendant</span>&nbsp;&nbsp;
+        <span id="s8-o1" class="chip">14K gold</span>&nbsp;&nbsp;
+        <span id="s8-o2" class="chip">add a little gold</span>
+      </div>
+
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    const S = "#s8-stage";
+    // scene in: slow scale settle (cinematic), out: blur + fade
+    tl.fromTo(S, { opacity: 0, scale: 0.97 }, { opacity: 1, scale: 1, duration: 0.9, ease: "power2.out" }, 0);
+    tl.fromTo("#s8-k", { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "expo.out" }, 1.0);
+    tl.fromTo("#s8-t", { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.6, ease: "expo.out" }, 2.6);
+    tl.fromTo("#s8-b1", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 3.93);
+    tl.fromTo("#s8-type .ch", { opacity: 0 }, { opacity: 1, duration: 0.01, stagger: { amount: 2.3 } }, 4.33);
+    tl.fromTo("#s8-b2", { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.6, ease: "expo.out" }, 7.44);
+    tl.to("#s8-b2", { keyframes: [{ x: -10 }, { x: 9 }, { x: -5 }, { x: 0 }], duration: 0.35 }, 8.040000000000001);
+    tl.fromTo("#s8-opts .kicker", { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "expo.out" }, 9.04);
+    tl.fromTo("#s8-o0", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 11.639999999999999);
+    tl.fromTo("#s8-o1", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 12.739999999999998);
+    tl.fromTo("#s8-o2", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 13.84);
+
+    tl.to(S, { opacity: 0, filter: "blur(8px)", duration: 0.5, ease: "power3.in" }, 18.4);
+    window.__timelines["s8"] = tl;
+  </script>
+</template>

@@ -16,10 +16,10 @@ Five agents work one order across the shop floor:
 
 ```bash
 python3.13 -m venv venv && ./venv/bin/pip install -r requirements.txt
-./venv/bin/python run.py order "Nani ka purana 18.4g 22K kangan hai, naya beaded kada banana hai" --quality preview
-./venv/bin/python run.py order "18K white gold solitaire with 0.5 ct diamond, budget 1.2 lakh, size 6"
-./venv/bin/python run.py order "purani 22K chain 6.2g se ruby lotus pendant banao"
-./venv/bin/python run.py order "1 ct diamond ring under 10k"        # impossible request: explains, offers options
+./venv/bin/python run.py order "Nani ka purana 18.4g 22K kangan hai, naya 22K beaded kada banana hai, size 2-6" --quality preview
+./venv/bin/python run.py order "18K white gold solitaire with 0.5 ct diamond, budget 1.2 lakh, size 12"
+./venv/bin/python run.py order "purani 22K chain 6.2g se 22K ruby lotus pendant banao"
+./venv/bin/python run.py order "18K 1 ct diamond ring under 10k, size 12"        # impossible request: explains, offers options
 ./venv/bin/python run.py order "kuch sundar sa bana do"             # unclear request: asks a follow-up
 ./venv/bin/python run.py calibrate --workshop dariba-01 --designed 18.58 --actual 17.95
 ```
@@ -77,8 +77,10 @@ A throwaway OpenAI-compatible endpoint (`probe/`, standard library only) that lo
 1. **Deploy (Render, free):** New → Web Service → this repo. Runtime Python, build command `echo probe-has-no-deps` (do **not** install requirements.txt: it pulls bpy), start command `python -m probe`, instance type Free, health check path `/`. Env: `PROBE_API_KEY` = a long random string (e.g. `python -c "import secrets; print(secrets.token_urlsafe(32))"`). Free instances sleep after ~15 min idle; the first request then takes ~1 min, so open `https://<app>.onrender.com/` in a browser before testing. No-Render alternative: `python -m probe` locally + `cloudflared tunnel --url http://localhost:8080`.
 2. **Check:** `curl -H "Authorization: Bearer $KEY" https://<app>.onrender.com/v1/models` → `karigar-probe`.
 3. **Import in Nonilion:** room → agent panel → IMPORT → Other. API key = `PROBE_API_KEY`; Where is it? = `https://<app>.onrender.com/v1`; instructions = `You are the Karigar probe.`; press **Test the key**.
-4. **Read the log:** `https://<app>.onrender.com/probe/log?n=50` with the same Bearer header (curl, or a browser header extension). Each request is an `event: request` entry (path, prefix used, headers redacted, body, client IP); chat replies add `done` (elapsed_s) or `disconnected` (Nonilion hung up — its timeout).
-5. **In the room chat:** say anything — the reply lists messages/roles, stream yes/no, ids seen, tools, headers, and ends with a Markdown table and an image (does it render?). Then: `probe delay 30`, `probe delay 120`, `probe delay 300` (non-stream or stream timeout), `probe stream 10 probe delay 60` (are progress lines shown live?), a second message (is history sent?), a photo upload (`image parts: 1`?).
+4. **Read the log:** `https://<app>.onrender.com/probe/log?n=50` with the same Bearer header (curl, or a browser header extension). Each request is an `event: request` entry (path, prefix and agent used, headers/query redacted, body, client IP = last X-Forwarded-For hop); chat replies add `done` (elapsed_s) or `disconnected` (Nonilion hung up — its timeout). Requests without the key are logged as a summary only (`body_bytes`, body not read).
+5. **In the room chat:** say anything — the reply lists the agent, messages/roles, stream yes/no, ids seen, tools, headers, and ends with a Markdown table and an image (does it render?). Then: `probe delay 30`, `probe delay 120`, `probe delay 300` (non-stream or stream timeout), `probe stream 10 probe delay 60` (are progress lines shown live?), a second message (is history sent?), a photo upload (`image parts: 1`?). **Several agents:** import the probe twice with different base paths — `https://<app>.onrender.com/sakhi/v1` and `https://<app>.onrender.com/karigar/v1` — then `@`-mention one, then the other; each reply says `agent: sakhi` / `agent: karigar`, and the log's `agent` field shows which one Nonilion called (does a message to one agent also reach the other? is history shared?).
+
+Limits (see docs/decisions.md): body ≤ 8 MB (413), JSON ≤ 100,000 nodes / depth 64 (400), 30 s to send a request (408), ≤ 8 delayed/streaming replies at once (429), ≤ 64 connections (503), log lines ≤ 64 KB, log rotated at 10 MB keeping 5 old files. Agent names in `/<agent>/v1` must match `[a-z0-9_-]{1,32}` (else 404).
 6. Write each answer into docs/nonilion.md's "Unknowns" table.
 
 ## Status: real vs. still to do

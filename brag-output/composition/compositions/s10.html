@@ -1,0 +1,62 @@
+<template>
+  <style>
+
+  #root { position:absolute; inset:0; color:#F3E9D6; font-family:'EB Garamond', serif; }
+  .stage { position:absolute; inset:0; }
+  .hero { font-family:'Playfair Display', serif; font-weight:900; text-transform:uppercase;
+           letter-spacing:0.02em; color:#F3E9D6; text-align:center; line-height:1.04; }
+  .gold { color:#E0B25A; }
+  .ruby { color:#C24B58; }
+  .emerald { color:#3FA37C; }
+  .mono { font-family:'IBM Plex Mono', monospace; }
+  .kicker { font-family:'IBM Plex Mono', monospace; font-size:28px; letter-spacing:0.28em;
+             text-transform:uppercase; color:#E0B25A; text-align:center; }
+  .lead { font-family:'EB Garamond', serif; font-style:italic; font-size:44px; color:#F3E9D6;
+           text-align:center; }
+  .abs { position:absolute; }
+  .cx { left:0; right:0; }
+  .bubble { position:absolute; border-radius:28px; padding:28px 40px; font-family:'IBM Plex Mono', monospace;
+             font-size:38px; line-height:1.35; }
+  .b-cust { background:#2A211A; color:#F3E9D6; border:2px solid #4A3B2C; }
+  .b-bot { background:#1B1511; color:#F3E9D6; border:2px solid #9C7230; }
+  .who { font-family:'IBM Plex Mono', monospace; font-size:28px; letter-spacing:0.2em; text-transform:uppercase;
+          color:#A89A84; margin-bottom:10px; }
+  .chip { display:inline-block; padding:14px 30px; border-radius:999px; border:2px solid #9C7230;
+           font-family:'IBM Plex Mono', monospace; font-size:28px; color:#F3E9D6; background:#1B1511; }
+
+
+  .wcol { border-top:4px solid #E0B25A; padding-top:50px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:16px; }
+  .wr { font-family:'Playfair Display', serif; font-weight:900; font-size:58px; margin:16px 0 10px; }
+  .wl { font-family:'EB Garamond', serif; font-size:40px; line-height:1.25; }
+
+  </style>
+  <div id="root" data-composition-id="s10" data-width="1920" data-height="1080">
+    <div id="s10-stage" class="stage">
+
+      <div id="s10-k" class="kicker abs cx" style="top:130px">Why it matters</div>
+      <div id="s10-c0" class="abs wcol" style="left:150px;top:300px;width:500px;height:520px">
+        <svg viewBox="0 0 120 120" width="120" height="120" style="color:#E0B25A" ><path d="M16 50 l10 -30 h68 l10 30 M20 50 v54 h80 v-54 M16 50 h88 M48 104 v-30 h24 v30" fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/></svg><div class="wr">The jeweller</div><div class="wl">No guesswork.</div><div class="wl">No haggling over grams.</div></div>
+      <div id="s10-c1" class="abs wcol" style="left:710px;top:300px;width:500px;height:520px">
+        <svg viewBox="0 0 120 120" width="120" height="120" style="color:#E0B25A" ><path d="M60 104 l-40 -40 a22 22 0 0 1 40 -30 a22 22 0 0 1 40 30 z" fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/></svg><div class="wr">The customer</div><div class="wl">An heirloom, reborn.</div><div class="wl">Seen before a gram is melted.</div></div>
+      <div id="s10-c2" class="abs wcol" style="left:1270px;top:300px;width:500px;height:520px">
+        <svg viewBox="0 0 120 120" width="120" height="120" style="color:#E0B25A" ><path d="M14 36 h76 c0 14 10 22 22 22 v8 h-36 l-8 16 h14 v16 h-60 v-16 h14 l-8 -16 h-14 z" fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/></svg><div class="wr">The workshop</div><div class="wl">A design that can</div><div class="wl">actually be cast.</div></div>
+
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    const S = "#s10-stage";
+    // scene in: slow scale settle (cinematic), out: blur + fade
+    tl.fromTo(S, { opacity: 0, scale: 0.97 }, { opacity: 1, scale: 1, duration: 0.9, ease: "power2.out" }, 0);
+    tl.fromTo("#s10-k", { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "expo.out" }, 0.5);
+    tl.fromTo("#s10-c0", { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.9, ease: "expo.out" }, 0.9);
+    tl.fromTo("#s10-c0 .wl", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.4, stagger: 0.5, ease: "power4.out" }, 1.5);
+    tl.fromTo("#s10-c1", { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.9, ease: "expo.out" }, 5.2700000000000005);
+    tl.fromTo("#s10-c1 .wl", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.4, stagger: 0.5, ease: "power4.out" }, 5.87);
+    tl.fromTo("#s10-c2", { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.9, ease: "expo.out" }, 10.780000000000001);
+    tl.fromTo("#s10-c2 .wl", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.4, stagger: 0.5, ease: "power4.out" }, 11.38);
+
+    tl.to(S, { opacity: 0, filter: "blur(8px)", duration: 0.5, ease: "power3.in" }, 17.4);
+    window.__timelines["s10"] = tl;
+  </script>
+</template>

@@ -1,0 +1,55 @@
+<template>
+  <style>
+
+  #root { position:absolute; inset:0; color:#F3E9D6; font-family:'EB Garamond', serif; }
+  .stage { position:absolute; inset:0; }
+  .hero { font-family:'Playfair Display', serif; font-weight:900; text-transform:uppercase;
+           letter-spacing:0.02em; color:#F3E9D6; text-align:center; line-height:1.04; }
+  .gold { color:#E0B25A; }
+  .ruby { color:#C24B58; }
+  .emerald { color:#3FA37C; }
+  .mono { font-family:'IBM Plex Mono', monospace; }
+  .kicker { font-family:'IBM Plex Mono', monospace; font-size:28px; letter-spacing:0.28em;
+             text-transform:uppercase; color:#E0B25A; text-align:center; }
+  .lead { font-family:'EB Garamond', serif; font-style:italic; font-size:44px; color:#F3E9D6;
+           text-align:center; }
+  .abs { position:absolute; }
+  .cx { left:0; right:0; }
+  .bubble { position:absolute; border-radius:28px; padding:28px 40px; font-family:'IBM Plex Mono', monospace;
+             font-size:38px; line-height:1.35; }
+  .b-cust { background:#2A211A; color:#F3E9D6; border:2px solid #4A3B2C; }
+  .b-bot { background:#1B1511; color:#F3E9D6; border:2px solid #9C7230; }
+  .who { font-family:'IBM Plex Mono', monospace; font-size:28px; letter-spacing:0.2em; text-transform:uppercase;
+          color:#A89A84; margin-bottom:10px; }
+  .chip { display:inline-block; padding:14px 30px; border-radius:999px; border:2px solid #9C7230;
+           font-family:'IBM Plex Mono', monospace; font-size:28px; color:#F3E9D6; background:#1B1511; }
+
+
+  </style>
+  <div id="root" data-composition-id="s4" data-width="1920" data-height="1080">
+    <div id="s4-stage" class="stage">
+
+      <div id="s4-k" class="kicker abs cx" style="top:150px">At the counter</div>
+      <div id="s4-b" class="bubble b-cust" style="left:310px;top:300px;width:1300px">
+        <div class="who">Customer</div><div id="s4-type"><span style="white-space:nowrap"><span class="ch" style="opacity:0">N</span><span class="ch" style="opacity:0">a</span><span class="ch" style="opacity:0">n</span><span class="ch" style="opacity:0">i</span></span> <span style="white-space:nowrap"><span class="ch" style="opacity:0">k</span><span class="ch" style="opacity:0">a</span></span> <span style="white-space:nowrap"><span class="ch" style="opacity:0">p</span><span class="ch" style="opacity:0">u</span><span class="ch" style="opacity:0">r</span><span class="ch" style="opacity:0">a</span><span class="ch" style="opacity:0">n</span><span class="ch" style="opacity:0">a</span></span> <span style="white-space:nowrap"><span class="ch" style="opacity:0">1</span><span class="ch" style="opacity:0">8</span><span class="ch" style="opacity:0">.</span><span class="ch" style="opacity:0">4</span><span class="ch" style="opacity:0">g</span></span> <span style="white-space:nowrap"><span class="ch" style="opacity:0">2</span><span class="ch" style="opacity:0">2</span><span class="ch" style="opacity:0">K</span></span> <span style="white-space:nowrap"><span class="ch" style="opacity:0">k</span><span class="ch" style="opacity:0">a</span><span class="ch" style="opacity:0">n</span><span class="ch" style="opacity:0">g</span><span class="ch" style="opacity:0">a</span><span class="ch" style="opacity:0">n</span></span> <span style="white-space:nowrap"><span class="ch" style="opacity:0">h</span><span class="ch" style="opacity:0">a</span><span class="ch" style="opacity:0">i</span><span class="ch" style="opacity:0">,</span></span> <span style="white-space:nowrap"><span class="ch" style="opacity:0">n</span><span class="ch" style="opacity:0">a</span><span class="ch" style="opacity:0">y</span><span class="ch" style="opacity:0">a</span></span> <span style="white-space:nowrap"><span class="ch" style="opacity:0">b</span><span class="ch" style="opacity:0">e</span><span class="ch" style="opacity:0">a</span><span class="ch" style="opacity:0">d</span><span class="ch" style="opacity:0">e</span><span class="ch" style="opacity:0">d</span></span> <span style="white-space:nowrap"><span class="ch" style="opacity:0">k</span><span class="ch" style="opacity:0">a</span><span class="ch" style="opacity:0">d</span><span class="ch" style="opacity:0">a</span></span> <span style="white-space:nowrap"><span class="ch" style="opacity:0">b</span><span class="ch" style="opacity:0">a</span><span class="ch" style="opacity:0">n</span><span class="ch" style="opacity:0">a</span><span class="ch" style="opacity:0">n</span><span class="ch" style="opacity:0">a</span></span> <span style="white-space:nowrap"><span class="ch" style="opacity:0">h</span><span class="ch" style="opacity:0">a</span><span class="ch" style="opacity:0">i</span></span></div>
+      </div>
+      <div id="s4-tr" class="lead abs cx" style="top:600px;color:#A89A84">&ldquo;Nani's old 22K kangan &mdash; make it into a new beaded kada.&rdquo;</div>
+      <div id="s4-no" class="hero abs cx" style="top:760px;font-size:76px">No forms. No menus.<br/><span class="gold">Just a sentence.</span></div>
+
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    const S = "#s4-stage";
+    // scene in: slow scale settle (cinematic), out: blur + fade
+    tl.fromTo(S, { opacity: 0, scale: 0.97 }, { opacity: 1, scale: 1, duration: 0.9, ease: "power2.out" }, 0);
+    tl.fromTo("#s4-k", { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "expo.out" }, 0.6);
+    tl.fromTo("#s4-b", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" }, 1.4);
+    tl.fromTo("#s4-type .ch", { opacity: 0 }, { opacity: 1, duration: 0.01, stagger: { amount: 3.8 } }, 2.0);
+    tl.fromTo("#s4-tr", { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.7, ease: "expo.out" }, 6.2);
+    tl.fromTo("#s4-no", { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.7, ease: "expo.out" }, 8.0);
+
+    tl.to(S, { opacity: 0, filter: "blur(8px)", duration: 0.5, ease: "power3.in" }, 13.4);
+    window.__timelines["s4"] = tl;
+  </script>
+</template>

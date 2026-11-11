@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 """Karigar CLI.
 
-  python run.py order "Mere paas 18.4g purana 22K kangan hai, naya beaded kada banana hai"
-  python run.py order "lotus pendant with ruby, budget 60k" --quality final
+  python run.py order "Mere paas 18.4g purana 22K kangan hai, naya 22K beaded kada banana hai, size 2-6"
+  python run.py order "18K lotus pendant with ruby, budget 60k" --quality final
   python run.py calibrate --workshop dariba-01 --designed 18.9 --actual 18.3
   python run.py packs
 """

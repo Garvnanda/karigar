@@ -4,7 +4,9 @@ from __future__ import annotations
 
 from typing import Literal, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
+
+from . import sizes
 
 PieceType = Literal["ring", "bangle", "pendant"]
 Gem = Literal["none", "diamond", "ruby", "emerald", "sapphire"]
@@ -41,10 +43,29 @@ class Brief(BaseModel):
     budget_inr: Optional[float] = Field(None, gt=0)
     gem: Gem = "none"
     gem_ct: Optional[float] = Field(None, gt=0, le=5)
-    ring_inner_d_mm: float = Field(17.3, ge=12, le=25)      # ~US 7
+    # Canonical ring size is the inner diameter. `ring_size` (Indian, 1-30) converts through
+    # data/ring_sizes.json. The schema defaults below are for code paths that build a Brief
+    # directly; brief.parse never relies on them (it asks for the size instead).
+    ring_size: Optional[int] = Field(None, ge=1, le=30)
+    ring_inner_d_mm: float = Field(17.3, ge=12, le=25)
     bangle_inner_d_mm: float = Field(60.3, ge=45, le=75)    # Indian size 2-6
     style: list[str] = []
     assumptions: list[str] = []
+    lang: Literal["en", "hinglish"] = "en"                  # reply language of the request
+
+    @model_validator(mode="before")
+    @classmethod
+    def _ring_size_to_mm(cls, data):
+        if (isinstance(data, dict) and data.get("ring_size") is not None
+                and data.get("ring_inner_d_mm") is None):
+            size = data["ring_size"]
+            if isinstance(size, (int, float)) and 1 <= size <= 30 and float(size).is_integer():
+                data = {**data, "ring_inner_d_mm": sizes.ring_inner_d_mm(int(size))}
+        return data
+
+
+# Which motifs each piece is built with (the pendant's look comes from `shape`).
+MOTIFS = {"ring": ("plain", "floral"), "bangle": ("plain", "beaded"), "pendant": ("plain",)}
 
 
 class DesignSpec(BaseModel):
@@ -61,14 +82,22 @@ class DesignSpec(BaseModel):
     gem: Gem = "none"
     gem_d_mm: float = Field(0.0, ge=0, le=12)
     prongs: Literal[4, 6] = 4
-    # bangle motif
-    motif: Literal["plain", "beaded"] = "plain"
+    # motif: "beaded" = bangle beads; "floral" = ring with a flower top (petals, size_mm)
+    motif: Literal["plain", "beaded", "floral"] = "plain"
     bead_count: int = Field(24, ge=8, le=72)
-    # pendant
+    # pendant (size_mm/petals also give a floral ring's flower diameter and petal count)
     shape: Literal["disc", "lotus"] = "lotus"
     size_mm: float = Field(18.0, ge=8, le=45)
     petals: int = Field(8, ge=5, le=12)
     rationale: str = ""
+
+    @model_validator(mode="after")
+    def _motif_fits_piece(self):
+        allowed = MOTIFS[self.piece_type]
+        if self.motif not in allowed:
+            raise ValueError(f"motif '{self.motif}' is not made for a {self.piece_type}; "
+                             f"use one of {', '.join(allowed)}")
+        return self
 
     @property
     def gem_ct(self) -> float:

@@ -1,0 +1,2315 @@
+{
+  "ok": true,
+  "strict": false,
+  "browserSkipped": false,
+  "lint": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 1,
+    "infoCount": 0,
+    "findings": [
+      {
+        "code": "gsap_repeated_fromto_without_baseline",
+        "severity": "warning",
+        "message": "2 tl.fromTo() calls target \"#s8-b2\" with no stable baseline. The last-authored fromTo \"from\" values become the element's resting state for any seek before the first tween actually runs, because GSAP applies fromTo from-values at authoring time (immediateRender), not at tween position.",
+        "selector": "#s8-b2",
+        "dataAttributes": {},
+        "sourceFile": "C:\\Users\\harag\\Documents\\coding\\igdtuw\\karigar\\karigar\\brag-output\\composition\\compositions\\s8.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Add `immediateRender: false` to every fromTo except the earliest-positioned one (at 7.44s), so pre-first-tween seeks keep its \"from\" values. A hiding `tl.set(..., 0)` baseline trips gsap_timeline_set_initial_hide, and a `gsap.set` authored before the fromTo calls is overwritten by them."
+      }
+    ],
+    "filesScanned": 13
+  },
+  "runtime": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 65,
+    "infoCount": 0,
+    "findings": [
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"music1\" is 117.36s but its slot (data-duration) is 117.50s — the slot is shortened to the media length when rendered. Set data-duration to ~117.36s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx0\" is 0.12s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.12s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx1\" is 0.21s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.21s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx2\" is 0.11s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.11s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx3\" is 0.19s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.19s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx4\" is 0.14s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.14s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx6\" is 0.05s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.05s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx7\" is 0.25s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.25s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx8\" is 0.25s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.25s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx9\" is 0.25s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.25s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx10\" is 0.25s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.25s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx11\" is 0.25s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.25s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx12\" is 0.25s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.25s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx13\" is 0.25s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.25s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx14\" is 0.25s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.25s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx15\" is 0.25s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.25s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx16\" is 0.25s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.25s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx17\" is 0.25s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.25s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx18\" is 0.25s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.25s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx19\" is 0.25s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.25s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx20\" is 0.25s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.25s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx21\" is 0.11s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.11s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx22\" is 0.19s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.19s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx23\" is 0.11s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.11s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx24\" is 0.19s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.19s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx25\" is 0.11s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.11s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx26\" is 0.12s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.12s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx27\" is 0.21s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.21s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx29\" is 0.59s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.59s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx30\" is 0.69s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.69s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx31\" is 0.46s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.46s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx32\" is 0.69s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.69s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx33\" is 0.46s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.46s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx34\" is 0.89s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.89s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx35\" is 0.69s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.69s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx36\" is 0.25s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.25s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx37\" is 0.25s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.25s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx38\" is 0.25s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.25s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx39\" is 0.25s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.25s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx40\" is 0.25s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.25s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx41\" is 0.25s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.25s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx42\" is 0.25s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.25s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx43\" is 0.25s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.25s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx44\" is 0.25s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.25s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx45\" is 0.34s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.34s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx46\" is 0.11s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.11s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx47\" is 0.11s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.11s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx48\" is 0.11s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.11s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx49\" is 0.25s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.25s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx50\" is 0.25s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.25s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx51\" is 0.25s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.25s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx52\" is 0.25s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.25s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx53\" is 0.25s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.25s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx54\" is 0.25s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.25s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx55\" is 0.05s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.05s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx56\" is 0.19s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.19s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx57\" is 0.14s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.14s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx58\" is 0.14s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.14s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx59\" is 0.14s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.14s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx60\" is 0.11s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.11s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx61\" is 0.19s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.19s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx62\" is 0.11s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.11s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx63\" is 0.19s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.19s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx64\" is 0.11s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.11s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"fx65\" is 0.66s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.66s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "214",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      }
+    ]
+  },
+  "layout": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 8,
+    "findings": [
+      {
+        "code": "text_box_overflow",
+        "severity": "info",
+        "time": 59.444,
+        "selector": "#s4-type > span:nth-of-type(56)",
+        "message": "Text extends outside its nearest visual/container box.",
+        "rect": {
+          "left": 1606.69,
+          "top": 368,
+          "right": 1629.5,
+          "bottom": 417,
+          "width": 22.81,
+          "height": 49
+        },
+        "containerSelector": "#s4-b",
+        "text": "a",
+        "fixHint": "Text is 23px x 49px inside 1300px x 148px and overflows by up to 20px; widen the container to at least ~1320px, or allow wrapping with max-width/fitTextFontSize.",
+        "containerRect": {
+          "left": 310,
+          "top": 300,
+          "right": 1610,
+          "bottom": 448.3,
+          "width": 1300,
+          "height": 148.3
+        },
+        "overflow": {
+          "right": 19.5
+        },
+        "dataAttributes": {},
+        "sourceFile": "compositions/s4.html",
+        "bbox": {
+          "x": 1606.69,
+          "y": 368,
+          "width": 22.81,
+          "height": 49
+        },
+        "firstSeen": 59.444,
+        "lastSeen": 59.444,
+        "occurrences": 1,
+        "heldMs": 0,
+        "times": [
+          59.444
+        ]
+      },
+      {
+        "code": "text_box_overflow",
+        "severity": "info",
+        "time": 59.444,
+        "selector": "#s4-type > span:nth-of-type(57)",
+        "message": "Text extends outside its nearest visual/container box.",
+        "rect": {
+          "left": 1629.5,
+          "top": 368,
+          "right": 1652.31,
+          "bottom": 417,
+          "width": 22.81,
+          "height": 49
+        },
+        "containerSelector": "#s4-b",
+        "text": "n",
+        "fixHint": "Text is 23px x 49px inside 1300px x 148px and overflows by up to 42px; widen the container to at least ~1342px, or allow wrapping with max-width/fitTextFontSize.",
+        "containerRect": {
+          "left": 310,
+          "top": 300,
+          "right": 1610,
+          "bottom": 448.3,
+          "width": 1300,
+          "height": 148.3
+        },
+        "overflow": {
+          "right": 42.31
+        },
+        "dataAttributes": {},
+        "sourceFile": "compositions/s4.html",
+        "bbox": {
+          "x": 1629.5,
+          "y": 368,
+          "width": 22.81,
+          "height": 49
+        },
+        "firstSeen": 59.444,
+        "lastSeen": 59.444,
+        "occurrences": 1,
+        "heldMs": 0,
+        "times": [
+          59.444
+        ]
+      },
+      {
+        "code": "text_box_overflow",
+        "severity": "info",
+        "time": 59.444,
+        "selector": "#s4-type > span:nth-of-type(58)",
+        "message": "Text extends outside its nearest visual/container box.",
+        "rect": {
+          "left": 1652.31,
+          "top": 368,
+          "right": 1675.13,
+          "bottom": 417,
+          "width": 22.82,
+          "height": 49
+        },
+        "containerSelector": "#s4-b",
+        "text": "a",
+        "fixHint": "Text is 23px x 49px inside 1300px x 148px and overflows by up to 65px; widen the container to at least ~1365px, or allow wrapping with max-width/fitTextFontSize.",
+        "containerRect": {
+          "left": 310,
+          "top": 300,
+          "right": 1610,
+          "bottom": 448.3,
+          "width": 1300,
+          "height": 148.3
+        },
+        "overflow": {
+          "right": 65.13
+        },
+        "dataAttributes": {},
+        "sourceFile": "compositions/s4.html",
+        "bbox": {
+          "x": 1652.31,
+          "y": 368,
+          "width": 22.82,
+          "height": 49
+        },
+        "firstSeen": 59.444,
+        "lastSeen": 59.444,
+        "occurrences": 1,
+        "heldMs": 0,
+        "times": [
+          59.444
+        ]
+      },
+      {
+        "code": "text_box_overflow",
+        "severity": "info",
+        "time": 59.444,
+        "selector": "#s4-type > span:nth-of-type(59)",
+        "message": "Text extends outside its nearest visual/container box.",
+        "rect": {
+          "left": 1675.13,
+          "top": 368,
+          "right": 1697.94,
+          "bottom": 417,
+          "width": 22.81,
+          "height": 49
+        },
+        "containerSelector": "#s4-b",
+        "text": "n",
+        "fixHint": "Text is 23px x 49px inside 1300px x 148px and overflows by up to 88px; widen the container to at least ~1388px, or allow wrapping with max-width/fitTextFontSize.",
+        "containerRect": {
+          "left": 310,
+          "top": 300,
+          "right": 1610,
+          "bottom": 448.3,
+          "width": 1300,
+          "height": 148.3
+        },
+        "overflow": {
+          "right": 87.94
+        },
+        "dataAttributes": {},
+        "sourceFile": "compositions/s4.html",
+        "bbox": {
+          "x": 1675.13,
+          "y": 368,
+          "width": 22.81,
+          "height": 49
+        },
+        "firstSeen": 59.444,
+        "lastSeen": 59.444,
+        "occurrences": 1,
+        "heldMs": 0,
+        "times": [
+          59.444
+        ]
+      },
+      {
+        "code": "text_box_overflow",
+        "severity": "info",
+        "time": 59.444,
+        "selector": "#s4-type > span:nth-of-type(60)",
+        "message": "Text extends outside its nearest visual/container box.",
+        "rect": {
+          "left": 1697.94,
+          "top": 368,
+          "right": 1720.75,
+          "bottom": 417,
+          "width": 22.81,
+          "height": 49
+        },
+        "containerSelector": "#s4-b",
+        "text": "a",
+        "fixHint": "Text is 23px x 49px inside 1300px x 148px and overflows by up to 111px; widen the container to at least ~1411px, or allow wrapping with max-width/fitTextFontSize.",
+        "containerRect": {
+          "left": 310,
+          "top": 300,
+          "right": 1610,
+          "bottom": 448.3,
+          "width": 1300,
+          "height": 148.3
+        },
+        "overflow": {
+          "right": 110.75
+        },
+        "dataAttributes": {},
+        "sourceFile": "compositions/s4.html",
+        "bbox": {
+          "x": 1697.94,
+          "y": 368,
+          "width": 22.81,
+          "height": 49
+        },
+        "firstSeen": 59.444,
+        "lastSeen": 59.444,
+        "occurrences": 1,
+        "heldMs": 0,
+        "times": [
+          59.444
+        ]
+      },
+      {
+        "code": "text_box_overflow",
+        "severity": "info",
+        "time": 59.444,
+        "selector": "#s4-type > span:nth-of-type(62)",
+        "message": "Text extends outside its nearest visual/container box.",
+        "rect": {
+          "left": 1743.56,
+          "top": 368,
+          "right": 1766.38,
+          "bottom": 417,
+          "width": 22.82,
+          "height": 49
+        },
+        "containerSelector": "#s4-b",
+        "text": "h",
+        "fixHint": "Text is 23px x 49px inside 1300px x 148px and overflows by up to 156px; widen the container to at least ~1456px, or allow wrapping with max-width/fitTextFontSize.",
+        "containerRect": {
+          "left": 310,
+          "top": 300,
+          "right": 1610,
+          "bottom": 448.3,
+          "width": 1300,
+          "height": 148.3
+        },
+        "overflow": {
+          "right": 156.38
+        },
+        "dataAttributes": {},
+        "sourceFile": "compositions/s4.html",
+        "bbox": {
+          "x": 1743.56,
+          "y": 368,
+          "width": 22.82,
+          "height": 49
+        },
+        "firstSeen": 59.444,
+        "lastSeen": 59.444,
+        "occurrences": 1,
+        "heldMs": 0,
+        "times": [
+          59.444
+        ]
+      },
+      {
+        "code": "text_box_overflow",
+        "severity": "info",
+        "time": 59.444,
+        "selector": "#s4-type > span:nth-of-type(63)",
+        "message": "Text extends outside its nearest visual/container box.",
+        "rect": {
+          "left": 1766.38,
+          "top": 368,
+          "right": 1789.19,
+          "bottom": 417,
+          "width": 22.81,
+          "height": 49
+        },
+        "containerSelector": "#s4-b",
+        "text": "a",
+        "fixHint": "Text is 23px x 49px inside 1300px x 148px and overflows by up to 179px; widen the container to at least ~1479px, or allow wrapping with max-width/fitTextFontSize.",
+        "containerRect": {
+          "left": 310,
+          "top": 300,
+          "right": 1610,
+          "bottom": 448.3,
+          "width": 1300,
+          "height": 148.3
+        },
+        "overflow": {
+          "right": 179.19
+        },
+        "dataAttributes": {},
+        "sourceFile": "compositions/s4.html",
+        "bbox": {
+          "x": 1766.38,
+          "y": 368,
+          "width": 22.81,
+          "height": 49
+        },
+        "firstSeen": 59.444,
+        "lastSeen": 59.444,
+        "occurrences": 1,
+        "heldMs": 0,
+        "times": [
+          59.444
+        ]
+      },
+      {
+        "code": "text_box_overflow",
+        "severity": "info",
+        "time": 59.444,
+        "selector": "#s4-type > span:nth-of-type(64)",
+        "message": "Text extends outside its nearest visual/container box.",
+        "rect": {
+          "left": 1789.19,
+          "top": 368,
+          "right": 1812,
+          "bottom": 417,
+          "width": 22.81,
+          "height": 49
+        },
+        "containerSelector": "#s4-b",
+        "text": "i",
+        "fixHint": "Text is 23px x 49px inside 1300px x 148px and overflows by up to 202px; widen the container to at least ~1502px, or allow wrapping with max-width/fitTextFontSize.",
+        "containerRect": {
+          "left": 310,
+          "top": 300,
+          "right": 1610,
+          "bottom": 448.3,
+          "width": 1300,
+          "height": 148.3
+        },
+        "overflow": {
+          "right": 202
+        },
+        "dataAttributes": {},
+        "sourceFile": "compositions/s4.html",
+        "bbox": {
+          "x": 1789.19,
+          "y": 368,
+          "width": 22.81,
+          "height": 49
+        },
+        "firstSeen": 59.444,
+        "lastSeen": 59.444,
+        "occurrences": 1,
+        "heldMs": 0,
+        "times": [
+          59.444
+        ]
+      }
+    ],
+    "duration": 214,
+    "samples": [
+      11.889,
+      35.667,
+      59.444,
+      83.222,
+      107,
+      130.778,
+      154.556,
+      178.333,
+      202.111
+    ],
+    "transitionSamples": [],
+    "transitionSamplesDropped": 0,
+    "tolerance": 2,
+    "totalIssueCount": 8,
+    "truncated": false
+  },
+  "motion": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "enabled": false,
+    "samples": 0
+  },
+  "contrast": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "enabled": true,
+    "samples": [
+      11.889,
+      59.444,
+      107,
+      154.556,
+      202.111
+    ],
+    "checked": 104,
+    "passed": 104
+  },
+  "craft": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 13,
+    "infoCount": 0,
+    "findings": [
+      {
+        "code": "first_frame_empty",
+        "severity": "warning",
+        "message": "Frame 0 shows only the background, and the first frame is the thumbnail on social players: have the title or key image already on screen at 0 s instead of entering from nothing; see references/review.md.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0
+      },
+      {
+        "code": "dead_stretch",
+        "severity": "warning",
+        "message": "Nothing on screen changes for 3.22 s (12.86–16.08 s): start the next move within 3 s, or put data-hold on the element whose stillness is deliberate; see references/motion.md.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 12.861,
+        "seconds": 3.216,
+        "floorSeconds": 3,
+        "until": 16.077
+      },
+      {
+        "code": "text_below_floor",
+        "severity": "warning",
+        "message": "Type floor is 28 px (2.6% of the 1080 px short side, what a phone can read) and \"Old gold → new piece\" renders at 24 px for 16.08 s: set reading text to at least 28 px, or put data-layout-ignore on text that is texture rather than reading; see references/look.md.",
+        "text": "Old gold → new piece",
+        "selector": "#s2-k",
+        "dataAttributes": {},
+        "sourceFile": "compositions/s2.html",
+        "bbox": {
+          "x": 739.19,
+          "y": 110,
+          "width": 441.61,
+          "height": 32
+        },
+        "time": 17.863,
+        "times": [
+          17.863
+        ],
+        "fontPx": 24,
+        "floorPx": 28,
+        "seconds": 16.077,
+        "elements": [
+          {
+            "selector": "#s2-k",
+            "text": "Old gold → new piece",
+            "fontPx": 24,
+            "time": 17.863,
+            "seconds": 16.077
+          }
+        ]
+      },
+      {
+        "code": "text_below_floor",
+        "severity": "warning",
+        "message": "Type floor is 28 px (2.6% of the 1080 px short side, what a phone can read) and \"Flagship pack · The Jeweller's Shop\" renders at 24 px for 7.14 s: set reading text to at least 28 px, or put data-layout-ignore on text that is texture rather than reading; see references/look.md.",
+        "text": "Flagship pack · The Jeweller's Shop",
+        "selector": "#s3-pack",
+        "dataAttributes": {},
+        "sourceFile": "compositions/s3.html",
+        "bbox": {
+          "x": 573.59,
+          "y": 821.33,
+          "width": 772.82,
+          "height": 32
+        },
+        "time": 40.728,
+        "times": [
+          40.728
+        ],
+        "fontPx": 24,
+        "floorPx": 28,
+        "seconds": 7.145,
+        "elements": [
+          {
+            "selector": "#s3-pack",
+            "text": "Flagship pack · The Jeweller's Shop",
+            "fontPx": 24,
+            "time": 40.728,
+            "seconds": 7.145
+          }
+        ]
+      },
+      {
+        "code": "text_below_floor",
+        "severity": "warning",
+        "message": "Type floor is 28 px (2.6% of the 1080 px short side, what a phone can read) and 2 text elements stay under it for 0.5 s or more, the smallest \"Customer\" at 20 px: set reading text to at least 28 px, or put data-layout-ignore on text that is texture rather than reading; see references/look.md.",
+        "text": "Customer",
+        "selector": "#s4-b > div:nth-of-type(1)",
+        "dataAttributes": {},
+        "sourceFile": "compositions/s4.html",
+        "bbox": {
+          "x": 352,
+          "y": 331.48,
+          "width": 136,
+          "height": 27
+        },
+        "time": 49.659,
+        "times": [
+          48.945,
+          49.659
+        ],
+        "fontPx": 20,
+        "floorPx": 28,
+        "seconds": 12.504,
+        "elements": [
+          {
+            "selector": "#s4-b > div:nth-of-type(1)",
+            "text": "Customer",
+            "fontPx": 20,
+            "time": 49.659,
+            "seconds": 12.504
+          },
+          {
+            "selector": "#s4-k",
+            "text": "At the counter",
+            "fontPx": 24,
+            "time": 48.945,
+            "seconds": 13.218
+          }
+        ]
+      },
+      {
+        "code": "text_below_floor",
+        "severity": "warning",
+        "message": "Type floor is 28 px (2.6% of the 1080 px short side, what a phone can read) and 6 text elements stay under it for 0.5 s or more, the smallest \"Counter\" at 20 px: set reading text to at least 28 px, or put data-layout-ignore on text that is texture rather than reading; see references/look.md.",
+        "text": "Counter",
+        "selector": "#s5-c0 > div:nth-of-type(1) > div:nth-of-type(1)",
+        "dataAttributes": {},
+        "sourceFile": "compositions/s5.html",
+        "bbox": {
+          "x": 142,
+          "y": 456.58,
+          "width": 119,
+          "height": 27
+        },
+        "time": 66.093,
+        "times": [
+          62.878,
+          66.093,
+          70.381,
+          75.74,
+          79.312,
+          83.957
+        ],
+        "fontPx": 20,
+        "floorPx": 28,
+        "seconds": 25.009,
+        "elements": [
+          {
+            "selector": "#s5-c0 > div:nth-of-type(1) > div:nth-of-type(1)",
+            "text": "Counter",
+            "fontPx": 20,
+            "time": 66.093,
+            "seconds": 25.009
+          },
+          {
+            "selector": "#s5-c1 > div:nth-of-type(1) > div:nth-of-type(1)",
+            "text": "Gold desk",
+            "fontPx": 20,
+            "time": 70.381,
+            "seconds": 20.721
+          },
+          {
+            "selector": "#s5-c2 > div:nth-of-type(1) > div:nth-of-type(1)",
+            "text": "Design studio",
+            "fontPx": 20,
+            "time": 75.74,
+            "seconds": 15.362
+          },
+          {
+            "selector": "#s5-c3 > div:nth-of-type(1) > div:nth-of-type(1)",
+            "text": "Workshop",
+            "fontPx": 20,
+            "time": 79.312,
+            "seconds": 11.79
+          },
+          {
+            "selector": "#s5-c4 > div:nth-of-type(1) > div:nth-of-type(1)",
+            "text": "Photo studio",
+            "fontPx": 20,
+            "time": 83.957,
+            "seconds": 7.145
+          },
+          {
+            "selector": "#s5-k",
+            "text": "One order · five agents",
+            "fontPx": 24,
+            "time": 62.878,
+            "seconds": 28.224
+          }
+        ]
+      },
+      {
+        "code": "dead_stretch",
+        "severity": "warning",
+        "message": "Nothing on screen changes for 3.22 s (86.46–89.67 s): start the next move within 3 s, or put data-hold on the element whose stillness is deliberate; see references/motion.md.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 86.457,
+        "seconds": 3.216,
+        "floorSeconds": 3,
+        "until": 89.673
+      },
+      {
+        "code": "text_below_floor",
+        "severity": "warning",
+        "message": "Type floor is 28 px (2.6% of the 1080 px short side, what a phone can read) and 3 text elements stay under it for 0.5 s or more, the smallest \"your gold\" at 24 px: set reading text to at least 28 px, or put data-layout-ignore on text that is texture rather than reading; see references/look.md.",
+        "text": "your gold",
+        "selector": "#s6-lab",
+        "dataAttributes": {},
+        "sourceFile": "compositions/s6.html",
+        "bbox": {
+          "x": 860.63,
+          "y": 740,
+          "width": 198.73,
+          "height": 32
+        },
+        "time": 96.104,
+        "times": [
+          96.104,
+          99.319,
+          99.319
+        ],
+        "fontPx": 24,
+        "floorPx": 28,
+        "seconds": 1.428,
+        "elements": [
+          {
+            "selector": "#s6-lab",
+            "text": "your gold",
+            "fontPx": 24,
+            "time": 96.104,
+            "seconds": 1.428
+          },
+          {
+            "selector": "#s6-bars > div:nth-of-type(1) > span:nth-of-type(1)",
+            "text": "Old gold",
+            "fontPx": 24,
+            "time": 99.319,
+            "seconds": 3.215
+          },
+          {
+            "selector": "#s6-bars > div:nth-of-type(2) > span:nth-of-type(1)",
+            "text": "New kada",
+            "fontPx": 24,
+            "time": 99.319,
+            "seconds": 3.215
+          }
+        ]
+      },
+      {
+        "code": "text_below_floor",
+        "severity": "warning",
+        "message": "Type floor is 28 px (2.6% of the 1080 px short side, what a phone can read) and 3 text elements stay under it for 0.5 s or more, the smallest \"Variant 1\" at 24 px: set reading text to at least 28 px, or put data-layout-ignore on text that is texture rather than reading; see references/look.md.",
+        "text": "Variant 1",
+        "selector": "#s7-v0 > div:nth-of-type(1)",
+        "dataAttributes": {},
+        "sourceFile": "compositions/s7.html",
+        "bbox": {
+          "x": 449.33,
+          "y": 554.56,
+          "width": 184.38,
+          "height": 36.79
+        },
+        "time": 114.324,
+        "times": [
+          114.324,
+          114.681,
+          115.038
+        ],
+        "fontPx": 24,
+        "floorPx": 28,
+        "seconds": 13.576,
+        "elements": [
+          {
+            "selector": "#s7-v0 > div:nth-of-type(1)",
+            "text": "Variant 1",
+            "fontPx": 24,
+            "time": 114.324,
+            "seconds": 13.576
+          },
+          {
+            "selector": "#s7-v1 > div:nth-of-type(1)",
+            "text": "Variant 2",
+            "fontPx": 24,
+            "time": 114.681,
+            "seconds": 13.219
+          },
+          {
+            "selector": "#s7-v2 > div:nth-of-type(1)",
+            "text": "Variant 3",
+            "fontPx": 24,
+            "time": 115.038,
+            "seconds": 12.862
+          }
+        ]
+      },
+      {
+        "code": "text_below_floor",
+        "severity": "warning",
+        "message": "Type floor is 28 px (2.6% of the 1080 px short side, what a phone can read) and 4 text elements stay under it for 0.5 s or more, the smallest \"Customer\" at 20 px: set reading text to at least 28 px, or put data-layout-ignore on text that is texture rather than reading; see references/look.md.",
+        "text": "Customer",
+        "selector": "#s8-b1 > div:nth-of-type(1)",
+        "dataAttributes": {},
+        "sourceFile": "compositions/s8.html",
+        "bbox": {
+          "x": 302,
+          "y": 350.6,
+          "width": 136,
+          "height": 27
+        },
+        "time": 132.187,
+        "times": [
+          129.329,
+          132.187,
+          135.76,
+          137.189
+        ],
+        "fontPx": 20,
+        "floorPx": 28,
+        "seconds": 14.647,
+        "elements": [
+          {
+            "selector": "#s8-b1 > div:nth-of-type(1)",
+            "text": "Customer",
+            "fontPx": 20,
+            "time": 132.187,
+            "seconds": 14.647
+          },
+          {
+            "selector": "#s8-b2 > div:nth-of-type(1)",
+            "text": "Jauhari",
+            "fontPx": 20,
+            "time": 135.76,
+            "seconds": 11.074
+          },
+          {
+            "selector": "#s8-k",
+            "text": "When it can't be made",
+            "fontPx": 24,
+            "time": 129.329,
+            "seconds": 17.505
+          },
+          {
+            "selector": "span.kicker",
+            "text": "Closest options",
+            "fontPx": 24,
+            "time": 137.189,
+            "seconds": 9.645
+          }
+        ]
+      },
+      {
+        "code": "text_below_floor",
+        "severity": "warning",
+        "message": "Type floor is 28 px (2.6% of the 1080 px short side, what a phone can read) and 3 text elements stay under it for 0.5 s or more, the smallest \"Customer\" at 20 px: set reading text to at least 28 px, or put data-layout-ignore on text that is texture rather than reading; see references/look.md.",
+        "text": "Customer",
+        "selector": "#s9-b1 > div:nth-of-type(1)",
+        "dataAttributes": {},
+        "sourceFile": "compositions/s9.html",
+        "bbox": {
+          "x": 342,
+          "y": 340.08,
+          "width": 136,
+          "height": 27
+        },
+        "time": 148.264,
+        "times": [
+          147.907,
+          148.264,
+          151.122
+        ],
+        "fontPx": 20,
+        "floorPx": 28,
+        "seconds": 10.717,
+        "elements": [
+          {
+            "selector": "#s9-b1 > div:nth-of-type(1)",
+            "text": "Customer",
+            "fontPx": 20,
+            "time": 148.264,
+            "seconds": 10.717
+          },
+          {
+            "selector": "#s9-b2 > div:nth-of-type(1)",
+            "text": "Sakhi",
+            "fontPx": 20,
+            "time": 151.122,
+            "seconds": 7.859
+          },
+          {
+            "selector": "#s9-k",
+            "text": "When it's unclear",
+            "fontPx": 24,
+            "time": 147.907,
+            "seconds": 11.074
+          }
+        ]
+      },
+      {
+        "code": "text_below_floor",
+        "severity": "warning",
+        "message": "Type floor is 28 px (2.6% of the 1080 px short side, what a phone can read) and \"Why it matters\" renders at 24 px for 17.15 s: set reading text to at least 28 px, or put data-layout-ignore on text that is texture rather than reading; see references/look.md.",
+        "text": "Why it matters",
+        "selector": "#s10-k",
+        "dataAttributes": {},
+        "sourceFile": "compositions/s10.html",
+        "bbox": {
+          "x": 805.51,
+          "y": 130.21,
+          "width": 308.98,
+          "height": 31.98
+        },
+        "time": 159.696,
+        "times": [
+          159.696
+        ],
+        "fontPx": 23.99,
+        "floorPx": 28,
+        "seconds": 17.148,
+        "elements": [
+          {
+            "selector": "#s10-k",
+            "text": "Why it matters",
+            "fontPx": 23.99,
+            "time": 159.696,
+            "seconds": 17.148
+          }
+        ]
+      },
+      {
+        "code": "text_below_floor",
+        "severity": "warning",
+        "message": "Type floor is 28 px (2.6% of the 1080 px short side, what a phone can read) and \"Five AI agents · The Jeweller's Shop\" renders at 24 px for 5.36 s: set reading text to at least 28 px, or put data-layout-ignore on text that is texture rather than reading; see references/look.md.",
+        "text": "Five AI agents · The Jeweller's Shop",
+        "selector": "#s12-foot",
+        "dataAttributes": {},
+        "sourceFile": "compositions/s12.html",
+        "bbox": {
+          "x": 562.55,
+          "y": 882.86,
+          "width": 794.89,
+          "height": 32
+        },
+        "time": 208.641,
+        "times": [
+          208.641
+        ],
+        "fontPx": 24,
+        "floorPx": 28,
+        "seconds": 5.359,
+        "elements": [
+          {
+            "selector": "#s12-foot",
+            "text": "Five AI agents · The Jeweller's Shop",
+            "fontPx": 24,
+            "time": 208.641,
+            "seconds": 5.359
+          }
+        ]
+      }
+    ],
+    "enabled": true,
+    "step": 0.3569999999999993,
+    "samples": 599
+  },
+  "audio": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": []
+  },
+  "hdr": {
+    "autoPromotion": null,
+    "inspection": "available"
+  },
+  "snapshots": {
+    "enabled": false,
+    "files": [],
+    "times": [],
+    "findingFiles": []
+  }
+}

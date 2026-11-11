@@ -1,0 +1,83 @@
+<template>
+  <style>
+
+  #root { position:absolute; inset:0; color:#F3E9D6; font-family:'EB Garamond', serif; }
+  .stage { position:absolute; inset:0; }
+  .hero { font-family:'Playfair Display', serif; font-weight:900; text-transform:uppercase;
+           letter-spacing:0.02em; color:#F3E9D6; text-align:center; line-height:1.04; }
+  .gold { color:#E0B25A; }
+  .ruby { color:#C24B58; }
+  .emerald { color:#3FA37C; }
+  .mono { font-family:'IBM Plex Mono', monospace; }
+  .kicker { font-family:'IBM Plex Mono', monospace; font-size:28px; letter-spacing:0.28em;
+             text-transform:uppercase; color:#E0B25A; text-align:center; }
+  .lead { font-family:'EB Garamond', serif; font-style:italic; font-size:44px; color:#F3E9D6;
+           text-align:center; }
+  .abs { position:absolute; }
+  .cx { left:0; right:0; }
+  .bubble { position:absolute; border-radius:28px; padding:28px 40px; font-family:'IBM Plex Mono', monospace;
+             font-size:38px; line-height:1.35; }
+  .b-cust { background:#2A211A; color:#F3E9D6; border:2px solid #4A3B2C; }
+  .b-bot { background:#1B1511; color:#F3E9D6; border:2px solid #9C7230; }
+  .who { font-family:'IBM Plex Mono', monospace; font-size:28px; letter-spacing:0.2em; text-transform:uppercase;
+          color:#A89A84; margin-bottom:10px; }
+  .chip { display:inline-block; padding:14px 30px; border-radius:999px; border:2px solid #9C7230;
+           font-family:'IBM Plex Mono', monospace; font-size:28px; color:#F3E9D6; background:#1B1511; }
+
+
+  .nrow { display:flex; align-items:center; gap:40px; height:130px; }
+  .nnode { width:110px; height:110px; border-radius:50%; border:2px solid #E0B25A; display:flex; align-items:center; justify-content:center; background:#18120E; flex:none; }
+  .nh { font-family:'Playfair Display', serif; font-weight:900; font-size:50px; }
+  .nd { font-family:'EB Garamond', serif; font-size:34px; color:#A89A84; }
+
+  </style>
+  <div id="root" data-composition-id="s11" data-width="1920" data-height="1080">
+    <div id="s11-stage" class="stage">
+
+      <div id="s11-t" class="hero abs cx" style="top:100px;font-size:72px">Only the <span class="gold">beginning.</span></div>
+      <div id="s11-spine" class="abs" style="left:384px;top:310px;width:3px;height:610px;background:#9C7230;transform-origin:50% 0"></div>
+      <div id="s11-r0" class="abs nrow" style="left:330px;top:250px;width:1300px">
+        <div class="nnode"><svg viewBox="0 0 120 120" width="64" height="64" style="color:#E0B25A" ><circle cx="60" cy="62" r="22" fill="none" stroke="currentColor" stroke-width="6"/><circle cx="60" cy="20" r="8" fill="currentColor"/><circle cx="102" cy="52" r="8" fill="currentColor"/><circle cx="86" cy="100" r="8" fill="currentColor"/><circle cx="34" cy="100" r="8" fill="currentColor"/><circle cx="18" cy="52" r="8" fill="currentColor"/></svg></div>
+        <div><div class="nh">Nonilion rooms</div><div class="nd">Every agent gets a seat on the shop floor.</div></div>
+      </div>
+      <div id="s11-r1" class="abs nrow" style="left:330px;top:400px;width:1300px">
+        <div class="nnode"><svg viewBox="0 0 120 120" width="64" height="64" style="color:#E0B25A" ><rect x="32" y="10" width="56" height="100" rx="10" fill="none" stroke="currentColor" stroke-width="6"/><circle cx="60" cy="60" r="14" fill="none" stroke="currentColor" stroke-width="5"/><path d="M50 50 l10 -10 l10 10" fill="none" stroke="currentColor" stroke-width="4"/></svg></div>
+        <div><div class="nh">AR try-on</div><div class="nd">Straight from the chat, at real-world scale.</div></div>
+      </div>
+      <div id="s11-r2" class="abs nrow" style="left:330px;top:550px;width:1300px">
+        <div class="nnode"><svg viewBox="0 0 120 120" width="64" height="64" style="color:#E0B25A" ><path d="M30 100 l60 -60 M86 14 c-40 4 -60 30 -60 70 c40 0 66 -20 70 -60 z" fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/></svg></div>
+        <div><div class="nh">“@Karigar, make it 2 g lighter”</div><div class="nd">Re-shaped in seconds.</div></div>
+      </div>
+      <div id="s11-r3" class="abs nrow" style="left:330px;top:700px;width:1300px">
+        <div class="nnode"><svg viewBox="0 0 120 120" width="64" height="64" style="color:#E0B25A" ><path d="M16 86 a44 44 0 0 1 88 0" fill="none" stroke="currentColor" stroke-width="6"/><path d="M60 86 l26 -30" stroke="currentColor" stroke-width="6" stroke-linecap="round"/><circle cx="60" cy="86" r="7" fill="currentColor"/></svg></div>
+        <div><div class="nh">Workshop calibration</div><div class="nd">Learns each workshop's real loss, casting by casting.</div></div>
+      </div>
+      <div id="s11-r4" class="abs nrow" style="left:330px;top:850px;width:1300px">
+        <div class="nnode"><svg viewBox="0 0 120 120" width="64" height="64" style="color:#E0B25A" ><path d="M60 12 l42 22 v50 l-42 22 l-42 -22 v-50 z M18 34 l42 22 l42 -22 M60 56 v50" fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/></svg></div>
+        <div><div class="nh">Hardware pack</div><div class="nd">The same engine, beyond gold.</div></div>
+      </div>
+
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    const S = "#s11-stage";
+    // scene in: slow scale settle (cinematic), out: blur + fade
+    tl.fromTo(S, { opacity: 0, scale: 0.97 }, { opacity: 1, scale: 1, duration: 0.9, ease: "power2.out" }, 0);
+    tl.fromTo("#s11-t", { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.8, ease: "expo.out" }, 1.0);
+    tl.fromTo("#s11-spine", { scaleY: 0 }, { scaleY: 1, duration: 16.09, ease: "none" }, 3.05);
+    tl.fromTo("#s11-r0", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.7, ease: "expo.out" }, 2.9499999999999997);
+    tl.fromTo("#s11-r1", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.7, ease: "expo.out" }, 8.41);
+    tl.to("#s11-r0 .nh, #s11-r0 .nd", { opacity: 0.55, duration: 0.4 }, 8.41);
+    tl.fromTo("#s11-r2", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.7, ease: "expo.out" }, 11.33);
+    tl.to("#s11-r1 .nh, #s11-r1 .nd", { opacity: 0.55, duration: 0.4 }, 11.33);
+    tl.fromTo("#s11-r3", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.7, ease: "expo.out" }, 14.89);
+    tl.to("#s11-r2 .nh, #s11-r2 .nd", { opacity: 0.55, duration: 0.4 }, 14.89);
+    tl.fromTo("#s11-r4", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.7, ease: "expo.out" }, 18.439999999999998);
+    tl.to("#s11-r3 .nh, #s11-r3 .nd", { opacity: 0.55, duration: 0.4 }, 18.439999999999998);
+    tl.to("#s11-r4 .nh, #s11-r4 .nd, #s11-r0 .nh, #s11-r0 .nd, #s11-r1 .nh, #s11-r1 .nd, #s11-r2 .nh, #s11-r2 .nd, #s11-r3 .nh, #s11-r3 .nd", { opacity: 1, duration: 0.6 }, 22.14);
+
+    tl.to(S, { opacity: 0, filter: "blur(8px)", duration: 0.5, ease: "power3.in" }, 25.4);
+    window.__timelines["s11"] = tl;
+  </script>
+</template>

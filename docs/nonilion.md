@@ -41,16 +41,16 @@ from product pages, not docs. Verify it in the app (QUESTIONS.md) before the dem
   personas with no way shown to attach our code, so HIRE is not our route. Atlas/Iris could share the room as
   background staff for the demo.
 
-### Unknowns about the "Other" route (answer with the probe endpoint, Phase 7)
-| Question | Why it matters |
-|---|---|
-| Which paths does "Test the key" call (`/models`? a tiny chat call?) | Must answer it or the import fails |
-| Does each call carry the full chat history, and any room / user / conversation ID? | Order state per conversation |
-| `stream: true`? How long does Nonilion wait for a reply? | Pipeline takes minutes; streaming could carry progress lines |
-| Does it render Markdown, tables, `![](url)` images, links in replies? | Renders and files shown as images or links |
-| Are uploaded photos sent as `image_url` parts? | Photo-to-spec (P1) |
-| Does it send `tools` / expect tool calls? | We ignore them, but must not error |
-| Can 2+ imported agents point at different base URLs on our server? | One character per agent (Sakhi, Jauhari, …) |
+### Unknowns about the "Other" route (answered with the probe, Phase 6.5)
+| Question | Why it matters | Answer (from probe log) |
+|---|---|---|
+| Which paths does "Test the key" call (`/models`? a tiny chat call?) | Must answer it or the import fails | _pending_ |
+| Does each call carry the full chat history, and any room / user / conversation ID? | Order state per conversation | _pending_ |
+| `stream: true`? How long does Nonilion wait for a reply? | Pipeline takes minutes; streaming could carry progress lines | _pending_ |
+| Does it render Markdown, tables, `![](url)` images, links in replies? | Renders and files shown as images or links | _pending_ |
+| Are uploaded photos sent as `image_url` parts? | Photo-to-spec (P1) | _pending_ |
+| Does it send `tools` / expect tool calls? | We ignore them, but must not error | _pending_ |
+| Can 2+ imported agents point at different base URLs on our server? | One character per agent (Sakhi, Jauhari, …) | _pending_ |
 
 ## What this means
 The Bot API doesn't exist yet, but the **Import → Other** route does the same job: Karigar runs an

@@ -1,0 +1,55 @@
+<template>
+  <style>
+
+  #root { position:absolute; inset:0; color:#F3E9D6; font-family:'EB Garamond', serif; }
+  .stage { position:absolute; inset:0; }
+  .hero { font-family:'Playfair Display', serif; font-weight:900; text-transform:uppercase;
+           letter-spacing:0.02em; color:#F3E9D6; text-align:center; line-height:1.04; }
+  .gold { color:#E0B25A; }
+  .ruby { color:#C24B58; }
+  .emerald { color:#3FA37C; }
+  .mono { font-family:'IBM Plex Mono', monospace; }
+  .kicker { font-family:'IBM Plex Mono', monospace; font-size:28px; letter-spacing:0.28em;
+             text-transform:uppercase; color:#E0B25A; text-align:center; }
+  .lead { font-family:'EB Garamond', serif; font-style:italic; font-size:44px; color:#F3E9D6;
+           text-align:center; }
+  .abs { position:absolute; }
+  .cx { left:0; right:0; }
+  .bubble { position:absolute; border-radius:28px; padding:28px 40px; font-family:'IBM Plex Mono', monospace;
+             font-size:38px; line-height:1.35; }
+  .b-cust { background:#2A211A; color:#F3E9D6; border:2px solid #4A3B2C; }
+  .b-bot { background:#1B1511; color:#F3E9D6; border:2px solid #9C7230; }
+  .who { font-family:'IBM Plex Mono', monospace; font-size:28px; letter-spacing:0.2em; text-transform:uppercase;
+          color:#A89A84; margin-bottom:10px; }
+  .chip { display:inline-block; padding:14px 30px; border-radius:999px; border:2px solid #9C7230;
+           font-family:'IBM Plex Mono', monospace; font-size:28px; color:#F3E9D6; background:#1B1511; }
+
+
+  </style>
+  <div id="root" data-composition-id="s3" data-width="1920" data-height="1080">
+    <div id="s3-stage" class="stage">
+
+      <div id="s3-until" class="lead abs cx" style="top:300px">Until now.</div>
+      <div id="s3-word" class="hero abs cx gold" style="top:390px;font-size:220px;letter-spacing:0.08em"><span class="L" style="display:inline-block;opacity:0">K</span><span class="L" style="display:inline-block;opacity:0">A</span><span class="L" style="display:inline-block;opacity:0">R</span><span class="L" style="display:inline-block;opacity:0">I</span><span class="L" style="display:inline-block;opacity:0">G</span><span class="L" style="display:inline-block;opacity:0">A</span><span class="L" style="display:inline-block;opacity:0">R</span></div>
+      <div id="s3-rule" class="abs" style="left:660px;top:660px;width:600px;height:3px;background:#E0B25A;transform-origin:50% 50%"></div>
+      <div id="s3-tag" class="lead abs cx" style="top:700px;font-size:52px">An AI artisan for anything that gets made.</div>
+      <div id="s3-pack" class="kicker abs cx" style="top:820px">Flagship pack &middot; The Jeweller's Shop</div>
+
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    const S = "#s3-stage";
+    // scene in: slow scale settle (cinematic), out: blur + fade
+    tl.fromTo(S, { opacity: 0, scale: 0.97 }, { opacity: 1, scale: 1, duration: 0.9, ease: "power2.out" }, 0);
+    tl.fromTo("#s3-until", { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "expo.out" }, 1.0);
+    tl.to("#s3-until", { opacity: 0, filter: "blur(6px)", duration: 0.3, ease: "power3.in" }, 2.0);
+    tl.fromTo("#s3-word .L", { opacity: 0.0, filter: "blur(14px)", y: 20 }, { opacity: 1, filter: "blur(0px)", y: 0, duration: 0.6, ease: "expo.out", stagger: 0.1 }, 2.3);
+    tl.fromTo("#s3-rule", { scaleX: 0 }, { scaleX: 1, duration: 0.9, ease: "power2.inOut" }, 3.4);
+    tl.fromTo("#s3-tag", { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.8, ease: "expo.out" }, 4.2);
+    tl.fromTo("#s3-pack", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.7, ease: "expo.out" }, 6.4);
+
+    tl.to(S, { opacity: 0, filter: "blur(8px)", duration: 0.5, ease: "power3.in" }, 13.4);
+    window.__timelines["s3"] = tl;
+  </script>
+</template>

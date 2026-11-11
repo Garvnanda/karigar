@@ -1,0 +1,113 @@
+<template>
+  <style>
+
+  #root { position:absolute; inset:0; color:#F3E9D6; font-family:'EB Garamond', serif; }
+  .stage { position:absolute; inset:0; }
+  .hero { font-family:'Playfair Display', serif; font-weight:900; text-transform:uppercase;
+           letter-spacing:0.02em; color:#F3E9D6; text-align:center; line-height:1.04; }
+  .gold { color:#E0B25A; }
+  .ruby { color:#C24B58; }
+  .emerald { color:#3FA37C; }
+  .mono { font-family:'IBM Plex Mono', monospace; }
+  .kicker { font-family:'IBM Plex Mono', monospace; font-size:28px; letter-spacing:0.28em;
+             text-transform:uppercase; color:#E0B25A; text-align:center; }
+  .lead { font-family:'EB Garamond', serif; font-style:italic; font-size:44px; color:#F3E9D6;
+           text-align:center; }
+  .abs { position:absolute; }
+  .cx { left:0; right:0; }
+  .bubble { position:absolute; border-radius:28px; padding:28px 40px; font-family:'IBM Plex Mono', monospace;
+             font-size:38px; line-height:1.35; }
+  .b-cust { background:#2A211A; color:#F3E9D6; border:2px solid #4A3B2C; }
+  .b-bot { background:#1B1511; color:#F3E9D6; border:2px solid #9C7230; }
+  .who { font-family:'IBM Plex Mono', monospace; font-size:28px; letter-spacing:0.2em; text-transform:uppercase;
+          color:#A89A84; margin-bottom:10px; }
+  .chip { display:inline-block; padding:14px 30px; border-radius:999px; border:2px solid #9C7230;
+           font-family:'IBM Plex Mono', monospace; font-size:28px; color:#F3E9D6; background:#1B1511; }
+
+
+  .agent { border:2px solid #3A2E22; border-radius:26px; background:#18120E; }
+  .ag-in { padding:44px 30px; display:flex; flex-direction:column; align-items:flex-start; gap:18px; }
+  .ag-zone { font-family:'IBM Plex Mono', monospace; font-size:28px; letter-spacing:0.08em; text-transform:uppercase; color:#E0B25A; }
+  .ag-name { font-family:'Playfair Display', serif; font-weight:900; font-size:52px; }
+  .ag-job { font-family:'EB Garamond', serif; font-size:30px; line-height:1.3; color:#F3E9D6; }
+
+  </style>
+  <div id="root" data-composition-id="s5" data-width="1920" data-height="1080">
+    <div id="s5-stage" class="stage">
+
+      <div id="s5-k" data-hold class="kicker abs cx" style="top:120px">One order &middot; five agents</div>
+      <div id="s5-t" class="hero abs cx" style="top:170px;font-size:64px">The shop floor</div>
+      <div id="s5-c0" class="abs agent" style="left:110px;top:300px;width:320px;height:480px">
+        <div class="ag-in">
+          <svg viewBox="0 0 120 120" width="104" height="104" style="color:#E0B25A" ><path d="M20 22 h80 a12 12 0 0 1 12 12 v40 a12 12 0 0 1 -12 12 h-46 l-20 18 v-18 h-14 a12 12 0 0 1 -12 -12 v-40 a12 12 0 0 1 12 -12z" fill="none" stroke="currentColor" stroke-width="6"/></svg>
+          <div class="ag-zone">Counter</div>
+          <div class="ag-name">Sakhi</div>
+          <div class="ag-job">Understands the request. Asks when something is missing.</div>
+        </div>
+      </div>
+      <div id="s5-c1" class="abs agent" style="left:460px;top:300px;width:320px;height:480px">
+        <div class="ag-in">
+          <svg viewBox="0 0 120 120" width="104" height="104" style="color:#E0B25A" ><path d="M60 20 v80 M30 104 h60 M14 40 h92 M14 40 l-10 30 h20 z M106 40 l-10 30 h20 z" fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/></svg>
+          <div class="ag-zone">Gold desk</div>
+          <div class="ag-name">Jauhari</div>
+          <div class="ag-job">Turns old gold into one target weight. Refuses the impossible.</div>
+        </div>
+      </div>
+      <div id="s5-c2" class="abs agent" style="left:810px;top:300px;width:320px;height:480px">
+        <div class="ag-in">
+          <svg viewBox="0 0 120 120" width="104" height="104" style="color:#E0B25A" ><path d="M24 96 l10 -30 l50 -50 l20 20 l-50 50 z M74 26 l20 20" fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/></svg>
+          <div class="ag-zone">Design studio</div>
+          <div class="ag-name">Naqqash</div>
+          <div class="ag-job">Proposes three design variants.</div>
+        </div>
+      </div>
+      <div id="s5-c3" class="abs agent" style="left:1160px;top:300px;width:320px;height:480px">
+        <div class="ag-in">
+          <svg viewBox="0 0 120 120" width="104" height="104" style="color:#E0B25A" ><path d="M14 36 h76 c0 14 10 22 22 22 v8 h-36 l-8 16 h14 v16 h-60 v-16 h14 l-8 -16 h-14 z" fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/></svg>
+          <div class="ag-zone">Workshop</div>
+          <div class="ag-name">Karigar</div>
+          <div class="ag-job">Shapes each design to the gold. Checks it can be cast.</div>
+        </div>
+      </div>
+      <div id="s5-c4" class="abs agent" style="left:1510px;top:300px;width:320px;height:480px">
+        <div class="ag-in">
+          <svg viewBox="0 0 120 120" width="104" height="104" style="color:#E0B25A" ><path d="M14 38 h22 l10 -14 h28 l10 14 h22 v62 h-92 z" fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/><circle cx="60" cy="68" r="18" fill="none" stroke="currentColor" stroke-width="6"/></svg>
+          <div class="ag-zone">Photo studio</div>
+          <div class="ag-name">Chitrakar</div>
+          <div class="ag-job">Catalog renders and a model for AR.</div>
+        </div>
+      </div>
+      <div id="s5-line" class="abs" style="left:110px;top:840px;width:1720px;height:4px;background:#E0B25A;transform-origin:0 50%"></div>
+      <div id="s5-dot" class="abs" style="left:96px;top:828px;width:28px;height:28px;border-radius:50%;background:#E0B25A"></div>
+
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    const S = "#s5-stage";
+    // scene in: slow scale settle (cinematic), out: blur + fade
+    tl.fromTo(S, { opacity: 0, scale: 0.97 }, { opacity: 1, scale: 1, duration: 0.9, ease: "power2.out" }, 0);
+    tl.fromTo("#s5-k", { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "expo.out" }, 0.6);
+    tl.fromTo("#s5-t", { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "expo.out" }, 1.0);
+    tl.fromTo("#s5-stage .agent", { opacity: 0, y: 40 }, { opacity: 0.28, y: 0, duration: 0.7, ease: "expo.out", stagger: 0.08 }, 1.6);
+    tl.fromTo("#s5-line", { scaleX: 0 }, { scaleX: 0, duration: 0.01 }, 0);
+    tl.to("#s5-c0", { opacity: 1, y: -14, borderColor: "#E0B25A", duration: 0.6, ease: "expo.out" }, 3.9200000000000004);
+    tl.to("#s5-line", { scaleX: 0.20, duration: 0.8, ease: "power2.inOut" }, 3.9200000000000004);
+    tl.to("#s5-dot", { x: 330, duration: 0.8, ease: "power2.inOut" }, 3.9200000000000004);
+    tl.to("#s5-c1", { opacity: 1, y: -14, borderColor: "#E0B25A", duration: 0.6, ease: "expo.out" }, 8.23);
+    tl.to("#s5-line", { scaleX: 0.40, duration: 0.8, ease: "power2.inOut" }, 8.23);
+    tl.to("#s5-dot", { x: 674, duration: 0.8, ease: "power2.inOut" }, 8.23);
+    tl.to("#s5-c2", { opacity: 1, y: -14, borderColor: "#E0B25A", duration: 0.6, ease: "expo.out" }, 13.629999999999999);
+    tl.to("#s5-line", { scaleX: 0.60, duration: 0.8, ease: "power2.inOut" }, 13.629999999999999);
+    tl.to("#s5-dot", { x: 1018, duration: 0.8, ease: "power2.inOut" }, 13.629999999999999);
+    tl.to("#s5-c3", { opacity: 1, y: -14, borderColor: "#E0B25A", duration: 0.6, ease: "expo.out" }, 17.150000000000002);
+    tl.to("#s5-line", { scaleX: 0.80, duration: 0.8, ease: "power2.inOut" }, 17.150000000000002);
+    tl.to("#s5-dot", { x: 1362, duration: 0.8, ease: "power2.inOut" }, 17.150000000000002);
+    tl.to("#s5-c4", { opacity: 1, y: -14, borderColor: "#E0B25A", duration: 0.6, ease: "expo.out" }, 21.740000000000002);
+    tl.to("#s5-line", { scaleX: 1.00, duration: 0.8, ease: "power2.inOut" }, 21.740000000000002);
+    tl.to("#s5-dot", { x: 1706, duration: 0.8, ease: "power2.inOut" }, 21.740000000000002);
+
+    tl.to(S, { opacity: 0, filter: "blur(8px)", duration: 0.5, ease: "power3.in" }, 28.4);
+    window.__timelines["s5"] = tl;
+  </script>
+</template>

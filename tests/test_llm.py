@@ -117,6 +117,6 @@ def test_brief_falls_back_to_regex_when_llm_fails(agentrouter, monkeypatch):
     from karigar.packs.jewellery import brief as B
     run = FakeRun(exc=subprocess.TimeoutExpired("claude", 45))
     monkeypatch.setattr(llm.subprocess, "run", run)
-    b, q = B.parse("purani 22K chain 6.2g se ruby lotus pendant banao")
+    b, q = B.parse("purani 22K chain 6.2g se 22K ruby lotus pendant banao")
     assert len(run.calls) == 1  # the patched runner was used, not the real CLI
     assert q is None and b.piece_type == "pendant" and b.old_gold.weight_g == 6.2

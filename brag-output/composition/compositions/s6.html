@@ -1,0 +1,86 @@
+<template>
+  <style>
+
+  #root { position:absolute; inset:0; color:#F3E9D6; font-family:'EB Garamond', serif; }
+  .stage { position:absolute; inset:0; }
+  .hero { font-family:'Playfair Display', serif; font-weight:900; text-transform:uppercase;
+           letter-spacing:0.02em; color:#F3E9D6; text-align:center; line-height:1.04; }
+  .gold { color:#E0B25A; }
+  .ruby { color:#C24B58; }
+  .emerald { color:#3FA37C; }
+  .mono { font-family:'IBM Plex Mono', monospace; }
+  .kicker { font-family:'IBM Plex Mono', monospace; font-size:28px; letter-spacing:0.28em;
+             text-transform:uppercase; color:#E0B25A; text-align:center; }
+  .lead { font-family:'EB Garamond', serif; font-style:italic; font-size:44px; color:#F3E9D6;
+           text-align:center; }
+  .abs { position:absolute; }
+  .cx { left:0; right:0; }
+  .bubble { position:absolute; border-radius:28px; padding:28px 40px; font-family:'IBM Plex Mono', monospace;
+             font-size:38px; line-height:1.35; }
+  .b-cust { background:#2A211A; color:#F3E9D6; border:2px solid #4A3B2C; }
+  .b-bot { background:#1B1511; color:#F3E9D6; border:2px solid #9C7230; }
+  .who { font-family:'IBM Plex Mono', monospace; font-size:28px; letter-spacing:0.2em; text-transform:uppercase;
+          color:#A89A84; margin-bottom:10px; }
+  .chip { display:inline-block; padding:14px 30px; border-radius:999px; border:2px solid #9C7230;
+           font-family:'IBM Plex Mono', monospace; font-size:28px; color:#F3E9D6; background:#1B1511; }
+
+
+  .barrow { display:flex; align-items:center; gap:24px; margin:12px 0; }
+  .bl { width:220px; font-family:'IBM Plex Mono', monospace; font-size:28px; color:#A89A84; text-transform:uppercase; letter-spacing:0.15em; }
+  .bar { flex:1; height:22px; border-radius:11px; background:#2A211A; overflow:hidden; }
+  .fill { width:100%; height:100%; background:#E0B25A; transform-origin:0 50%; }
+
+  </style>
+  <div id="root" data-composition-id="s6" data-width="1920" data-height="1080">
+    <div id="s6-stage" class="stage">
+
+      <div id="s6-t" class="hero abs cx" style="top:110px;font-size:72px">The design bends <span class="gold">to the gold.</span></div>
+      <svg class="abs" style="left:0;top:0" width="1920" height="1080" viewBox="0 0 1920 1080"><defs>
+  <linearGradient id="s6-g" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#FFE7A8"/><stop offset="0.35" stop-color="#E0B25A"/>
+    <stop offset="0.7" stop-color="#9C7230"/><stop offset="1" stop-color="#F6CF77"/>
+  </linearGradient>
+  <radialGradient id="s6-orb" cx="0.4" cy="0.35" r="0.7">
+    <stop offset="0" stop-color="#FFF4CF"/><stop offset="0.45" stop-color="#E0B25A"/><stop offset="1" stop-color="#6B4A1C"/>
+  </radialGradient>
+</defs>
+        <g id="s6-old"><circle cx="960" cy="500" r="190" fill="none" stroke="url(#s6-g)" stroke-width="14" stroke-dasharray="1193.8" stroke-dashoffset="1193.8" class="draw" stroke-linecap="round"/><circle cx="960" cy="500" r="182.3" fill="none" stroke="#FFE7A8" stroke-opacity="0.35" stroke-width="2"/></g>
+        <circle id="s6-orb" cx="960" cy="500" r="90" fill="url(#s6-orb)"/>
+        <g id="s6-new"><circle cx="960" cy="500" r="200" fill="none" stroke="url(#s6-g)" stroke-width="26"/><circle class="s6b" cx="1165.2" cy="500.0" r="15" fill="url(#s6-orb)"/><circle class="s6b" cx="1160.7" cy="542.7" r="15" fill="url(#s6-orb)"/><circle class="s6b" cx="1147.5" cy="583.5" r="15" fill="url(#s6-orb)"/><circle class="s6b" cx="1126.0" cy="620.6" r="15" fill="url(#s6-orb)"/><circle class="s6b" cx="1097.3" cy="652.5" r="15" fill="url(#s6-orb)"/><circle class="s6b" cx="1062.6" cy="677.7" r="15" fill="url(#s6-orb)"/><circle class="s6b" cx="1023.4" cy="695.2" r="15" fill="url(#s6-orb)"/><circle class="s6b" cx="981.4" cy="704.1" r="15" fill="url(#s6-orb)"/><circle class="s6b" cx="938.6" cy="704.1" r="15" fill="url(#s6-orb)"/><circle class="s6b" cx="896.6" cy="695.2" r="15" fill="url(#s6-orb)"/><circle class="s6b" cx="857.4" cy="677.7" r="15" fill="url(#s6-orb)"/><circle class="s6b" cx="822.7" cy="652.5" r="15" fill="url(#s6-orb)"/><circle class="s6b" cx="794.0" cy="620.6" r="15" fill="url(#s6-orb)"/><circle class="s6b" cx="772.5" cy="583.5" r="15" fill="url(#s6-orb)"/><circle class="s6b" cx="759.3" cy="542.7" r="15" fill="url(#s6-orb)"/><circle class="s6b" cx="754.8" cy="500.0" r="15" fill="url(#s6-orb)"/><circle class="s6b" cx="759.3" cy="457.3" r="15" fill="url(#s6-orb)"/><circle class="s6b" cx="772.5" cy="416.5" r="15" fill="url(#s6-orb)"/><circle class="s6b" cx="794.0" cy="379.4" r="15" fill="url(#s6-orb)"/><circle class="s6b" cx="822.7" cy="347.5" r="15" fill="url(#s6-orb)"/><circle class="s6b" cx="857.4" cy="322.3" r="15" fill="url(#s6-orb)"/><circle class="s6b" cx="896.6" cy="304.8" r="15" fill="url(#s6-orb)"/><circle class="s6b" cx="938.6" cy="295.9" r="15" fill="url(#s6-orb)"/><circle class="s6b" cx="981.4" cy="295.9" r="15" fill="url(#s6-orb)"/><circle class="s6b" cx="1023.4" cy="304.8" r="15" fill="url(#s6-orb)"/><circle class="s6b" cx="1062.6" cy="322.3" r="15" fill="url(#s6-orb)"/><circle class="s6b" cx="1097.3" cy="347.5" r="15" fill="url(#s6-orb)"/><circle class="s6b" cx="1126.0" cy="379.4" r="15" fill="url(#s6-orb)"/><circle class="s6b" cx="1147.5" cy="416.5" r="15" fill="url(#s6-orb)"/><circle class="s6b" cx="1160.7" cy="457.3" r="15" fill="url(#s6-orb)"/></g>
+      </svg>
+      <div id="s6-lab" class="kicker abs cx" style="top:740px">your gold</div>
+      <div id="s6-bars" class="abs" style="left:560px;top:790px;width:800px">
+        <div class="barrow"><span class="bl">Old gold</span><div class="bar"><div id="s6-b1" class="fill"></div></div></div>
+        <div class="barrow"><span class="bl">New kada</span><div class="bar"><div id="s6-b2" class="fill"></div></div></div>
+      </div>
+      <div id="s6-g" class="hero abs cx gold" style="top:830px;font-size:110px">Gram for gram.</div>
+
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    const S = "#s6-stage";
+    // scene in: slow scale settle (cinematic), out: blur + fade
+    tl.fromTo(S, { opacity: 0, scale: 0.97 }, { opacity: 1, scale: 1, duration: 0.9, ease: "power2.out" }, 0);
+    tl.fromTo("#s6-old .draw", { attr: { "stroke-dashoffset": 1193.8 } }, { attr: { "stroke-dashoffset": 0 }, duration: 1.0, ease: "power2.inOut" }, 0.5);
+    tl.fromTo("#s6-orb", { scale: 0, opacity: 0, svgOrigin: "960 500" }, { scale: 0, opacity: 0, svgOrigin: "960 500", duration: 0.01 }, 0);
+    tl.fromTo("#s6-new", { opacity: 0 }, { opacity: 0, duration: 0.01 }, 0);
+    tl.fromTo("#s6-lab, #s6-bars, #s6-g", { opacity: 0 }, { opacity: 0, duration: 0.01 }, 0);
+    tl.fromTo("#s6-t", { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.8, ease: "expo.out" }, 2.73);
+    tl.to("#s6-old", { scale: 0.3, opacity: 0, svgOrigin: "960 500", duration: 1.2, ease: "power3.in" }, 3.33);
+    tl.to("#s6-orb", { scale: 1, opacity: 1, svgOrigin: "960 500", duration: 1.0, ease: "expo.out" }, 4.23);
+    tl.to("#s6-lab", { opacity: 1, duration: 0.5 }, 4.63);
+    tl.to("#s6-lab", { opacity: 0, duration: 0.3 }, 6.22);
+    tl.to("#s6-new", { opacity: 1, duration: 0.6 }, 6.42);
+    tl.fromTo("#s6-new circle", { opacity: 0, scale: 0.3, transformOrigin: "50% 50%" }, { opacity: 1, scale: 1, duration: 0.4, ease: "expo.out", stagger: 0.04 }, 6.42);
+    tl.to("#s6-orb", { scale: 0.15, opacity: 0, svgOrigin: "960 500", duration: 1.4, ease: "power2.in" }, 6.72);
+    tl.to("#s6-bars", { opacity: 1, duration: 0.4 }, 8.02);
+    tl.fromTo("#s6-b1", { scaleX: 0 }, { scaleX: 1, duration: 1.0, ease: "power2.out" }, 8.22);
+    tl.fromTo("#s6-b2", { scaleX: 0 }, { scaleX: 1, duration: 1.6, ease: "power3.out" }, 8.82);
+    tl.to("#s6-bars", { opacity: 0, filter: "blur(6px)", duration: 0.3 }, 11.2);
+    tl.fromTo("#s6-g", { opacity: 0, filter: "blur(12px)", scale: 1.06 }, { opacity: 1, filter: "blur(0px)", scale: 1, duration: 0.7, ease: "expo.out" }, 13.2);
+
+    tl.to(S, { opacity: 0, filter: "blur(8px)", duration: 0.5, ease: "power3.in" }, 19.4);
+    window.__timelines["s6"] = tl;
+  </script>
+</template>

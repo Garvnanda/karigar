@@ -1,0 +1,64 @@
+<template>
+  <style>
+
+  #root { position:absolute; inset:0; color:#F3E9D6; font-family:'EB Garamond', serif; }
+  .stage { position:absolute; inset:0; }
+  .hero { font-family:'Playfair Display', serif; font-weight:900; text-transform:uppercase;
+           letter-spacing:0.02em; color:#F3E9D6; text-align:center; line-height:1.04; }
+  .gold { color:#E0B25A; }
+  .ruby { color:#C24B58; }
+  .emerald { color:#3FA37C; }
+  .mono { font-family:'IBM Plex Mono', monospace; }
+  .kicker { font-family:'IBM Plex Mono', monospace; font-size:28px; letter-spacing:0.28em;
+             text-transform:uppercase; color:#E0B25A; text-align:center; }
+  .lead { font-family:'EB Garamond', serif; font-style:italic; font-size:44px; color:#F3E9D6;
+           text-align:center; }
+  .abs { position:absolute; }
+  .cx { left:0; right:0; }
+  .bubble { position:absolute; border-radius:28px; padding:28px 40px; font-family:'IBM Plex Mono', monospace;
+             font-size:38px; line-height:1.35; }
+  .b-cust { background:#2A211A; color:#F3E9D6; border:2px solid #4A3B2C; }
+  .b-bot { background:#1B1511; color:#F3E9D6; border:2px solid #9C7230; }
+  .who { font-family:'IBM Plex Mono', monospace; font-size:28px; letter-spacing:0.2em; text-transform:uppercase;
+          color:#A89A84; margin-bottom:10px; }
+  .chip { display:inline-block; padding:14px 30px; border-radius:999px; border:2px solid #9C7230;
+           font-family:'IBM Plex Mono', monospace; font-size:28px; color:#F3E9D6; background:#1B1511; }
+
+
+  </style>
+  <div id="root" data-composition-id="s12" data-width="1920" data-height="1080">
+    <div id="s12-stage" class="stage">
+
+      <svg class="abs" style="left:0;top:0" width="1920" height="1080" viewBox="0 0 1920 1080"><defs>
+  <linearGradient id="s12-g" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#FFE7A8"/><stop offset="0.35" stop-color="#E0B25A"/>
+    <stop offset="0.7" stop-color="#9C7230"/><stop offset="1" stop-color="#F6CF77"/>
+  </linearGradient>
+  <radialGradient id="s12-orb" cx="0.4" cy="0.35" r="0.7">
+    <stop offset="0" stop-color="#FFF4CF"/><stop offset="0.45" stop-color="#E0B25A"/><stop offset="1" stop-color="#6B4A1C"/>
+  </radialGradient>
+</defs>
+        <g id="s12-p0"><g id="s12-ring"><ellipse cx="690" cy="270.0" rx="90.0" ry="34.0" fill="none" stroke="url(#s12-g)" stroke-width="14.0"/><polygon points="656.0,222.0 690,182.0 724.0,222.0 690,252.0" fill="#EAF4FF" stroke="#BFD8F0" stroke-width="2.0"/><polyline points="656.0,222.0 690,228.0 724.0,222.0" fill="none" stroke="#9DBAD6" stroke-width="2.0"/><path d="M664.0,238.0 L676.0,254.0 M716.0,238.0 L704.0,254.0" stroke="url(#s12-g)" stroke-width="6.0"/></g></g>
+        <g id="s12-p1"><g id="s12-kada"><circle cx="960" cy="210" r="70" fill="none" stroke="url(#s12-g)" stroke-width="12"/><circle class="b" cx="1032.4" cy="210.0" r="8" fill="url(#s12-orb)"/><circle class="b" cx="1028.9" cy="232.4" r="8" fill="url(#s12-orb)"/><circle class="b" cx="1018.6" cy="252.6" r="8" fill="url(#s12-orb)"/><circle class="b" cx="1002.6" cy="268.6" r="8" fill="url(#s12-orb)"/><circle class="b" cx="982.4" cy="278.9" r="8" fill="url(#s12-orb)"/><circle class="b" cx="960.0" cy="282.4" r="8" fill="url(#s12-orb)"/><circle class="b" cx="937.6" cy="278.9" r="8" fill="url(#s12-orb)"/><circle class="b" cx="917.4" cy="268.6" r="8" fill="url(#s12-orb)"/><circle class="b" cx="901.4" cy="252.6" r="8" fill="url(#s12-orb)"/><circle class="b" cx="891.1" cy="232.4" r="8" fill="url(#s12-orb)"/><circle class="b" cx="887.6" cy="210.0" r="8" fill="url(#s12-orb)"/><circle class="b" cx="891.1" cy="187.6" r="8" fill="url(#s12-orb)"/><circle class="b" cx="901.4" cy="167.4" r="8" fill="url(#s12-orb)"/><circle class="b" cx="917.4" cy="151.4" r="8" fill="url(#s12-orb)"/><circle class="b" cx="937.6" cy="141.1" r="8" fill="url(#s12-orb)"/><circle class="b" cx="960.0" cy="137.6" r="8" fill="url(#s12-orb)"/><circle class="b" cx="982.4" cy="141.1" r="8" fill="url(#s12-orb)"/><circle class="b" cx="1002.6" cy="151.4" r="8" fill="url(#s12-orb)"/><circle class="b" cx="1018.6" cy="167.4" r="8" fill="url(#s12-orb)"/><circle class="b" cx="1028.9" cy="187.6" r="8" fill="url(#s12-orb)"/></g></g>
+        <g id="s12-p2"><g id="s12-lotus"><circle cx="1230" cy="150.0" r="11.200000000000001" fill="none" stroke="url(#s12-g)" stroke-width="4.800000000000001"/><path d="M1230,270 C1209.2,230.0 1218.8,193.2 1230,182.0 C1241.2,193.2 1250.8,230.0 1230,270 Z" fill="url(#s12-g)" fill-opacity="0.92" stroke="#FFE7A8" stroke-opacity="0.5" stroke-width="1.2000000000000002" transform="rotate(-60 1230 270)"/><path d="M1230,270 C1209.2,230.0 1218.8,193.2 1230,182.0 C1241.2,193.2 1250.8,230.0 1230,270 Z" fill="url(#s12-g)" fill-opacity="0.92" stroke="#FFE7A8" stroke-opacity="0.5" stroke-width="1.2000000000000002" transform="rotate(-30 1230 270)"/><path d="M1230,270 C1209.2,230.0 1218.8,193.2 1230,182.0 C1241.2,193.2 1250.8,230.0 1230,270 Z" fill="url(#s12-g)" fill-opacity="0.92" stroke="#FFE7A8" stroke-opacity="0.5" stroke-width="1.2000000000000002" transform="rotate(0 1230 270)"/><path d="M1230,270 C1209.2,230.0 1218.8,193.2 1230,182.0 C1241.2,193.2 1250.8,230.0 1230,270 Z" fill="url(#s12-g)" fill-opacity="0.92" stroke="#FFE7A8" stroke-opacity="0.5" stroke-width="1.2000000000000002" transform="rotate(30 1230 270)"/><path d="M1230,270 C1209.2,230.0 1218.8,193.2 1230,182.0 C1241.2,193.2 1250.8,230.0 1230,270 Z" fill="url(#s12-g)" fill-opacity="0.92" stroke="#FFE7A8" stroke-opacity="0.5" stroke-width="1.2000000000000002" transform="rotate(60 1230 270)"/><circle cx="1230" cy="265.2" r="10.4" fill="#C24B58"/></g></g>
+      </svg>
+      <div id="s12-word" class="hero abs cx gold" style="top:360px;font-size:200px;letter-spacing:0.08em"><span class="L" style="display:inline-block;opacity:0">K</span><span class="L" style="display:inline-block;opacity:0">A</span><span class="L" style="display:inline-block;opacity:0">R</span><span class="L" style="display:inline-block;opacity:0">I</span><span class="L" style="display:inline-block;opacity:0">G</span><span class="L" style="display:inline-block;opacity:0">A</span><span class="L" style="display:inline-block;opacity:0">R</span></div>
+      <div id="s12-tag" class="lead abs cx" style="top:640px;font-size:54px">Bring your old gold.<br/>Leave with <span class="gold">exactly that gold</span>, ready to cast.</div>
+      <div id="s12-foot" class="kicker abs cx" style="top:880px;color:#A89A84">Five AI agents &middot; The Jeweller's Shop</div>
+
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    const S = "#s12-stage";
+    // scene in: slow scale settle (cinematic), out: blur + fade
+    tl.fromTo(S, { opacity: 0, scale: 0.97 }, { opacity: 1, scale: 1, duration: 0.9, ease: "power2.out" }, 0);
+    tl.fromTo("#s12-p0, #s12-p1, #s12-p2", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, ease: "expo.out", stagger: 0.15 }, 0.3);
+    tl.fromTo("#s12-word .L", { opacity: 0, filter: "blur(14px)", scale: 1.15 }, { opacity: 1, filter: "blur(0px)", scale: 1, duration: 0.6, ease: "expo.out", stagger: 0.07 }, 1.0);
+    tl.fromTo("#s12-tag", { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.8, ease: "expo.out" }, 2.2);
+    tl.fromTo("#s12-foot", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.7, ease: "expo.out" }, 5.4);
+
+    tl.to(S, { opacity: 0, filter: "blur(8px)", duration: 0.5, ease: "power3.in" }, 10.4);
+    window.__timelines["s12"] = tl;
+  </script>
+</template>

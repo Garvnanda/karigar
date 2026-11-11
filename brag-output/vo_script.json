@@ -1,0 +1,16 @@
+{
+ "speed": 1.15,
+ "gap": 0.18,
+ "scenes": {
+  "01": ["Everything around you was made by someone.", "A ring.", "A chair.", "A circuit box.", "A kurta.", "And every custom piece starts the same way: with guesswork."],
+  "02": ["A sketch on WhatsApp.", "A freelancer in CAD.", "Days of back and forth.", "And it still comes out too heavy, too weak, or impossible to make."],
+  "03": ["Meet Karigar.", "An AI artisan for anything that gets made.", "Say what you want, and get something that can actually be made."],
+  "04": ["Here's the idea.", "The AI listens and reasons, but it never draws, and never invents a number.", "Code builds the real 3D model, measures it, and checks that it can be made."],
+  "05": ["Every craft plugs in as a pack.", "Jewellery.", "Hardware.", "Clothing.", "Brass handicrafts.", "Furniture.", "Only the rules change. The engine stays."],
+  "06": ["We proved it first in a jeweller's shop.", "One sentence, in Hinglish.", "Five agents get to work.", "And out come three castable designs, made from exactly the customer's old gold."],
+  "07": ["It's honest, too.", "If something can't be made, it says no, and offers real options.", "If a request is vague, it asks."],
+  "08": ["Catalog renders.", "A casting file.", "An AR model.", "A job card.", "Everything the workshop needs."],
+  "09": ["Next, Karigar moves into Nonilion rooms.", "AR try-on, from the chat.", "Make it two grams lighter, and it re-solves in seconds.", "And the next pack: hardware."],
+  "10": ["Karigar.", "One engine. Many crafts."]
+ }
+}

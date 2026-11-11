@@ -5,9 +5,13 @@
 - Setup once (in WSL): `./venv/bin/pip install -r requirements.txt`.
 - Covered: `gold.py` targets, `solver.py` convergence + bounds, `calibration.py` (temp files), `pricing.py` plan + quote (incl. old-gold credit), `brief.py` regex parser.
 - `tests/test_geometry_bpy.py` — golden gold weights: plain ring, solitaire ring, beaded bangle, lotus pendant at fixed scales must match `tests/golden/gold_volume.json` to 0.01 g and be identical across two builds in one process. Regenerate only after an intended geometry change: `KARIGAR_REGEN_GOLDEN=1 ./venv/bin/python -m pytest -q tests/test_geometry_bpy.py` ; a missing file or key fails the test. Review the JSON diff before staging.
+- Phase 2 (bpy, ~35 s): `tests/test_ring_families_bpy.py` builds 8 ring families (bands comfort/flat/knife/faceted, solitaire 4/6, floral, floral with stone) × scales 0.8/1.0/1.35 and asserts each gold body passes `mesh_check.check` (watertight, manifold, consistent outward normals, one component, no self-intersection) and that the inner diameter measured on the mesh is within ±0.05 mm of `inner_d_mm`; plus floral parameters (petal count, flower size, scales with ring), monotone volume in scale. `tests/test_mesh_hygiene_bpy.py` proves the checker catches each defect on known-bad meshes (open, two pieces, inside-out, one flipped face, crossing solids incl. a 0.01 mm crossing) and that inner diameter is the inscribed circle, not the nearest vertex.
+- Manual mesh look (optional): export a floral ring STL via a CLI order and open it in Blender; the flower should sit on top of the band, nothing inside the finger hole.
 - `tests/test_render_bpy.py` — every gem and metal material builds on the pinned bpy.
+- Phase 1 (no bpy, ~2 s): `test_brief.py` (scope reply, language mirroring, question policy, ambiguous style → 3 variants, LLM repair with a fake `complete_json`), `test_sizes.py` (each Indian size 1–30 through `Brief(ring_size=…)`), `test_lang.py`, `test_rates.py` (rate parse/store/ack, temp `RATES_FILE` from conftest), `test_result.py` (JobResult contract, infeasible payloads from plan + solver, all-variants-fail pooling with a fake pack), `test_scripted_briefs.py` (12 scripted briefs in `tests/data/briefs.json`, including heroes A–D).
+- `tests/conftest.py` also points `rates.RATES_FILE` at a temp file, so tests never write `data/gold_rates.json`.
 - `tests/test_orders_e2e.py` — the 5 README orders through `Orchestrator.handle` at `draft`, 3 variants, into `tmp_path`, with a temp `CalibrationStore` (`Orchestrator(calibration=...)`). Asserts status (done / done / done / infeasible / needs_info) and, for done orders, `casting.stl`, `model.glb`, `job_card.json`, `quote.json`, `render_hero.png` per variant plus `order.json`.
-- `tests/test_probe.py` — Phase 6.5 probe: server on an ephemeral port in a thread; auth 401/200, models (with and without `/v1`), health, 404, non-stream chat.completion shape and echoed findings, SSE chunks + `[DONE]`, `include_usage`, delay/stream directives and env defaults, log fields, redaction (key, cookie, token headers, body `api_key`), data-URI images logged as type+length, truncation, `/probe/log` auth, `python -m probe` from env. ~3 s.
+- `tests/test_probe.py` — Phase 6.5 probe: server on an ephemeral port in a thread; auth 401/200, models (with and without `/v1`), health, 404, non-stream chat.completion shape and echoed findings, SSE chunks + `[DONE]`, `include_usage`, delay/stream directives and env defaults, log fields, redaction (key, cookie, token headers, body `api_key`), data-URI images logged as type+length, truncation, `/probe/log` auth, `python -m probe` from env. Security round (docs/security/6.5.md, one or more tests per finding): unauthenticated bodies not parsed (spy) and huge declared bodies answered 401 without reading; 413 / JSON node and depth caps; log line cap, multi-file rotation and backward `tail()`; lone surrogate, huge directive numbers, wrong field types, catch-all 500 with no traceback; secrets in path/query/keys/headers; read timeout (raw half-sent socket), 429 slow-reply cap, 503 connection cap; U+2028 entries; last X-Forwarded-For hop; `/<agent>/v1` paths and bad slugs → 404. ~8 s.
 - `tests/conftest.py` unsets `ANTHROPIC_API_KEY` / `AGENTROUTER_API_KEY` and sets `KARIGAR_LLM_BACKEND=none` for every test, so tests never call a real model. `tests/test_llm.py` drives the AgentRouter path with a fake `subprocess.run`.
 
 ### Live AgentRouter check (manual)
@@ -16,11 +20,14 @@
 
 ## Manual (live)
 ### CLI orders (run in WSL from the repo root)
-1. `./venv/bin/python run.py order "Nani ka purana 18.4g 22K kangan hai, naya beaded kada banana hai" --quality draft` — expected: `status: done`, `out/ORD-…/v1..v3/` with renders, `casting.stl`, `model.glb`, `job_card.json`, `quote.json`.
-2. `./venv/bin/python run.py order "18K white gold solitaire with 0.5 ct diamond, budget 1.2 lakh, size 6" --quality draft` — expected: `done`.
-3. `./venv/bin/python run.py order "purani 22K chain 6.2g se ruby lotus pendant banao" --quality draft` — expected: `done`.
-4. `./venv/bin/python run.py order "1 ct diamond ring under 10k"` — expected: `infeasible`, with options.
-5. `./venv/bin/python run.py order "kuch sundar sa bana do"` — expected: `needs_info`, one follow-up question.
+1. `./venv/bin/python run.py order "Nani ka purana 18.4g 22K kangan hai, naya 22K beaded kada banana hai, size 2-6" --quality draft` — expected: `status: done`, `out/ORD-…/v1..v3/` with renders, `casting.stl`, `model.glb`, `job_card.json`, `quote.json`.
+2. `./venv/bin/python run.py order "18K white gold solitaire with 0.5 ct diamond, budget 1.2 lakh, size 12" --quality draft` — expected: `done`.
+3. `./venv/bin/python run.py order "purani 22K chain 6.2g se 22K ruby lotus pendant banao" --quality draft` — expected: `done`.
+4. `./venv/bin/python run.py order "18K 1 ct diamond ring under 10k, size 12"` — expected: `infeasible`, with options.
+5. `./venv/bin/python run.py order "kuch sundar sa bana do"` — expected: `needs_info`, up to 3 questions in Hinglish in one reply.
+5a. `./venv/bin/python run.py order "22K ring of 6g"` — expected: `needs_info`, asks for the ring size (no assumed size).
+5b. `./venv/bin/python run.py order "aaj ka rate 22K 14730"` — expected: `rate_set`, a Hinglish acknowledgement with the time. (Writes `data/gold_rates.json`; delete it afterwards.)
+5c. `./venv/bin/python run.py order "I want a 22K necklace, 20 g"` — expected: `out_of_scope`, offers a pendant.
 6. `./venv/bin/python run.py calibrate --workshop test-01 --designed 18.58 --actual 17.95` — expected: learned loss ≈ 3.39%. (Writes `data/calibration.json`; delete it afterwards.)
 
 ### Visual checks

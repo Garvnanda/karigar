@@ -1,5 +1,8 @@
 """The five README example orders, end to end at draft quality.
 
+Phase 1 made ring/bangle size and the new piece's karat blocking questions, so the README
+examples state them (decisions.md "Phase 1: size and new-piece karat are always asked").
+
 LLM is off (conftest), output goes to tmp_path, calibration reads/writes a temp
 file only. Real bpy geometry, Cycles renders, STL/GLB export.
 """
@@ -13,10 +16,10 @@ from karigar.core.orchestrator import Orchestrator
 import karigar.packs.jewellery  # noqa: F401  (registers the pack)
 
 ORDERS = [
-    ("kangan", "Nani ka purana 18.4g 22K kangan hai, naya beaded kada banana hai", "done"),
-    ("solitaire", "18K white gold solitaire with 0.5 ct diamond, budget 1.2 lakh, size 6", "done"),
-    ("pendant", "purani 22K chain 6.2g se ruby lotus pendant banao", "done"),
-    ("impossible", "1 ct diamond ring under 10k", "infeasible"),
+    ("kangan", "Nani ka purana 18.4g 22K kangan hai, naya 22K beaded kada banana hai, size 2-6", "done"),
+    ("solitaire", "18K white gold solitaire with 0.5 ct diamond, budget 1.2 lakh, size 12", "done"),
+    ("pendant", "purani 22K chain 6.2g se 22K ruby lotus pendant banao", "done"),
+    ("impossible", "18K 1 ct diamond ring under 10k, size 12", "infeasible"),
     ("unclear", "kuch sundar sa bana do", "needs_info"),
 ]
 VARIANT_FILES = ("casting.stl", "model.glb", "job_card.json", "quote.json", "render_hero.png")
@@ -37,6 +40,7 @@ def test_readme_order(tmp_path, name, text, expected):
         return
     if expected == "infeasible":
         assert res["explanation"].strip()
+        assert res["infeasible"]["binding_constraint"] and len(res["infeasible"]["alternatives"]) >= 2
         return
 
     order_dir = out / res["order_id"]

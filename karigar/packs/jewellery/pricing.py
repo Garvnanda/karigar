@@ -35,12 +35,15 @@ def stone_cost(gem: str, ct: float, rc: dict) -> float:
     return 0.0 if gem == "none" else ct * rc["stone_rate_per_ct"][gem]
 
 
+DEFAULT_CT = {"ring": 0.5, "pendant": 0.25, "bangle": 0.0}  # stated to the customer by brief.py
+
+
 def requested_ct(brief: Brief) -> float:
     if brief.gem == "none":
         return 0.0
     if brief.gem_ct:
         return brief.gem_ct
-    return {"ring": 0.5, "pendant": 0.25, "bangle": 0.0}[brief.piece_type]
+    return DEFAULT_CT[brief.piece_type]
 
 
 def plan(brief: Brief, loss_pct: float) -> Plan:
@@ -81,26 +84,45 @@ def plan(brief: Brief, loss_pct: float) -> Plan:
                 opts.append(f"a {alt_ct:.2f} ct {brief.gem} with the rest in gold")
             if plain_g >= min_w and brief.gem == "diamond":
                 opts.append("a ruby or emerald instead of a diamond")
+            needed = (min_w * rate * (1 + mk) + stones) * (1 + gst)
+            if len(opts) < 2:
+                opts.append(f"a budget of about {inr(needed)} for this {ct:g} ct {brief.gem} "
+                            f"in a {min_w} g {k}K {brief.piece_type}")
+            # Largest stone the budget covers once the lightest wearable piece is paid for.
+            room = brief.budget_inr / (1 + gst) - min_w * rate * (1 + mk)
+            best_ct = max(0.0, room / rc["stone_rate_per_ct"].get(brief.gem, 1))
             expl = (f"I can't do that one honestly: a {ct:g} ct {brief.gem} alone costs about {inr(stones)} "
                     f"before tax, more than the {inr(brief.budget_inr)} budget. Closest options: "
                     + "; ".join(f"({i}) {o}" for i, o in enumerate(opts, 1)) + ". Which would you like?")
-            return Plan(False, explanation=expl, detail={"mode": mode, "stones_inr": stones})
+            return Plan(False, explanation=expl, detail={"mode": mode, "stones_inr": stones},
+                        binding_constraint="budget: the stone alone costs more than the budget",
+                        best_achievable={"value": round(best_ct, 2), "unit": "ct"},
+                        alternatives=opts)
         w = gold_budget / (rate * (1 + mk))
         t = G.target_from_gross(w, k, loss_pct)
         head = f"Budget {inr(brief.budget_inr)} buys {w:.2f} g of {k}K after making charges, stones and GST."
     else:
-        return Plan(False, explanation="Tell me the old gold weight, a target weight, or a budget.")
+        return Plan(False, explanation="Tell me the old gold weight, a target weight, or a budget.",
+                    binding_constraint="no target: no old gold, weight or budget given",
+                    best_achievable={"value": 0.0, "unit": "g"},
+                    alternatives=["your old gold's weight and karat", "a target finished weight",
+                                  "a budget"])
 
     if t.finished_gross_g < min_w:
         if mode == "budget":
-            fix = (f"a smaller stone (about {max(0.05, ct * 0.4):.2f} ct), 14K gold, or a budget of about "
-                   f"{inr((min_w * rate * (1 + mk) + stones) * (1 + gst))}")
+            alts = [f"a smaller stone (about {max(0.05, ct * 0.4):.2f} ct)", "14K gold",
+                    f"a budget of about {inr((min_w * rate * (1 + mk) + stones) * (1 + gst))}"]
         else:
-            fix = (f"a pendant (needs only {rc['min_finished_weight_g']['pendant']} g), 14K gold for more "
-                   f"volume per gram, or adding a little gold")
+            alts = [f"a pendant (needs only {rc['min_finished_weight_g']['pendant']} g)",
+                    "14K gold for more volume per gram", "adding a little gold"]
+        if brief.piece_type == "pendant":
+            alts = [a for a in alts if not a.startswith("a pendant")]
         expl = (f"That leaves {t.finished_gross_g:.2f} g of gold, below the {min_w} g minimum for a "
-                f"{brief.piece_type} that survives daily wear. Options: {fix}.")
-        return Plan(False, explanation=expl, detail={"mode": mode, **t.as_dict()})
+                f"{brief.piece_type} that survives daily wear. Options: {', '.join(alts[:-1])}, or {alts[-1]}.")
+        return Plan(False, explanation=expl, detail={"mode": mode, **t.as_dict()},
+                    binding_constraint=f"minimum finished weight for a {brief.piece_type} ({min_w} g)",
+                    best_achievable={"value": round(t.finished_gross_g, 2), "unit": "g"},
+                    alternatives=alts)
 
     summary = (f"{head} Workshop loss {loss_pct:.1f}%, so Karigar models {t.design_gross_g:.2f} g.")
     return Plan(True, target_value=t.design_gross_g, unit="g", summary=summary,

@@ -15,6 +15,7 @@ venv/
 # Pipeline output and per-machine runtime data
 out/
 data/calibration.json
+data/gold_rates.json
 data/orders.db
 
 # Blender

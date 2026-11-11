@@ -321,3 +321,303 @@ def test_python_m_probe_starts_from_env(tmp_path):
     finally:
         proc.terminate()
         proc.wait(timeout=5)
+
+
+# --- security round (docs/security/6.5.md) --------------------------------------------------
+
+import socket  # noqa: E402
+
+from probe import server as probe_server  # noqa: E402
+from probe.server import RequestLog, scrub  # noqa: E402
+
+
+def _start(tmp_path, **kw):
+    srv = make_server("127.0.0.1", 0, api_key=KEY, log_path=tmp_path / "requests.jsonl",
+                      stream_lines=kw.pop("stream_lines", 0), **kw)
+    threading.Thread(target=srv.serve_forever, kwargs={"poll_interval": 0.05}, daemon=True).start()
+    return srv, f"http://127.0.0.1:{srv.server_address[1]}", tmp_path / "requests.jsonl"
+
+
+def _raw(base, data: bytes, timeout=3.0) -> bytes:
+    """Send raw bytes, return everything the server sends until it closes (or timeout)."""
+    port = int(base.rsplit(":", 1)[1])
+    with socket.create_connection(("127.0.0.1", port), timeout=timeout) as s:
+        s.sendall(data)
+        out = b""
+        while True:
+            try:
+                chunk = s.recv(65536)
+            except ConnectionResetError:
+                return out
+            if not chunk:
+                return out
+            out += chunk
+
+
+def _post_raw(base, path, body: bytes, key=KEY):
+    h = {"Content-Type": "application/json"}
+    if key:
+        h["Authorization"] = f"Bearer {key}"
+    req = urllib.request.Request(base + path, data=body, headers=h, method="POST")
+    try:
+        with urllib.request.urlopen(req, timeout=5) as r:
+            return r.status, r.read().decode()
+    except urllib.error.HTTPError as e:
+        return e.code, e.read().decode()
+
+
+# F1: auth before parse; body caps
+
+def test_unauth_body_is_not_parsed_or_scrubbed_only_its_length_logged(probe, monkeypatch):
+    base, log = probe
+    calls = []
+    monkeypatch.setattr(probe_server, "scrub", lambda *a, **k: calls.append("scrub"))
+    monkeypatch.setattr(probe_server, "_parse_json", lambda *a, **k: calls.append("parse"), raising=False)
+    monkeypatch.setattr(probe_server.json, "loads", lambda *a, **k: calls.append("loads"))
+    status, _ = _post_raw(base, "/v1/chat/completions", b'{"messages": [1, 2, 3]}', key=None)
+    monkeypatch.undo()
+    assert status == 401 and calls == []
+    req = entries(log)[-1]
+    assert req["auth_ok"] is False and req["body"] is None and req["body_bytes"] == 23
+
+
+def test_unauth_huge_declared_body_gets_401_without_reading_it(probe):
+    base, log = probe
+    head = (b"POST /v1/chat/completions HTTP/1.1\r\nHost: x\r\nContent-Length: 24000000\r\n"
+            b"Content-Type: application/json\r\n\r\n[{}")
+    t0 = time.monotonic()
+    got = _raw(base, head)
+    assert got.startswith(b"HTTP/1.") and b" 401 " in got.split(b"\r\n", 1)[0]
+    assert time.monotonic() - t0 < 2
+    assert entries(log)[-1]["body_bytes"] == 24_000_000
+
+
+def test_authed_body_over_cap_is_413_without_reading(probe):
+    base, _ = probe
+    assert probe_server.MAX_BODY <= 8 * 1024 * 1024     # chat bodies are small; 25 MB was a memory DoS
+    head = (f"POST /v1/chat/completions HTTP/1.1\r\nHost: x\r\nAuthorization: Bearer {KEY}\r\n"
+            f"Content-Length: {probe_server.MAX_BODY + 1}\r\n\r\n").encode()
+    got = _raw(base, head)
+    assert b" 413 " in got.split(b"\r\n", 1)[0]
+
+
+def test_json_node_count_over_cap_is_400(probe):
+    base, _ = probe
+    body = b"[" + b",".join([b"{}"] * (probe_server.MAX_JSON_NODES + 1)) + b"]"
+    status, raw = _post_raw(base, "/v1/chat/completions", body)
+    assert status == 400 and json.loads(raw)["error"]["code"] == "json_too_complex"
+
+
+def test_json_depth_over_cap_is_400_not_a_crash(probe):
+    base, _ = probe
+    for n in (probe_server.MAX_JSON_DEPTH + 1, 100_000):
+        status, raw = _post_raw(base, "/v1/chat/completions", b"[" * n + b"]" * n)
+        assert status == 400 and json.loads(raw)["error"]["code"] == "json_too_complex"
+
+
+# F2: log entry cap, rotation keeps history, tail reads from the end
+
+def test_log_entry_is_capped(tmp_path):
+    log = RequestLog(tmp_path / "l.jsonl")
+    log.write({"event": "request", "body": {f"k{i}": "x" * 1000 for i in range(500)}})
+    line = (tmp_path / "l.jsonl").read_bytes()
+    assert len(line) <= probe_server.MAX_LOG_ENTRY + 1
+    e = json.loads(line)
+    assert e["event"] == "request" and e["truncated"] is True and e["original_bytes"] > 400_000
+
+
+def test_rotation_keeps_several_files_and_tail_spans_them(tmp_path, monkeypatch):
+    p = tmp_path / "l.jsonl"
+    log = RequestLog(p, max_bytes=400, keep=3)
+    for i in range(60):
+        log.write({"i": i, "pad": "p" * 40})
+    assert all(p.with_name(f"l.jsonl.{k}").exists() for k in (1, 2, 3))
+    assert not p.with_name("l.jsonl.4").exists()
+
+    def no_whole_read(*a, **k):
+        raise AssertionError("tail must not read whole files")
+    monkeypatch.setattr(type(p), "read_text", no_whole_read)
+    monkeypatch.setattr(type(p), "read_bytes", no_whole_read)
+    got = [e["i"] for e in log.tail(20)]
+    assert got == list(range(40, 60))
+
+
+def test_tail_returns_only_last_n(tmp_path):
+    log = RequestLog(tmp_path / "l.jsonl")
+    for i in range(2000):
+        log.write({"i": i})
+    assert [e["i"] for e in log.tail(3)] == [1997, 1998, 1999]
+    assert RequestLog(tmp_path / "none.jsonl").tail(5) == []
+
+
+# F3: hostile JSON never crashes the handler
+
+def test_lone_surrogate_is_logged_as_ascii_and_answered(probe):
+    base, log = probe
+    status, _ = _post_raw(base, "/v1/chat/completions",
+                          b'{"model":"m","messages":[{"role":"user","content":"a\\ud800b"}]}')
+    assert status == 200
+    log.read_bytes().decode("ascii")
+    assert entries(log)[0]["body"]["messages"][0]["content"] == "a\ud800b"
+
+
+def test_huge_number_directive_does_not_crash():
+    assert parse_directives([{"role": "user", "content": "probe stream " + "9" * 400}]) == {}
+    assert parse_directives([{"role": "user", "content": "probe delay " + "9" * 400}]) == {}
+    assert parse_directives([{"role": "user", "content": "probe stream 999999"}])["stream_lines"] == 200
+
+
+def test_huge_number_directive_over_http(probe):
+    base, _ = probe
+    status, _, _ = call(base, "/v1/chat/completions", body=chat("probe stream " + "9" * 400))
+    assert status == 200
+
+
+@pytest.mark.parametrize("body", [
+    {"messages": [{"role": "user", "content": [{"type": "image_url", "image_url": {"url": 5}}]}]},
+    {"messages": [{"role": "user", "content": [{"type": "text", "text": 5}]}]},
+    {"messages": [{"role": 5, "content": "hi"}]},
+    {"messages": [{"role": "user", "content": "hi"}], "tools": [{"function": "x"}]},
+    {"messages": [{"role": "user", "content": "hi"}], "tools": 5},
+    {"messages": [{"role": "user", "content": "hi"}], "stream": True, "stream_options": "x"},
+    {"messages": [{"role": "user", "content": "hi"}], "model": {"x": 1}, "metadata": [1]},
+])
+def test_wrong_field_types_still_get_a_reply(probe, body):
+    base, _ = probe
+    status, _, raw = call(base, "/v1/chat/completions", body=body)
+    assert status == 200 and "Karigar probe" in raw
+
+
+def test_scrub_is_depth_capped():
+    v = []
+    for _ in range(900):
+        v = [v]
+    assert "[too deep]" in json.dumps(scrub(v, KEY))
+
+
+def test_unexpected_error_is_500_json_logged_one_line_no_traceback(probe, monkeypatch, capfd):
+    base, log = probe
+
+    def boom(*a, **k):
+        raise RuntimeError("boom " + KEY)
+    monkeypatch.setattr(probe_server, "describe", boom)
+    status, _, raw = call(base, "/v1/chat/completions", body=chat())
+    assert status == 500 and json.loads(raw)["error"]["code"] == "internal_error"
+    err = [e for e in entries(log) if e.get("event") == "error"]
+    assert err and err[-1]["error"].startswith("RuntimeError: boom")
+    assert KEY not in log.read_text(encoding="utf-8")
+    assert "Traceback" not in capfd.readouterr().err
+
+
+# F4: secrets in path, query, dict keys, broader word list, narrow *tokens exemption
+
+def test_secrets_never_reach_the_log_from_path_query_keys_or_values(probe):
+    base, log = probe
+    body = chat("hi", **{KEY: 1, "refresh_tokens": "rt-secret", "credentials": {"user": "cred-secret"},
+                         "pwd": "pwd-secret", "bearer": "bearer-secret", "auth": "auth-secret",
+                         "max_completion_tokens": 5, "max_output_tokens": 6})
+    call(base, f"/v1/chat/completions?api_key={KEY}&access_token=at-secret&foo=1", body=body,
+         headers={"X-Upstream": "Bearer hdr-secret", "X-Other": f"x{KEY}x"})
+    call(base, f"/v1/models/{KEY}")
+    raw = log.read_text(encoding="utf-8")
+    for s in (KEY, "rt-secret", "cred-secret", "pwd-secret", "bearer-secret", "auth-secret",
+              "at-secret", "hdr-secret"):
+        assert s not in raw, s
+    req = [e for e in entries(log) if e.get("event") == "request"][0]
+    assert "foo=1" in req["query"]
+    assert req["body"]["max_completion_tokens"] == 5 and req["body"]["max_output_tokens"] == 6
+
+
+# F5: timeouts, slow-reply cap, connection cap
+
+def test_half_sent_request_is_closed_after_read_timeout(tmp_path):
+    srv, base, _ = _start(tmp_path, read_timeout=0.3)
+    try:
+        for partial in (b"GET / HTTP/1.1\r\n",
+                        (f"POST /v1/chat/completions HTTP/1.1\r\nAuthorization: Bearer {KEY}\r\n"
+                         f"Content-Length: 100\r\n\r\n{{").encode()):
+            t0 = time.monotonic()
+            _raw(base, partial, timeout=3)
+            assert 0.25 <= time.monotonic() - t0 < 2.5
+    finally:
+        srv.shutdown()
+        srv.server_close()
+
+
+def test_concurrent_slow_replies_are_capped_with_429(tmp_path):
+    srv, base, _ = _start(tmp_path, max_slow=1)
+    try:
+        first = {}
+        t = threading.Thread(target=lambda: first.update(r=call(base, "/v1/chat/completions",
+                                                                 body=chat("probe delay 0.8"))))
+        t.start()
+        time.sleep(0.25)
+        status, _, raw = call(base, "/v1/chat/completions", body=chat("probe delay 0.5"))
+        assert status == 429 and json.loads(raw)["error"]["code"] == "too_many_slow_requests"
+        status, _, _ = call(base, "/v1/chat/completions", body=chat("fast"))
+        assert status == 200
+        t.join()
+        assert first["r"][0] == 200
+    finally:
+        srv.shutdown()
+        srv.server_close()
+
+
+def test_connection_cap_refuses_extra_connections(tmp_path):
+    srv, base, _ = _start(tmp_path, max_conns=2, read_timeout=2)
+    port = srv.server_address[1]
+    idle = [socket.create_connection(("127.0.0.1", port), timeout=3) for _ in range(2)]
+    try:
+        time.sleep(0.2)
+        t0 = time.monotonic()
+        got = _raw(base, b"GET / HTTP/1.1\r\nHost: x\r\n\r\n", timeout=3)
+        assert b" 503 " in got.split(b"\r\n", 1)[0] and time.monotonic() - t0 < 1
+    finally:
+        for s in idle:
+            s.close()
+        srv.shutdown()
+        srv.server_close()
+
+
+# F6: line separators cannot hide entries
+
+def test_unicode_line_separators_do_not_hide_entries(probe):
+    base, log = probe
+    text = "a b c\x85d"
+    call(base, "/v1/chat/completions", body=chat(text))
+    assert " " not in log.read_text(encoding="utf-8")
+    _, _, raw = call(base, "/probe/log?n=5")
+    got = json.loads(raw)["entries"]
+    assert any(isinstance(e.get("body"), dict) and e["body"]["messages"][1]["content"] == text for e in got)
+
+
+# F7: client IP from the last X-Forwarded-For hop
+
+def test_client_ip_is_last_forwarded_hop_and_raw_header_logged(probe):
+    base, log = probe
+    call(base, "/v1/models", headers={"X-Forwarded-For": "6.6.6.6, 10.0.0.9"})
+    req = entries(log)[-1]
+    assert req["client_ip"] == "10.0.0.9" and req["forwarded_for"] == "6.6.6.6, 10.0.0.9"
+
+
+# Phase-reviewer: /<agent>/v1 base paths
+
+def test_agent_base_paths_are_accepted_logged_and_echoed(probe):
+    base, log = probe
+    for agent in ("sakhi", "karigar"):
+        status, _, _ = call(base, f"/{agent}/v1/models")
+        assert status == 200
+        status, _, raw = call(base, f"/{agent}/v1/chat/completions", body=chat())
+        assert status == 200 and f"agent: `{agent}`" in json.loads(raw)["choices"][0]["message"]["content"]
+    reqs = [e for e in entries(log) if e.get("event") == "request"]
+    assert [(e["agent"], e["prefix"]) for e in reqs] == [
+        ("sakhi", "/sakhi/v1"), ("sakhi", "/sakhi/v1"), ("karigar", "/karigar/v1"), ("karigar", "/karigar/v1")]
+    _, _, raw = call(base, "/v1/chat/completions", body=chat())
+    assert "agent: `none`" in json.loads(raw)["choices"][0]["message"]["content"]
+
+
+@pytest.mark.parametrize("name", ["Sakhi", "a" * 33, "bad!name", "a.b"])
+def test_bad_agent_slug_is_404(probe, name):
+    base, _ = probe
+    status, _, _ = call(base, f"/{name}/v1/models")
+    assert status == 404

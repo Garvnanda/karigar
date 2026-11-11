@@ -1,0 +1,67 @@
+<template>
+  <style>
+
+  #root { position:absolute; inset:0; color:#F3E9D6; font-family:'EB Garamond', serif; }
+  .stage { position:absolute; inset:0; }
+  .hero { font-family:'Playfair Display', serif; font-weight:900; text-transform:uppercase;
+           letter-spacing:0.02em; color:#F3E9D6; text-align:center; line-height:1.04; }
+  .gold { color:#E0B25A; }
+  .ruby { color:#C24B58; }
+  .emerald { color:#3FA37C; }
+  .mono { font-family:'IBM Plex Mono', monospace; }
+  .kicker { font-family:'IBM Plex Mono', monospace; font-size:28px; letter-spacing:0.28em;
+             text-transform:uppercase; color:#E0B25A; text-align:center; }
+  .lead { font-family:'EB Garamond', serif; font-style:italic; font-size:44px; color:#F3E9D6;
+           text-align:center; }
+  .abs { position:absolute; }
+  .cx { left:0; right:0; }
+  .bubble { position:absolute; border-radius:28px; padding:28px 40px; font-family:'IBM Plex Mono', monospace;
+             font-size:38px; line-height:1.35; }
+  .b-cust { background:#2A211A; color:#F3E9D6; border:2px solid #4A3B2C; }
+  .b-bot { background:#1B1511; color:#F3E9D6; border:2px solid #9C7230; }
+  .who { font-family:'IBM Plex Mono', monospace; font-size:28px; letter-spacing:0.2em; text-transform:uppercase;
+          color:#A89A84; margin-bottom:10px; }
+  .chip { display:inline-block; padding:14px 30px; border-radius:999px; border:2px solid #9C7230;
+           font-family:'IBM Plex Mono', monospace; font-size:28px; color:#F3E9D6; background:#1B1511; }
+
+
+  </style>
+  <div id="root" data-composition-id="s1" data-width="1920" data-height="1080">
+    <div id="s1-stage" class="stage">
+
+      <div id="s1-t" class="hero abs cx" style="top:380px;font-size:104px">In every home,<br/><span class="gold">there is a drawer.</span></div>
+      <svg class="abs" style="left:0;top:0" width="1920" height="1080" viewBox="0 0 1920 1080"><defs>
+  <linearGradient id="s1-g" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#FFE7A8"/><stop offset="0.35" stop-color="#E0B25A"/>
+    <stop offset="0.7" stop-color="#9C7230"/><stop offset="1" stop-color="#F6CF77"/>
+  </linearGradient>
+  <radialGradient id="s1-orb" cx="0.4" cy="0.35" r="0.7">
+    <stop offset="0" stop-color="#FFF4CF"/><stop offset="0.45" stop-color="#E0B25A"/><stop offset="1" stop-color="#6B4A1C"/>
+  </radialGradient>
+</defs>
+        <g id="s1-kangan"><circle cx="640" cy="470" r="170" fill="none" stroke="url(#s1-g)" stroke-width="16" stroke-dasharray="1068.1" stroke-dashoffset="1068.1" class="draw" stroke-linecap="round"/><circle cx="640" cy="470" r="161.2" fill="none" stroke="#FFE7A8" stroke-opacity="0.35" stroke-width="2"/></g>
+        <g id="s1-chain"><ellipse class="link" cx="1080.0" cy="430.0" rx="16" ry="9" fill="none" stroke="url(#s1-g)" stroke-width="5" transform="rotate(-30 1080.0 430.0)"/><ellipse class="link" cx="1105.5" cy="443.6" rx="16" ry="9" fill="none" stroke="url(#s1-g)" stroke-width="5" transform="rotate(30 1105.5 443.6)"/><ellipse class="link" cx="1130.9" cy="456.5" rx="16" ry="9" fill="none" stroke="url(#s1-g)" stroke-width="5" transform="rotate(-30 1130.9 456.5)"/><ellipse class="link" cx="1156.4" cy="468.0" rx="16" ry="9" fill="none" stroke="url(#s1-g)" stroke-width="5" transform="rotate(30 1156.4 468.0)"/><ellipse class="link" cx="1181.8" cy="477.5" rx="16" ry="9" fill="none" stroke="url(#s1-g)" stroke-width="5" transform="rotate(-30 1181.8 477.5)"/><ellipse class="link" cx="1207.3" cy="484.6" rx="16" ry="9" fill="none" stroke="url(#s1-g)" stroke-width="5" transform="rotate(30 1207.3 484.6)"/><ellipse class="link" cx="1232.7" cy="488.8" rx="16" ry="9" fill="none" stroke="url(#s1-g)" stroke-width="5" transform="rotate(-30 1232.7 488.8)"/><ellipse class="link" cx="1258.2" cy="490.0" rx="16" ry="9" fill="none" stroke="url(#s1-g)" stroke-width="5" transform="rotate(30 1258.2 490.0)"/><ellipse class="link" cx="1283.6" cy="488.0" rx="16" ry="9" fill="none" stroke="url(#s1-g)" stroke-width="5" transform="rotate(-30 1283.6 488.0)"/><ellipse class="link" cx="1309.1" cy="483.1" rx="16" ry="9" fill="none" stroke="url(#s1-g)" stroke-width="5" transform="rotate(30 1309.1 483.1)"/><ellipse class="link" cx="1334.5" cy="475.3" rx="16" ry="9" fill="none" stroke="url(#s1-g)" stroke-width="5" transform="rotate(-30 1334.5 475.3)"/><ellipse class="link" cx="1360.0" cy="465.3" rx="16" ry="9" fill="none" stroke="url(#s1-g)" stroke-width="5" transform="rotate(30 1360.0 465.3)"/><ellipse class="link" cx="1385.5" cy="453.4" rx="16" ry="9" fill="none" stroke="url(#s1-g)" stroke-width="5" transform="rotate(-30 1385.5 453.4)"/><ellipse class="link" cx="1410.9" cy="440.2" rx="16" ry="9" fill="none" stroke="url(#s1-g)" stroke-width="5" transform="rotate(30 1410.9 440.2)"/><ellipse class="link" cx="1436.4" cy="426.6" rx="16" ry="9" fill="none" stroke="url(#s1-g)" stroke-width="5" transform="rotate(-30 1436.4 426.6)"/><ellipse class="link" cx="1461.8" cy="413.1" rx="16" ry="9" fill="none" stroke="url(#s1-g)" stroke-width="5" transform="rotate(30 1461.8 413.1)"/><ellipse class="link" cx="1487.3" cy="400.5" rx="16" ry="9" fill="none" stroke="url(#s1-g)" stroke-width="5" transform="rotate(-30 1487.3 400.5)"/><ellipse class="link" cx="1512.7" cy="389.4" rx="16" ry="9" fill="none" stroke="url(#s1-g)" stroke-width="5" transform="rotate(30 1512.7 389.4)"/><ellipse class="link" cx="1538.2" cy="380.5" rx="16" ry="9" fill="none" stroke="url(#s1-g)" stroke-width="5" transform="rotate(-30 1538.2 380.5)"/><ellipse class="link" cx="1563.6" cy="374.1" rx="16" ry="9" fill="none" stroke="url(#s1-g)" stroke-width="5" transform="rotate(30 1563.6 374.1)"/><ellipse class="link" cx="1589.1" cy="370.6" rx="16" ry="9" fill="none" stroke="url(#s1-g)" stroke-width="5" transform="rotate(-30 1589.1 370.6)"/><ellipse class="link" cx="1614.5" cy="370.2" rx="16" ry="9" fill="none" stroke="url(#s1-g)" stroke-width="5" transform="rotate(30 1614.5 370.2)"/></g>
+      </svg>
+      <div id="s1-l1" class="lead abs" style="left:390px;width:500px;top:700px">a grandmother's kangan</div>
+      <div id="s1-l2" class="lead abs" style="left:1060px;width:600px;top:700px">a chain from a wedding, long ago</div>
+      <div id="s1-story" data-hold class="hero abs cx" style="top:860px;font-size:58px">Gold that carries <span class="gold">a story.</span></div>
+
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    const S = "#s1-stage";
+    // scene in: slow scale settle (cinematic), out: blur + fade
+    tl.fromTo(S, { opacity: 0, scale: 0.97 }, { opacity: 1, scale: 1, duration: 0.9, ease: "power2.out" }, 0);
+    tl.fromTo("#s1-t", { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.9, ease: "expo.out" }, 0.8);
+    tl.to("#s1-t", { opacity: 0, filter: "blur(6px)", duration: 0.5, ease: "power3.in" }, 6.3);
+    tl.fromTo("#s1-kangan .draw", { attr: { "stroke-dashoffset": 1068.1 } }, { attr: { "stroke-dashoffset": 0 }, duration: 1.6, ease: "power2.inOut" }, 6.8);
+    tl.fromTo("#s1-l1", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.7, ease: "expo.out" }, 7.6);
+    tl.fromTo("#s1-chain .link", { opacity: 0, scale: 0.4, transformOrigin: "50% 50%" }, { opacity: 1, scale: 1, duration: 0.35, ease: "expo.out", stagger: 0.045 }, 8.5);
+    tl.fromTo("#s1-l2", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.7, ease: "expo.out" }, 9.3);
+    tl.fromTo("#s1-story", { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.8, ease: "expo.out" }, 10.6);
+
+    tl.to(S, { opacity: 0, filter: "blur(8px)", duration: 0.5, ease: "power3.in" }, 16.4);
+    window.__timelines["s1"] = tl;
+  </script>
+</template>

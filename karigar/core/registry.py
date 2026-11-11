@@ -21,6 +21,10 @@ class Plan:
     summary: str = ""
     detail: dict = field(default_factory=dict)
     explanation: str = ""              # filled when ok=False: what's impossible + options
+    # ok=False contract (core/result.py Infeasible): which rule binds, the closest result, >= 2 options.
+    binding_constraint: str = ""
+    best_achievable: dict | None = None  # {"value": float, "unit": str}
+    alternatives: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -33,6 +37,25 @@ class Solved:
     iterations: int
     issues: list[str] = field(default_factory=list)
     explanation: str = ""
+    binding_constraint: str = ""
+    best_achievable: dict | None = None
+    alternatives: list[str] = field(default_factory=list)
+
+
+@dataclass
+class Intake:
+    """What the counter made of a message, before any pipeline work.
+
+    status "brief" -> run the pipeline on `brief`; anything else ("needs_info",
+    "out_of_scope", "rate_set") is answered at the counter with `reply`.
+    """
+    status: str
+    brief: Any = None
+    reply: str = ""
+    lang: str = "en"
+    questions: list[str] = field(default_factory=list)
+    topics: list[str] = field(default_factory=list)
+    data: dict = field(default_factory=dict)
 
 
 class DomainPack:
@@ -48,7 +71,15 @@ class DomainPack:
         """Return (brief, follow_up_question). Question is set when the request is unclear."""
         raise NotImplementedError
 
-    def describe_brief(self, brief) -> str:
+    def intake(self, text: str, attachments: list[Path] | None = None) -> Intake:
+        """Classify a message (order, question, or a non-order like a rate update).
+        Default: every message is an order brief."""
+        brief, question = self.parse_brief(text, attachments)
+        if question:
+            return Intake("needs_info", reply=question, questions=[question])
+        return Intake("brief", brief=brief)
+
+    def describe_brief(self, brief, lang: str = "en") -> str:
         raise NotImplementedError
 
     def plan(self, brief, loss_pct: float) -> Plan:
