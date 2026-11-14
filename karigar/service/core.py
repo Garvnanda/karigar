@@ -231,6 +231,58 @@ class KarigarService:
                                               "weights": r.get("weights")}
         return {"order_id": order_id, "versions": out} if out else None
 
+    # ------------------------------------------------------------------ console (Phase 10)
+    def order(self, order_id: str) -> dict | None:
+        """Everything the worker reported for an order, merged across its jobs (newest wins per
+        version). Numbers are the worker's, never recomputed here."""
+        jobs = self.jobs.jobs_for_order(order_id)
+        if not jobs:
+            return None
+        versions: dict = {}
+        head: dict = {}
+        for j in jobs:
+            res = j.result or j.partial or {}
+            is_edit = j.kind == "edit" or "order_id" in j.payload
+            if not is_edit and not head:
+                head = {k: res.get(k) for k in ("status", "lang", "brief", "explanation", "infeasible")}
+                head["request"] = j.payload.get("request_text") or j.payload.get("text")
+            for r in res.get("results") or []:
+                versions[str(r.get("version"))] = {**r, "job_status": j.status,
+                                                   "edit_text": j.payload.get("text") if is_edit else None,
+                                                   "edit": res.get("edit") if is_edit else None}
+        last = jobs[-1]
+        return {"order_id": order_id, "created": jobs[0].created, "updated": last.updated,
+                "status": last.status, **head,
+                "versions": [versions[k] for k in sorted(versions, key=lambda v: int(v) if v.isdigit() else 0)]}
+
+    def orders(self, limit: int = 200) -> list[dict]:
+        out = []
+        for oid in self.jobs.order_ids(limit):
+            o = self.order(oid) or {}
+            v = o.get("versions") or []
+            brief = o.get("brief") or {}
+            out.append({"order_id": oid, "created": o.get("created"), "status": o.get("status"),
+                        "piece": brief.get("piece_type"), "karat": brief.get("karat"),
+                        "versions": len(v),
+                        "finished_g": [((x.get("weights") or {}).get("finished_g")) for x in v],
+                        "total_inr": [((x.get("quote") or {}).get("total")) for x in v]})
+        return out
+
+    def shop(self, action: str, **data) -> Ticket:
+        """A shop job for the worker (which holds the gold rate and calibration): `snapshot`,
+        `refresh_rate` (run the MCX rate job now) or `calibrate` (record one cast weight)."""
+        job, created = self.jobs.enqueue("shop", {"action": action, **data})
+        log_stage("enqueue", event="service", job=job.job_id, shop=action)
+        return Ticket(None, job.job_id, created=created)
+
+    def shop_state(self) -> dict | None:
+        j = self.jobs.latest_done("shop")
+        return {**(j.result or {}).get("shop", {}), "reported_at": j.updated} if j else None
+
+    def system(self) -> dict:
+        seen = self.jobs.worker_seen()
+        return {"worker_online": self.worker_online(), "worker_last_seen": seen, **self.jobs.counts()}
+
     # ------------------------------------------------------------------ worker side
     def claim(self) -> dict | None:
         self.jobs.reap(self.render_timeout_s)

@@ -146,6 +146,9 @@ BUDGET_MARGIN = 0.004       # budget solve aims 0.4% under the budget so the bil
 COIN_ACCEPT_G = 0.05      # a coin is solved to its stamped weight within +/-0.05 g (Phase 3 gate)
 
 
+MAX_MESSAGE_CHARS = 2000
+
+
 class JewelleryPack(DomainPack):
     name = "jewellery"
     title = "Jeweller's Shop"
@@ -156,6 +159,9 @@ class JewelleryPack(DomainPack):
     def intake(self, text, attachments=None, sender=None) -> Intake:
         """Rate updates first (owner/staff senders only), then the brief (scope, questions, or a Brief)."""
         lang = detect(text)
+        if len(text) > MAX_MESSAGE_CHARS:   # security F11: never parse or resend huge text
+            q = M.t("too_long", lang, n=len(text))
+            return Intake("needs_info", reply=q, lang=lang, questions=[q], topics=["too_long"])
         r = rates.parse_rate_message(text)
         if r and not any(re.search(p, text.lower()) for p in B.PIECE_WORDS.values()):
             if not rates.may_set_rate(sender):

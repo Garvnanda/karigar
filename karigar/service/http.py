@@ -11,10 +11,11 @@ backed by the same KarigarService):
 - `POST <p>/chat/completions`             API key; stream (SSE) or not; unknown fields
                                           (`tools`, `tool_choice`, `metadata`, …) ignored
 - `POST /api/orders`, `POST /api/conversations/<key>/messages`, `POST /api/orders/<id>/edits`,
-  `GET /api/jobs/<id>`, `GET /api/orders/<id>/quote`   API key or owner token (Phase 10 console)
+  `GET /api/jobs/<id>`, `GET /api/orders/<id>/quote`, `GET /api/orders`, `GET /api/orders/<id>`,
+  `GET /api/system`   API key or owner token (Phase 10 console)
 - `GET /worker/jobs`, `POST /worker/jobs/<id>/{progress,solved,files,result,fail}`  worker token
 - `GET /files/<token>/<name>`             no key: the 192-bit token is the capability
-- `GET /console/<path>`                   static files from KARIGAR_CONSOLE_DIR (Phase 10), if set
+- `GET /console/<path>`                   static files from KARIGAR_CONSOLE_DIR (Phase 10), default console/
 
 Env: KARIGAR_API_KEY (required; the key Nonilion's "Other" import uses), KARIGAR_WORKER_TOKEN
 (required), KARIGAR_OWNER_TOKEN (optional), KARIGAR_SERVICE_DIR (jobs DB + files),
@@ -344,6 +345,17 @@ def make_server(host: str, port: int, service: KarigarService, api_key: str, wor
                     and _ID.fullmatch(seg[1]):
                 q = service.quote(seg[1])
                 return self._json(200, q) if q else self._error(404, "not_found", "No quote for that order")
+            if method == "GET" and seg == ["orders"]:
+                return self._json(200, {"orders": service.orders()})
+            if method == "GET" and len(seg) == 2 and seg[0] == "orders" and _ID.fullmatch(seg[1]):
+                o = service.order(seg[1])
+                return self._json(200, o) if o else self._error(404, "not_found", "No such order")
+            if method == "GET" and seg == ["system"]:
+                return self._json(200, service.system())
+            if method == "GET" and seg == ["shop"]:
+                return self._json(200, {"shop": service.shop_state()})
+            if method == "POST" and seg == ["shop"]:
+                return self._shop(b)
             if method != "POST":
                 return self._error(404, "not_found", "No such route")
             text = b.get("text")
@@ -374,6 +386,30 @@ def make_server(host: str, port: int, service: KarigarService, api_key: str, wor
             if t.job_id:
                 out["status"] = service.status(t.job_id)["status"]
             return self._json(202 if t.created else 200, out)
+
+        def _shop(self, b: dict) -> None:
+            """Owner console: gold rate and workshop calibration live on the worker (Phase 10)."""
+            action = b.get("action")
+            data: dict = {}
+            if action == "calibrate":
+                ws, d, a = b.get("workshop"), b.get("designed_g"), b.get("actual_g")
+                if not isinstance(ws, str) or not _ID.fullmatch(ws):
+                    return self._error(400, "invalid_request", "'workshop' must match [A-Za-z0-9_-]{1,64}")
+                for name, v in (("designed_g", d), ("actual_g", a)):
+                    if isinstance(v, bool) or not isinstance(v, (int, float)) or not 0 < v <= 2000:
+                        return self._error(400, "invalid_request", f"'{name}' must be grams in (0, 2000]")
+                data = {"workshop": ws, "designed_g": float(d), "actual_g": float(a)}
+            elif action not in ("snapshot", "refresh_rate"):
+                return self._error(400, "invalid_request", "'action' must be snapshot, refresh_rate or calibrate")
+            t = service.shop(action, **data)
+            w = b.get("wait_s", 0)
+            if isinstance(w, (int, float)) and not isinstance(w, bool) and w > 0:
+                deadline = time.monotonic() + min(float(w), MAX_WAIT_S)
+                while time.monotonic() < deadline and service.status(t.job_id)["status"] in ("queued", "running"):
+                    time.sleep(0.25)
+            st = service.status(t.job_id)
+            return self._json(202, {"job_id": t.job_id, "status": st["status"],
+                                    "shop": (st["result"] or {}).get("shop"), "error": st["error"]})
 
         # --- worker API ----------------------------------------------------------------
         def _worker(self, method: str, path: str, query: str, raw: bytes) -> None:
@@ -465,7 +501,7 @@ def main() -> int:
     svc = KarigarService(e("KARIGAR_SERVICE_DIR") or None)
     srv = make_server("0.0.0.0", port, svc, key, wtok, owner_token=e("KARIGAR_OWNER_TOKEN", ""),
                       public_url=e("KARIGAR_PUBLIC_URL") or e("RENDER_EXTERNAL_URL") or "",
-                      console_dir=Path(e("KARIGAR_CONSOLE_DIR")) if e("KARIGAR_CONSOLE_DIR") else None)
+                      console_dir=Path(e("KARIGAR_CONSOLE_DIR") or Path(__file__).resolve().parents[2] / "console"))
     print(f"karigar service listening on :{port}", flush=True)
     try:
         srv.serve_forever()

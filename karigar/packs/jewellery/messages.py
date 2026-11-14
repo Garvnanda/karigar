@@ -59,6 +59,12 @@ T: dict[str, dict[str, str]] = {
                   "{asked} abhi nahi bana sakti. "
                   "Sabse kareeb {nearest} hai. Kya {nearest} bana doon?",
     },
+    "too_long": {
+        EN: "That message is too long for me to read safely ({n} characters). "
+            "Please send the order in a few lines: piece, karat, weight or budget, and size.",
+        HINGLISH: "Yeh message bahut lamba hai ({n} characters). "
+                  "Order chhota likh ke bhejiye: piece, karat, weight ya budget, aur size.",
+    },
     # --- gold rate ---
     "rate_set": {
         EN: "Gold rate saved: {rates} (set {when}). I'll use it for quotes.",

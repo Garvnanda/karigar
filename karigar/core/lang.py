@@ -26,6 +26,8 @@ _WORD = re.compile(r"[a-z]+")
 
 def detect(text: str) -> str:
     """'hinglish' when the message reads as romanised Hindi, else 'en'."""
+    if re.search("[ऀ-ॿ]", text):   # Devanagari script: answer in Hinglish (security F17)
+        return HINGLISH
     words = _WORD.findall(text.lower())
     strong = sum(w in _STRONG for w in words)
     weak = sum(w in _WEAK for w in words)

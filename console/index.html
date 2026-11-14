@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Karigar Counter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="style.css">
+<script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
+</head>
+<body>
+<header class="bar">
+  <div class="brand"><span class="mark" aria-hidden="true">◈</span> Karigar <span class="sub" data-en="Counter" data-hi="Dukaan">Counter</span></div>
+  <nav class="tabs" role="tablist">
+    <button role="tab" data-tab="orders" aria-selected="true" data-en="Orders" data-hi="Orders">Orders</button>
+    <button role="tab" data-tab="try" data-en="Try it" data-hi="Try karein">Try it</button>
+    <button role="tab" data-tab="catalogue" data-en="Catalogue" data-hi="Designs">Catalogue</button>
+    <button role="tab" data-tab="rate" data-en="Gold rate" data-hi="Sone ka rate">Gold rate</button>
+    <button role="tab" data-tab="workshop" data-en="Workshop" data-hi="Karkhana">Workshop</button>
+    <button role="tab" data-tab="system" data-en="System" data-hi="System">System</button>
+  </nav>
+  <div class="tools">
+    <button id="lang" class="ghost" title="Language">EN / हिं</button>
+    <button id="logout" class="ghost" data-en="Sign out" data-hi="Sign out">Sign out</button>
+  </div>
+</header>
+
+<main>
+  <section id="login" class="panel narrow" hidden>
+    <h1 data-en="Owner sign-in" data-hi="Owner sign-in">Owner sign-in</h1>
+    <p class="muted" data-en="Paste the owner token set on the service (KARIGAR_OWNER_TOKEN). It stays on this device only."
+       data-hi="Service ka owner token (KARIGAR_OWNER_TOKEN) daaliye. Yeh sirf is device par rehta hai.">Paste the owner token set on the service (KARIGAR_OWNER_TOKEN). It stays on this device only.</p>
+    <form id="login-form" class="row">
+      <label for="token" class="sr">Owner token</label>
+      <input id="token" type="password" autocomplete="current-password" placeholder="owner token" required>
+      <button type="submit" class="primary" data-en="Sign in" data-hi="Sign in">Sign in</button>
+    </form>
+    <p id="login-err" class="err" hidden></p>
+  </section>
+
+  <section id="tab-orders" class="split" hidden>
+    <div class="list">
+      <div class="row filters">
+        <label for="q" class="sr">Search</label>
+        <input id="q" type="search" placeholder="Search order, piece, karat">
+        <label for="st" class="sr">Status</label>
+        <select id="st">
+          <option value="">All</option><option>done</option><option>solved</option>
+          <option>running</option><option>queued</option><option>failed</option>
+        </select>
+      </div>
+      <ol id="orders" class="orders" aria-live="polite"></ol>
+    </div>
+    <article id="detail" class="detail"><p class="muted" data-en="Pick an order." data-hi="Order chuniye.">Pick an order.</p></article>
+  </section>
+
+  <section id="tab-try" class="panel" hidden>
+    <h1 data-en="Try it" data-hi="Try karein">Try it</h1>
+    <p class="muted" data-en="Type a request the way a jeweller would. The reply is the same one Nonilion shows."
+       data-hi="Jaise jeweller likhta hai waise likhiye. Jawab wahi hai jo Nonilion dikhata hai.">Type a request the way a jeweller would. The reply is the same one Nonilion shows.</p>
+    <div id="chat" class="chat"></div>
+    <form id="chat-form" class="row">
+      <label for="msg" class="sr">Message</label>
+      <input id="msg" autocomplete="off" value="Nani ka purana 18.4g 22K kangan hai, naya 22K beaded kada banana hai, size 2-6">
+      <select id="agent" aria-label="Agent"><option value="karigar">Karigar</option><option value="sakhi">Sakhi</option></select>
+      <button class="primary" type="submit" data-en="Send" data-hi="Bhejiye">Send</button>
+    </form>
+  </section>
+
+  <section id="tab-catalogue" class="panel" hidden>
+    <h1 data-en="Catalogue" data-hi="Designs">Catalogue</h1>
+    <p class="muted" data-en="19 families. Weights measured on the mesh at the default size, 22K." data-hi="19 designs. Weight mesh se naapa gaya, default size, 22K.">19 families. Weights measured on the mesh at the default size, 22K.</p>
+    <div id="cat" class="cat"></div>
+  </section>
+
+  <section id="tab-rate" class="panel" hidden>
+    <h1 data-en="Gold rate" data-hi="Sone ka rate">Gold rate</h1>
+    <p class="muted" data-en="MCX gold + ₹5,000 per 10 g; other karats by purity. Orders refuse a rate older than 24 h." data-hi="MCX gold + ₹5,000 per 10 g. 24 ghante se purana rate order mein nahi chalta.">MCX gold + ₹5,000 per 10 g; other karats by purity. Orders refuse a rate older than 24 h.</p>
+    <table class="lines" id="rates"><tbody></tbody></table>
+    <div class="row"><button id="rate-refresh" class="primary" data-en="Refresh from MCX now" data-hi="Abhi MCX se refresh">Refresh from MCX now</button></div>
+    <p id="rate-out" class="muted"></p>
+  </section>
+
+  <section id="tab-workshop" class="panel" hidden>
+    <h1 data-en="Workshop calibration" data-hi="Karkhana calibration">Workshop calibration</h1>
+    <p class="muted" data-en="Weigh each finished piece and record it. After 3 pieces, weights use this workshop's own loss and tolerance." data-hi="Har bana piece tolkar likhiye. 3 piece ke baad weight isi karkhane ke loss se banega.">Weigh each finished piece and record it. After 3 pieces, weights use this workshop's own loss and tolerance.</p>
+    <dl id="cal" class="kv"></dl>
+    <form id="cal-form" class="row">
+      <label for="cal-ws" class="sr">Workshop</label><input id="cal-ws" placeholder="workshop id" required pattern="[A-Za-z0-9_-]{1,64}">
+      <label for="cal-d" class="sr">Designed grams</label><input id="cal-d" type="number" step="0.01" min="0.01" placeholder="designed g (cast)" required>
+      <label for="cal-a" class="sr">Actual grams</label><input id="cal-a" type="number" step="0.01" min="0.01" placeholder="actual g (finished)" required>
+      <button class="primary" type="submit" data-en="Record" data-hi="Likhiye">Record</button>
+    </form>
+    <p id="cal-out" class="muted"></p>
+  </section>
+
+  <section id="tab-system" class="panel" hidden>
+    <h1 data-en="System" data-hi="System">System</h1>
+    <dl id="sys" class="kv"></dl>
+  </section>
+</main>
+<script src="app.js"></script>
+</body>
+</html>

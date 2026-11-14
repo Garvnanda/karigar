@@ -97,3 +97,9 @@ Two processes: the **service** (Render; stdlib only: `karigar/service/{http,core
   - Any failure → None → caller uses its deterministic path (`brief._regex_parse`, `designer.fallback`). Brief JSON that fails validation gets one repair call first.
 - Nonilion: no Bot API exists yet. `NonilionTransport` stays a stub; Nonilion reaches Karigar as an imported OpenAI-compatible service: agents imported under "Other" at `https://<app>.onrender.com/sakhi/v1` and `/karigar/v1` (Phase 7 service).
 - Render (Phase 7): hosts the service (`render.yaml`); the worker polls it over HTTPS.
+
+## Console (Phase 10)
+`GET /console/` serves `console/` (static, no key). The page asks for the owner token once (kept in localStorage) and reads `/api` with it: `GET /api/orders` (`KarigarService.orders`: one row per order from the jobs DB), `GET /api/orders/<id>` (`order`: the request, brief and every version's weights/quote/files as the worker reported them), `GET /api/system` (worker online, jobs by status), `GET|POST /api/shop` (gold rate + workshop: a `shop` job the worker answers with `worker.shop_action`: stored rates with status, `ratejob.refresh` on `refresh_rate`, `CalibrationStore.record` on `calibrate`). The 3D viewer is `<model-viewer>` on the version's `/files/<token>/v<N>-model.glb`. "Try it" posts to `/api/orders` then `/api/conversations/<key>/messages` with `wait_s`, showing the same reply text Nonilion gets. `console/catalogue.json` comes from `scripts/make_catalogue.py` (bpy).
+
+## Simulation (Phase 8.5)
+`python -m sim.run`: `sim/users.py` seeded users → `pack.intake` → `pack.plan` → every Nth brief `pack.propose` + `pack.solve` (mesh checks) → pass bar (docs/user-sim-report.md). Temp dirs only.

@@ -382,3 +382,21 @@ Append-only. Newest at bottom. Entries dated 2026-11-11 marked "existing" record
 - **Decision**: After Phase 7: Phase 9 packaging (README first) → Phase 10 web console → then the full testing sweep (full suite + reviewer per phase). Phase 10 is designed with the `impeccable` skill and includes a 3D viewer: the worker exports a GLB per design from Blender (bpy `export_scene.gltf`) next to the STL; the console loads it in a browser viewer (a CDN viewer library — new dependency, approved by the user's request).
 - **Why**: User priority; a rotatable 3D design is the strongest demo moment.
 - **Alternatives**: Static renders only.
+
+## 2026-11-14 — Venv rebuilt on Python 3.13 + bpy 5.3.0
+- **Context**: `venv/` was corrupted (887 of the first 2,000 `.py` files zero-filled; pytest could not start). WSL has only Python 3.12; bpy 5.x needs 3.13.
+- **Decision**: user approved a rebuild. `uv venv --python 3.13 venv` (uv-managed CPython, no sudo) + `uv pip install -r requirements.txt`. bpy resolved to 5.3.0 (same as the desktop Blender); full suite 1080/1081 passed on it with unchanged golden weights, so `requirements.txt` pins `bpy==5.3.0`. Supersedes the "bpy 5.0.1, Python 3.11" lines above.
+- **Also**: `scripts/setup_worker.sh` had CRLF line endings (bash syntax error on Linux); converted to LF and `.gitattributes` keeps `*.sh` LF.
+
+## 2026-11-14 — Disc pendant body mesh resolution 64×24 → 96×36
+- **Context**: Phase 9 weight proof: the disc pendant's ellipsoid read 0.59% under its exact volume (gate < 0.5%).
+- **Decision**: `build_pendant` disc body uses 96×36 segments: −0.26%. Disc pendants weigh ~0.3% more (closer to the true shape). No golden weight moved (the golden pendant is the lotus). Comfort bands read −0.41% (40-segment section); left as is, inside the bar, and calibration absorbs it.
+
+## 2026-11-14 — Phase 8.5 simulation, backlog, Phase 10 console
+- **Sim**: `sim/` (stdlib), 1,000 seeded users, pass bar set in docs/user-sim-report.md (the `user-sim` skill's reference.md is not in this repo). One cluster found and fixed (old piece read as the new piece).
+- **Backlog**: all 11 items fixed with tests (docs/security/backlog.md). New behaviour: messages over 2,000 chars get a `too_long` question; budgets capped at ₹1 crore; "size 12.5" is asked; probe unauthenticated requests log to `<log>.unauth`.
+- **Security-breaker**: the `security-breaker` skill is not installed in this environment, so the full-project run is left for the user (gate stays unticked).
+- **Console**: `console/` static HTML/JS/CSS served at `/console/` (default dir now `console/`), data from new owner-token routes `GET /api/orders`, `/api/orders/<id>`, `/api/system`; numbers are the worker's JobResult, never computed in the browser. 3D viewer: `<model-viewer>` 3.5.0 from jsdelivr (CDN script, the user-approved new dependency) on the uploaded GLB. Catalogue weights from `scripts/make_catalogue.py` (bpy) → `console/catalogue.json`. Designed with the installed `artifact-design` guidance; the user runs `impeccable` + `hallmark` later. Gold-rate and workshop pages: rates and calibration live on the worker, so the console queues a `shop` job (`POST /api/shop` snapshot | refresh_rate | calibrate, owner token, inputs validated) and the worker answers with `worker.shop_action` (stored rates + status per karat, learned loss, tolerance, last records); `GET /api/shop` returns the latest report.
+
+## 2026-11-14 — Budget check (Phase 9)
+- Render: service on the free plan; `starter` ($7/month) for demo week so it never sleeps — paid from the $50 Render credits. No GPU (renders on the laptop CPU, draft ~18 s per 3-design order, measured live today). AgentRouter: existing key, < 1k tokens per call at $1/$5 per 1M ≈ cents; the demo runs with the LLM off. Total cash spend: $0; Render credits used ≤ $7.

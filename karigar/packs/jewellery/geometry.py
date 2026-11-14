@@ -315,7 +315,7 @@ def build_pendant(spec: DesignSpec, s: float) -> Built:
     R, th = spec.size_mm * s / 2, spec.thickness_mm * s
     parts, gems = [], []
     if spec.shape == "disc":
-        parts.append(sphere((0, 0, 0), (R, R, th / 2), "coin", 64, 24))
+        parts.append(sphere((0, 0, 0), (R, R, th / 2), "coin", 96, 36))
         parts.append(torus(R * 0.9, th * 0.32, "rim", 96, 12))
         center_r = R * 0.35
     else:

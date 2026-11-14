@@ -37,6 +37,11 @@ def call(base, path, body=None, key=KEY, method=None, headers=None):
         return e.code, dict(e.headers), e.read().decode()
 
 
+def unauth(log):
+    """Unauthenticated requests are logged to their own file (security N4)."""
+    return log.with_name(log.name + ".unauth")
+
+
 def entries(log):
     return [json.loads(line) for line in log.read_text(encoding="utf-8").splitlines() if line.strip()]
 
@@ -229,8 +234,8 @@ def test_log_has_request_fields_and_never_the_key(probe):
 def test_failed_auth_is_logged_without_the_bad_key(probe):
     base, log = probe
     call(base, "/v1/models", key="guess-123")
-    req = entries(log)[-1]
-    assert req["auth_ok"] is False and "guess-123" not in log.read_text(encoding="utf-8")
+    req = entries(unauth(log))[-1]
+    assert req["auth_ok"] is False and "guess-123" not in unauth(log).read_text(encoding="utf-8")
 
 
 def test_image_data_uri_logs_only_type_and_length(probe):
@@ -377,7 +382,7 @@ def test_unauth_body_is_not_parsed_or_scrubbed_only_its_length_logged(probe, mon
     status, _ = _post_raw(base, "/v1/chat/completions", b'{"messages": [1, 2, 3]}', key=None)
     monkeypatch.undo()
     assert status == 401 and calls == []
-    req = entries(log)[-1]
+    req = entries(unauth(log))[-1]
     assert req["auth_ok"] is False and req["body"] is None and req["body_bytes"] == 23
 
 
@@ -389,7 +394,7 @@ def test_unauth_huge_declared_body_gets_401_without_reading_it(probe):
     got = _raw(base, head)
     assert got.startswith(b"HTTP/1.") and b" 401 " in got.split(b"\r\n", 1)[0]
     assert time.monotonic() - t0 < 2
-    assert entries(log)[-1]["body_bytes"] == 24_000_000
+    assert entries(unauth(log))[-1]["body_bytes"] == 24_000_000
 
 
 def test_authed_body_over_cap_is_413_without_reading(probe):

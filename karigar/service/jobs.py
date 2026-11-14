@@ -207,6 +207,25 @@ class JobStore:
                                (order_id,)).fetchall()
         return [_row_job(r) for r in rows]
 
+    def order_ids(self, limit: int = 200) -> list[str]:
+        """Order ids, newest first (Phase 10 console)."""
+        with self._tx() as con:
+            rows = con.execute("SELECT order_id, MAX(created) AS c FROM jobs WHERE order_id IS NOT NULL"
+                               " GROUP BY order_id ORDER BY c DESC LIMIT ?", (limit,)).fetchall()
+        return [r["order_id"] for r in rows]
+
+    def latest_done(self, kind: str) -> Job | None:
+        with self._tx() as con:
+            r = con.execute("SELECT * FROM jobs WHERE kind = ? AND status = 'done'"
+                            " ORDER BY updated DESC, rowid DESC LIMIT 1", (kind,)).fetchone()
+        return _row_job(r) if r else None
+
+    def counts(self) -> dict:
+        with self._tx() as con:
+            rows = con.execute("SELECT status, COUNT(*) AS n FROM jobs GROUP BY status").fetchall()
+            last = con.execute("SELECT MAX(updated) FROM jobs").fetchone()[0]
+        return {"by_status": {r["status"]: r["n"] for r in rows}, "last_job_update": last}
+
     def claim(self, lease_s: float, max_attempts: int = 2) -> Job | None:
         """The oldest queued job (or a running one whose worker vanished before it solved
         anything), marked running with a lease. Also records the worker heartbeat."""

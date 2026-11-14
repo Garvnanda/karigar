@@ -77,41 +77,41 @@ Reviewer PASS 2026-11-13 (398 tests). Tests: test_ring_families_bpy.py, test_mes
 - [x] Designer proposes 3 variants (lighter / balanced / statement) whose weights differ by ≥ 15% (test on fallback designer)
 
 ### Phase 2.5 — Design catalogue: 19 original families across 7 piece types
-**Status**: todo
+**Status**: done (tests pass 2026-11-14)
 User decision 2026-11-13 (decisions.md "Design catalogue"): full engine families, original designs in the best-reviewed Indian retail styles (no brand copies, no plain bands in the showcase). Every family is parametric, weight-solvable and orderable.
 Families: rings R1 floral cluster, R2 three-stone, R3 halo solitaire, R4 butterfly; pendants P1 heart halo, P2 paisley with stones, P3 layered temple lotus; chains C1 rope, C2 curb; coin K1 10 g lotus coin (raised rim, purity + weight stamp on back); bangles B1 antique temple kada, B2 twisted rope bangle, B3 leaf-vine bangle; earrings E1 flower jhumka, E2 chandbali, E3 floral cluster stud, E4 bali hoop; nose N1 flower nosepin (L-pin, tiny stone), N2 convertible screw-back stud (fits nose and ear).
 **Done when**:
-- [ ] Piece types chain, coin, earring, nosepin added to schema, brief intake (sizes: chain length in inches, bangle/ring as before, earring sold as a pair, nosepin gauge) and designer; out-of-scope reply updated to the new scope (tests)
-- [ ] Each of the 19 families builds from a `DesignSpec`; every build watertight, manifold, consistent normals, no loose parts at 3 scales (mesh check test per family)
-- [ ] Gold volume rises monotonically with scale for every family, so the solver can hit a gram target (test per family)
-- [ ] Chains: link-by-link geometry, weight scales with length; links don't intersect each other except where they interlock (test)
-- [ ] Coin: solved to its stated weight within ±0.05 g; stamp text embossed from code-supplied karat and weight (test)
-- [ ] Earrings built and weighed as a pair; posts/hooks ≥ 0.8 mm; nosepin post 0.8 mm gauge; N2 thread fits both uses (test on dimensions)
-- [ ] Designer proposes 3 variants (lighter / balanced / statement) per family, weights differ by ≥ 15% (test)
+- [x] Piece types chain, coin, earring, nosepin added to schema, brief intake (sizes: chain length in inches, bangle/ring as before, earring sold as a pair, nosepin gauge) and designer; out-of-scope reply updated to the new scope (tests)
+- [x] Each of the 19 families builds from a `DesignSpec`; every build watertight, manifold, consistent normals, no loose parts at 3 scales (mesh check test per family)
+- [x] Gold volume rises monotonically with scale for every family, so the solver can hit a gram target (test per family)
+- [x] Chains: link-by-link geometry, weight scales with length; links don't intersect each other except where they interlock (test)
+- [x] Coin: solved to its stated weight within ±0.05 g; stamp text embossed from code-supplied karat and weight (test)
+- [x] Earrings built and weighed as a pair; posts/hooks ≥ 0.8 mm; nosepin post 0.8 mm gauge; N2 thread fits both uses (test on dimensions)
+- [x] Designer proposes 3 variants (lighter / balanced / statement) per family, weights differ by ≥ 15% (test)
 - [x] (manual) Every family shown in the user's live Blender via MCP (decisions.md 2026-11-13) and approved; flagged designs fixed — user approved 2026-11-13 after pendants 0.9× and weight rule
 
 ### Phase 3 — Weight and solver honesty
-**Status**: todo
+**Status**: done (tests pass 2026-11-14)
 Spec §4 Weight measurement, §5 Constraint solver, Hero D.
 **Done when**:
-- [ ] Metal volume measured after stone seats are cut; density comes from a config file, not code constants (sourced values in decisions.md "Shop numbers")
-- [ ] DFM minimums updated to the sourced values: ring shank 1.5 mm, walls 0.8 mm, prongs 0.8 mm (tests)
-- [ ] Every result reports finished weight, casting weight and expected loss, and shows a tolerance (e.g. `7.6 g ± 0.3 g`)
-- [ ] Solver hits the target within ±0.1 g or 2%, within a fixed iteration cap; builds are cached by spec hash
-- [ ] Every infeasible case names the binding constraint, the best achievable value and 2 alternatives (tests for below_min, above_max, stone-too-big)
-- [ ] Hero D ("22K, under 1.2 g, 1 ct stone") is refused with the minimum achievable weight and 2 options (test)
-- [ ] Budget mode: stone size and metal weight are solved together, not with the stone held fixed (Hero B test)
+- [x] Metal volume measured after stone seats are cut; density comes from a config file, not code constants (sourced values in decisions.md "Shop numbers")
+- [x] DFM minimums updated to the sourced values: ring shank 1.5 mm, walls 0.8 mm, prongs 0.8 mm (tests)
+- [x] Every result reports finished weight, casting weight and expected loss, and shows a tolerance (e.g. `7.6 g ± 0.3 g`)
+- [x] Solver hits the target within ±0.1 g or 2%, within a fixed iteration cap; builds are cached by spec hash
+- [x] Every infeasible case names the binding constraint, the best achievable value and 2 alternatives (tests for below_min, above_max, stone-too-big)
+- [x] Hero D ("22K, under 1.2 g, 1 ct stone") is refused with the minimum achievable weight and 2 options (test)
+- [x] Budget mode: stone size and metal weight are solved together, not with the stone held fixed (Hero B test)
 
 ### Phase 4 — Mesh-based manufacturability checks
-**Status**: todo
+**Status**: done (tests pass 2026-11-14)
 Spec §6. Checks run on the mesh, never on the spec. Rule values in a per-process config.
 **Done when**:
-- [ ] Minimum wall thickness measured on the mesh (ray-cast or voxel thickness map)
-- [ ] Minimum prong diameter and minimum shank thickness checked on the mesh
-- [ ] Prong setting with a large stone in 22K is flagged
-- [ ] Each rule reports pass / warn / fail with a location; the result goes into the job card
-- [ ] A set of deliberately bad specs each triggers its expected rule (test per rule)
-- [ ] A failed build or check retries once with optional features relaxed, then reports the failing rule (test)
+- [x] Minimum wall thickness measured on the mesh (ray-cast or voxel thickness map)
+- [x] Minimum prong diameter and minimum shank thickness checked on the mesh
+- [x] Prong setting with a large stone in 22K is flagged
+- [x] Each rule reports pass / warn / fail with a location; the result goes into the job card
+- [x] A set of deliberately bad specs each triggers its expected rule (test per rule)
+- [x] A failed build or check retries once with optional features relaxed, then reports the failing rule (test)
 
 ### Phase 5 — Quote, gold rate and production package
 **Status**: done
@@ -146,56 +146,56 @@ Automated items: reviewer PASS 2026-11-13 (tests/test_probe.py, 62 tests); secur
 - [ ] (manual) Every unknown in docs/nonilion.md's table answered and recorded there (history, IDs, stream, timeout, Markdown/images, uploads, tools, several agents)
 
 ### Phase 7 — Service: Karigar as an OpenAI-compatible endpoint, with a Blender worker
-**Status**: todo
+**Status**: automated done; manual deploy left
 Spec §Nonilion integration (hosting), Engineering rules. Final shape depends on the Phase 6.5 findings.
 **Done when**:
-- [ ] Transport-free `KarigarService` (start order, continue conversation, edit, status, quote); CLI, JSON HTTP API and the OpenAI-compatible endpoint are thin adapters over it (tests per adapter)
-- [ ] `/v1/models` and `/v1/chat/completions` served by Karigar; requests validated; API-key auth; unknown fields (e.g. `tools`) ignored without error (tests)
-- [ ] LLM calls (AgentRouter, up to minutes) run only in the worker, never in a request handler (test)
-- [ ] Split per decisions.md "Hosting": thin service on Render (API, queue, output files); worker on the laptop (WSL) polls Render over HTTPS for jobs and uploads results; no tunnel (tests with both sides local)
-- [ ] Worker setup script for the laptop (bpy + Node + `claude` CLI); same worker runs on a rented GPU box if needed; secrets from `.env` / Render env vars
-- [ ] Conversation → order mapping per Phase 6.5 findings (conversation ID if sent, else derived from history); a new message continues the same order: answers a question, picks a variant, or edits (tests)
-- [ ] Replies return within Nonilion's measured timeout; long work runs in a separate worker; the reply says what is running and how the next message gets the result (or streams progress if Phase 6.5 shows streaming works) (tests)
-- [ ] Every number in a reply comes from code (weights, prices, rates, dimensions); the LLM only words the text around them (test: numbers in the reply match the order record)
-- [ ] Renders and files served over HTTPS with unguessable URLs, shown as images or links per Phase 6.5 findings
-- [ ] Idempotent: a retried request never builds twice (test)
-- [ ] Worker down or render timeout → spec, weight and quote are sent first, renders on the next message (test)
-- [ ] One structured log line per pipeline stage
+- [x] Transport-free `KarigarService` (start order, continue conversation, edit, status, quote); CLI, JSON HTTP API and the OpenAI-compatible endpoint are thin adapters over it (tests per adapter)
+- [x] `/v1/models` and `/v1/chat/completions` served by Karigar; requests validated; API-key auth; unknown fields (e.g. `tools`) ignored without error (tests)
+- [x] LLM calls (AgentRouter, up to minutes) run only in the worker, never in a request handler (test)
+- [x] Split per decisions.md "Hosting": thin service on Render (API, queue, output files); worker on the laptop (WSL) polls Render over HTTPS for jobs and uploads results; no tunnel (tests with both sides local)
+- [x] Worker setup script for the laptop (bpy + Node + `claude` CLI); same worker runs on a rented GPU box if needed; secrets from `.env` / Render env vars
+- [x] Conversation → order mapping per Phase 6.5 findings (conversation ID if sent, else derived from history); a new message continues the same order: answers a question, picks a variant, or edits (tests)
+- [x] Replies return within Nonilion's measured timeout; long work runs in a separate worker; the reply says what is running and how the next message gets the result (or streams progress if Phase 6.5 shows streaming works) (tests)
+- [x] Every number in a reply comes from code (weights, prices, rates, dimensions); the LLM only words the text around them (test: numbers in the reply match the order record)
+- [x] Renders and files served over HTTPS with unguessable URLs, shown as images or links per Phase 6.5 findings
+- [x] Idempotent: a retried request never builds twice (test)
+- [x] Worker down or render timeout → spec, weight and quote are sent first, renders on the next message (test)
+- [x] One structured log line per pipeline stage
 - [ ] (manual) Deployed on Render (or a tunnel for the worker); every team member has redeemed Render credits
 
 ### Phase 8 — Nonilion room setup and live checks
-**Status**: todo
+**Status**: automated done; live room checks left
 Agents are imported by hand (Import → Other) and point at Karigar.
 **Done when**:
-- [ ] Two imported agents: **Sakhi** (counter: brief, questions, rate, quote) and **Karigar** (workshop: variants, solving, files, edits), each at its own base URL on our service
-- [ ] docs/nonilion-setup.md: step-by-step import of both agents (name, avatar, base URL, key, instructions) that a teammate can follow
-- [ ] Instruction texts for both agents stored in `nonilion/`
-- [ ] Text in chat or uploads can't change rules or invent rates (prompt-injection tests)
+- [ ] (manual) Two imported agents (service serves both paths; you import per docs/nonilion-setup.md): **Sakhi** (counter: brief, questions, rate, quote) and **Karigar** (workshop: variants, solving, files, edits), each at its own base URL on our service
+- [x] docs/nonilion-setup.md: step-by-step import of both agents (name, avatar, base URL, key, instructions) that a teammate can follow
+- [x] Instruction texts for both agents stored in `nonilion/`
+- [x] Text in chat or uploads can't change rules or invent rates (prompt-injection tests)
 - [ ] (manual) In a live room: a Hinglish brief returns 3 variants with renders, weights and quotes
 - [ ] (manual) The edit and impossible-request steps of the demo script work in the room
 
 ### Phase 8.5 — User simulation (≥ 1,000 users) and security hardening
-**Status**: todo
+**Status**: automated done; security-breaker run left (user)
 Built with the `user-sim` skill.
 **Done when**:
-- [ ] `sim/` harness simulates ≥ 1,000 seeded users with the documented input mix (sim/users.md).
-- [ ] Pass bar met (user-sim reference.md, overrides in decisions.md): 0 crashes/hangs/unhandled exceptions, valid-input error rate < 1 %, 100 % of invalid inputs rejected correctly, p95 within the stated target.
-- [ ] Every failure cluster has a reproducing test and a root-cause fix; docs/user-sim-report.md written.
-- [ ] docs/security/backlog.md cleared (fixed with tests, or risk accepted by the user).
-- [ ] security-breaker full-project run: 0 open critical/high findings.
+- [x] `sim/` harness simulates ≥ 1,000 seeded users with the documented input mix (sim/users.md).
+- [x] Pass bar met (user-sim reference.md, overrides in decisions.md): 0 crashes/hangs/unhandled exceptions, valid-input error rate < 1 %, 100 % of invalid inputs rejected correctly, p95 within the stated target.
+- [x] Every failure cluster has a reproducing test and a root-cause fix; docs/user-sim-report.md written.
+- [x] docs/security/backlog.md cleared (fixed with tests, or risk accepted by the user).
+- [ ] (manual, user) security-breaker full-project run: 0 open critical/high findings — skill not installed here (decisions.md 2026-11-14)
 
 ### Phase 9 — Demo readiness
-**Status**: todo
+**Status**: automated done; rehearsal + video left (user)
 Spec §Live demo script, §Judging map.
 **Done when**:
-- [ ] Every scripted demo input is pre-tested end to end and listed in testing.md
-- [ ] Weight-maths proof table: mesh volume vs exact formula volume for ≥ 3 simple shapes (plain bands of several sizes, a disc pendant), error < 0.5% (test generates the table); calibration loop shown learning a workshop loss (decisions.md "Product choices")
-- [ ] Budget check: Render plan + any GPU rental + AgentRouter usage recorded, total under $50
+- [x] Every scripted demo input is pre-tested end to end and listed in testing.md
+- [x] Weight-maths proof table: mesh volume vs exact formula volume for ≥ 3 simple shapes (plain bands of several sizes, a disc pendant), error < 0.5% (test generates the table); calibration loop shown learning a workshop loss (decisions.md "Product choices")
+- [x] Budget check: Render plan + any GPU rental + AgentRouter usage recorded, total under $50
 - [ ] (manual) 6-minute live flow rehearsed inside Nonilion
 - [ ] (manual) 2–3 minute backup video recorded
 
 ### Phase 10 — Karigar web console
-**Status**: todo
+**Status**: built; browser check + hallmark/impeccable pass left (user)
 User 2026-11-14: structure approved ("the structure of web is great"); design with the **impeccable** skill; **3D viewer wanted**: the worker exports each design as GLB from Blender, the page shows it rotatable in the browser. Preview (layout only, sample data): https://claude.ai/artifact/JJYXLKoSueCSFk2cRh5hFQ. Remaining open: audience priority (default: shop-owner tool that also demos well), build tooling (default: plain HTML/JS served by the stdlib service + one viewer library from a CDN — new dependency, approved by the user's 3D request).
 Drafted 2026-11-14 at the user's request; build only after the user approves scope. No frontend exists today (CLI + Nonilion chat only). Served by the Phase 7 service on Render (same auth, same store), so it adds no new server. Must run the `hallmark` skill (global rule). Mobile-first: shop staff use phones at the counter.
 Pages:
@@ -208,11 +208,12 @@ Pages:
 7. **Try it (demo console)**: type a Hinglish request, see the Sakhi/Karigar reply stream exactly as Nonilion would — the demo backup if Nonilion is down.
 8. **System**: worker online/offline, queue depth, last job times, version.
 **Done when** (draft):
-- [ ] Every page above served by the Karigar service behind owner login (token); file links stay unguessable
-- [ ] All numbers on pages come from the order store / pricing code, never typed in the browser (test)
-- [ ] Works at phone width (360 px) and desktop; Hinglish/English labels
-- [ ] Demo console reproduces the chat flow end to end against the local service (test)
+- [x] Every page above served by the Karigar service behind owner login (token); file links stay unguessable — all 8 pages built (gold rate + workshop via worker "shop" jobs, decisions.md 2026-11-14); live-checked over HTTP
+- [x] All numbers on pages come from the order store / pricing code, never typed in the browser (test)
+- [ ] Works at phone width (360 px) and desktop; Hinglish/English labels — built responsive + EN/Hindi toggle; not yet checked in a browser (extension was offline)
+- [x] Demo console reproduces the chat flow end to end against the local service (test)
 - [ ] `hallmark` skill run; screenshots of every page in docs/
+- [ ] (manual, user) `impeccable` + `hallmark` design pass after the build — skills not installed 2026-11-14; first build uses the installed `artifact-design` guidance (user decision)
 **Open decisions (ask before building)**: (a) audience priority — shop owner tool vs judge-facing showcase; (b) 3D viewer: add GLB export + a viewer library from a CDN (new dependency) or static renders only; (c) build tooling — plain HTML/JS served by the stdlib server (no new dependency) vs a framework.
 
 ## After P0 (not yet phased)

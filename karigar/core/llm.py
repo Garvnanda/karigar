@@ -170,7 +170,7 @@ def extract_json(text: str) -> dict | list | None:
         return None
     try:
         return json.loads(m.group(1))
-    except json.JSONDecodeError:
+    except (json.JSONDecodeError, RecursionError):   # deeply nested JSON (security F10)
         return None
 
 

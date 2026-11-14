@@ -65,7 +65,10 @@ _SCHEME_VALUE = re.compile(r"(?i)\b(bearer|basic|token)\s+\S+")
 # In body text only credential-shaped values (8+ chars with a digit or token punctuation) are cut, so
 # ordinary words after "basic"/"token" in a chat message stay readable.
 _BODY_SCHEME_VALUE = re.compile(r"(?i)\b(bearer|basic|token)\s+(?=\S*[0-9_\-.=+/])\S{8,}")
-_JSON_STRING = re.compile(rb'"[^"\\]*(?:\\.[^"\\]*)*"')
+# Closing quote optional: an unterminated string matches to the end instead of failing and being
+# retried from every later quote (security N3: that retry was quadratic).
+_JSON_STRING = re.compile(rb'"[^"\\]*(?:\\.[^"\\]*)*"?')
+MAX_TAIL_BYTES = 4 * 1024 * 1024
 _JSON_BRACKET = re.compile(rb"[\[\]{}]")
 
 
@@ -310,8 +313,14 @@ class RequestLog:
                 if len(lines) >= n:
                     break
                 lines = self._last_lines(path, n - len(lines)) + lines
+        kept, size = [], 0
+        for line in reversed(lines[-n:]):   # newest first, at most MAX_TAIL_BYTES returned (security N5)
+            size += len(line)
+            if size > MAX_TAIL_BYTES:
+                break
+            kept.append(line)
         out = []
-        for line in lines[-n:]:
+        for line in reversed(kept):
             try:
                 out.append(json.loads(line))
             except ValueError:
@@ -481,6 +490,9 @@ def make_server(host: str, port: int, api_key: str, log_path=DEFAULT_LOG,
     if not api_key:
         raise ValueError("PROBE_API_KEY is required")
     log = RequestLog(log_path)
+    # Unauthenticated requests go to their own small log, so a flood cannot rotate real
+    # Nonilion entries out of the main one (security N4).
+    unauth_log = RequestLog(Path(str(log_path) + ".unauth"), max_bytes=1024 * 1024, keep=1)
     slow = threading.BoundedSemaphore(max_slow)
 
     class Handler(BaseHTTPRequestHandler):
@@ -657,7 +669,7 @@ def make_server(host: str, port: int, api_key: str, log_path=DEFAULT_LOG,
                 except BadBody as b:
                     bad = (400, b.code, b.message)
                     entry["body"] = f"[unparsed, {len(raw)} bytes]"
-            log.write(entry)
+            (log if authed else unauth_log).write(entry)
 
             if method == "GET" and route == "/" and not prefix:
                 return self._json(200, {"ok": True, "service": "karigar-probe"})

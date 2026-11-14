@@ -162,12 +162,43 @@ def make_orchestrator(transport, on_stage, out_dir: Path, quality: str):
                         on_stage=on_stage)
 
 
+def shop_action(p: dict, workshop: str | None, calibration=None, rate_source=None, refresh=None) -> dict:
+    """What the console's gold-rate and workshop pages show: every stored karat rate with its
+    status, and the workshop's learned loss / tolerance. Numbers come from rates + calibration code."""
+    from ..core.calibration import CalibrationStore
+    from ..packs.jewellery import ratejob, rates
+    out: dict = {}
+    if p.get("action") == "refresh_rate":
+        r = (refresh or ratejob.refresh)()
+        out["refresh"] = {"ok": bool(r.ok), "message": r.message}
+    cal = calibration or CalibrationStore()
+    ws = p.get("workshop") or workshop
+    if p.get("action") == "calibrate":
+        out["recorded"] = {"workshop": ws, "designed_g": p["designed_g"], "actual_g": p["actual_g"],
+                           "loss_pct": round(cal.record(ws, p["designed_g"], p["actual_g"]), 2)}
+    src = rate_source or rates.rate_source()
+    stored = src.store.load()
+    out["rates"] = []
+    for k in rates.KARATS:
+        e = stored.get(k)
+        prob = src.problem([int(k)]) if e else None
+        out["rates"].append({"karat": int(k), "per_g": e and e["rate_per_g"], "set_at": e and e["set_at"],
+                             "source": e and e.get("source"),
+                             "status": "none" if not e else (prob.kind if prob else "ok")})
+    recs = (cal.data.get(ws or "", {}) or {}).get("records", [])
+    out["calibration"] = {"workshop": ws, "records": len(recs), "loss_pct": round(cal.loss_pct(ws), 2),
+                          "tolerance": cal.tolerance(ws), "summary": cal.summary(ws),
+                          "recent": recs[-10:]}
+    return out
+
+
 class Worker:
     def __init__(self, client, out_dir: Path | str = Path("out"), quality: str = "preview",
                  orchestrator_factory=None, poll_s: float = 3.0, sleep=time.sleep):
         self.c, self.out_dir, self.quality = client, Path(out_dir), quality
         self.factory, self.poll_s, self.sleep = orchestrator_factory, poll_s, sleep
         self.stop = threading.Event()
+        self.workshop = os.environ.get("KARIGAR_WORKSHOP") or None
 
     def _upload_files(self, job_id: str, result: dict) -> dict:
         """Upload every output file of each variant; replace local paths with service paths."""
@@ -187,7 +218,20 @@ class Worker:
             r["files"] = files
         return result
 
+    def run_shop(self, job: dict) -> dict:
+        """Shop jobs from the owner console: report / refresh the gold rate, record a cast."""
+        job_id, p = job["job_id"], job.get("payload") or {}
+        try:
+            res = {"status": "done", "shop": shop_action(p, self.workshop)}
+        except Exception as e:                                # report, never crash the loop
+            self.c.fail(job_id, type(e).__name__)
+            return {"status": "failed", "error": type(e).__name__}
+        self.c.finish(job_id, res)
+        return res
+
     def run_job(self, job: dict) -> dict:
+        if job.get("kind") == "shop":
+            return self.run_shop(job)
         job_id, payload = job["job_id"], job.get("payload") or {}
         t0 = time.time()
         log_stage("job_start", event="worker", job=job_id, kind=job.get("kind"))
