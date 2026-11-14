@@ -563,7 +563,10 @@ def test_concurrent_slow_replies_are_capped_with_429(tmp_path):
         srv.server_close()
 
 
-def test_connection_cap_refuses_extra_connections(tmp_path):
+def test_connection_cap_drops_oldest_idle_connection_for_a_new_one(tmp_path):
+    # Was "idle connections fill the cap -> 503"; since N2 (docs/security/6.5.md) a connection that has
+    # not sent its request head is evicted instead. The 503 path is tested in
+    # test_connection_cap_still_refuses_when_no_connection_is_reading_headers.
     srv, base, _ = _start(tmp_path, max_conns=2, read_timeout=2)
     port = srv.server_address[1]
     idle = [socket.create_connection(("127.0.0.1", port), timeout=3) for _ in range(2)]
@@ -571,7 +574,8 @@ def test_connection_cap_refuses_extra_connections(tmp_path):
         time.sleep(0.2)
         t0 = time.monotonic()
         got = _raw(base, b"GET / HTTP/1.1\r\nHost: x\r\n\r\n", timeout=3)
-        assert b" 503 " in got.split(b"\r\n", 1)[0] and time.monotonic() - t0 < 1
+        assert b" 200 " in got.split(b"\r\n", 1)[0] and time.monotonic() - t0 < 1
+        assert idle[0].recv(1) == b""
     finally:
         for s in idle:
             s.close()
@@ -621,3 +625,127 @@ def test_bad_agent_slug_is_404(probe, name):
     base, _ = probe
     status, _, _ = call(base, f"/{name}/v1/models")
     assert status == 404
+
+
+# --- security re-check 2026-11-13 (docs/security/6.5.md N1, N2, N6, N7) ----------------------
+
+import tracemalloc  # noqa: E402
+
+
+def _huge_headers(n=20, size=60000) -> bytes:
+    return (b"GET /v1/models HTTP/1.1\r\nHost: x\r\n"
+            + b"".join(b"X" + str(k).encode() + b": " + b"\xff" * size + b"\r\n" for k in range(n)) + b"\r\n")
+
+
+def test_huge_header_block_is_refused_431_with_bounded_memory(probe):
+    """N1: an unauthenticated 1.2 MB header block must not be parsed, logged in full or held in memory."""
+    base, log = probe
+    data = _huge_headers()
+    tracemalloc.start()
+    try:
+        tracemalloc.reset_peak()
+        try:
+            got = _raw(base, data, timeout=5)
+        except (BrokenPipeError, ConnectionResetError):
+            got = b""  # the server answered 431 and closed while we were still sending: fine
+        _, peak = tracemalloc.get_traced_memory()
+    finally:
+        tracemalloc.stop()
+    assert peak < 512 * 1024, f"peak {peak} bytes for one request"
+    assert got == b"" or b" 431 " in got.split(b"\r\n", 1)[0]
+    es = entries(log)
+    assert not [e for e in es if e.get("event") == "request"]
+    assert [e["reason"] for e in es if e.get("event") == "refused"] == ["headers_too_large"]
+    assert max(len(line) for line in log.read_bytes().splitlines()) < 1024
+
+
+def test_header_block_under_cap_is_served_and_header_names_are_cut(probe):
+    """N1: names are cut like values; a header block just under the cap still works."""
+    base, log = probe
+    name = "X-" + "n" * 5000
+    status, _, _ = call(base, "/v1/models", headers={name: "v", "X-Big": "a" * 20000})
+    assert status == 200
+    req = [e for e in entries(log) if e.get("event") == "request"][-1]
+    assert all(len(k) <= probe_server.MAX_STR + 40 for k in req["headers"])
+    assert all(len(v) <= probe_server.MAX_STR + 40 for v in req["headers"].values())
+
+
+def test_slow_header_sender_is_dropped_after_total_header_deadline(tmp_path):
+    """N2: one header line every 0.15 s keeps a per-recv timeout happy; the total deadline must not."""
+    srv, base, _ = _start(tmp_path, read_timeout=5, header_timeout=0.6)
+    port = srv.server_address[1]
+    try:
+        with socket.create_connection(("127.0.0.1", port), timeout=0.15) as s:
+            s.sendall(b"GET / HTTP/1.1\r\n")
+            t0, closed = time.monotonic(), False
+            while time.monotonic() - t0 < 4 and not closed:
+                try:
+                    s.sendall(b"X-a: b\r\n")
+                    closed = s.recv(1) == b""
+                except socket.timeout:
+                    continue
+                except OSError:
+                    closed = True
+            elapsed = time.monotonic() - t0
+        assert closed and 0.5 <= elapsed < 2.0, (closed, elapsed)
+    finally:
+        srv.shutdown()
+        srv.server_close()
+
+
+def test_valid_client_gets_through_when_slow_header_senders_fill_the_cap(tmp_path):
+    """N2: with every slot held by half-sent requests, a new client evicts the oldest one instead of 503."""
+    srv, base, log = _start(tmp_path, max_conns=2, read_timeout=10, header_timeout=10)
+    port = srv.server_address[1]
+    slow = [socket.create_connection(("127.0.0.1", port), timeout=3) for _ in range(2)]
+    try:
+        for s in slow:
+            s.sendall(b"GET / HTTP/1.1\r\n")
+        time.sleep(0.2)
+        t0 = time.monotonic()
+        for _ in range(3):
+            status, _, _ = call(base, "/v1/models")
+            assert status == 200
+        assert time.monotonic() - t0 < 3
+        assert slow[0].recv(1) == b""  # the oldest half-sent request was dropped
+        assert any(e.get("event") == "evicted" for e in entries(log))
+    finally:
+        for s in slow:
+            s.close()
+        srv.shutdown()
+        srv.server_close()
+
+
+def test_connection_cap_still_refuses_when_no_connection_is_reading_headers(tmp_path):
+    """N2: eviction only takes half-sent requests; busy (past-header) connections still get a 503."""
+    srv, base, _ = _start(tmp_path, max_conns=1, read_timeout=3)
+    try:
+        busy = threading.Thread(target=call, args=(base, "/v1/chat/completions"),
+                                kwargs={"body": chat("probe delay 1")})
+        busy.start()
+        time.sleep(0.3)
+        got = _raw(base, b"GET / HTTP/1.1\r\nHost: x\r\n\r\n", timeout=3)
+        assert b" 503 " in got.split(b"\r\n", 1)[0]
+        busy.join()
+    finally:
+        srv.shutdown()
+        srv.server_close()
+
+
+def test_forwarded_for_and_client_ip_never_carry_the_key(probe):
+    """N6: a key sent in X-Forwarded-For is redacted in client_ip and forwarded_for."""
+    base, log = probe
+    for key in (KEY, None):
+        call(base, "/v1/models", key=key, headers={"X-Forwarded-For": f"{KEY}, {KEY}"})
+    assert KEY not in log.read_text(encoding="utf-8")
+    req = entries(log)[-1]
+    assert req["client_ip"] == "[redacted]" and req["forwarded_for"] == "[redacted], [redacted]"
+
+
+def test_scheme_credentials_in_body_strings_are_redacted():
+    """N7: 'Bearer <token>' inside a body string is redacted like in headers; ordinary words stay."""
+    out = scrub({"note": "use Bearer sk-live-abc123 here", "auth_hint": "x",
+                 "msg": "basic necklace, token limit 22k"}, KEY)
+    assert out["note"] == "use Bearer [redacted] here"
+    assert "sk-live-abc123" not in json.dumps(out)
+    assert out["msg"] == "basic necklace, token limit 22k"

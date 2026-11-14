@@ -9,8 +9,8 @@ from karigar.core.lang import EN, HINGLISH
 T: dict[str, dict[str, str]] = {
     # --- questions (blocking fields only) ---
     "q_piece": {
-        EN: "What would you like made: a ring, a bangle or a pendant?",
-        HINGLISH: "Kya banana hai: ring, bangle ya pendant?",
+        EN: "What would you like made: a ring, bangle, pendant, chain, coin, earrings or a nose pin?",
+        HINGLISH: "Kya banana hai: ring, bangle, pendant, chain, sikka, earrings ya nose pin?",
     },
     "q_target": {
         EN: "How should I size it? Tell me your old gold's weight and karat, a target weight, or a budget.",
@@ -30,6 +30,10 @@ T: dict[str, dict[str, str]] = {
         EN: "What is the bangle size? An Indian size like 2-4, 2-6 or 2-8, or the inner diameter in mm.",
         HINGLISH: "Bangle ka size kya hai? 2-4, 2-6, 2-8 jaisa Indian size, ya andar ka diameter mm mein.",
     },
+    "q_chain_length": {
+        EN: "What chain length: 16, 18, 20, 22 or 24 inches?",
+        HINGLISH: "Chain kitni lambi chahiye: 16, 18, 20, 22 ya 24 inch?",
+    },
     "q_karat": {
         EN: "Which purity for the new piece: 22K, 18K or 14K?",
         HINGLISH: "Naya piece kitne karat ka chahiye: 22K, 18K ya 14K?",
@@ -48,15 +52,56 @@ T: dict[str, dict[str, str]] = {
     },
     # --- scope ---
     "out_of_scope": {
-        EN: "Right now I design rings, bangles and pendants only, so I can't make {asked} yet. "
+        EN: "Right now I design rings, bangles, pendants, chains, coins, earrings and nose pins only, "
+            "so I can't make {asked} yet. "
             "The nearest I can do is a {nearest}. Shall I make a {nearest} instead?",
-        HINGLISH: "Abhi main sirf ring, bangle aur pendant banati hoon; {asked} abhi nahi bana sakti. "
+        HINGLISH: "Abhi main sirf ring, bangle, pendant, chain, sikka, earrings aur nose pin banati hoon; "
+                  "{asked} abhi nahi bana sakti. "
                   "Sabse kareeb {nearest} hai. Kya {nearest} bana doon?",
     },
     # --- gold rate ---
     "rate_set": {
         EN: "Gold rate saved: {rates} (set {when}). I'll use it for quotes.",
         HINGLISH: "Rate save kar liya: {rates} ({when} par set). Quote isi se banega.",
+    },
+    "rate_not_allowed": {
+        EN: "Only the shop owner or staff can set the gold rate, so I haven't changed it; "
+            "quotes use the shop's configured gold rate. Is there a piece you'd like made?",
+        HINGLISH: "Gold rate sirf dukaan ke owner ya staff set kar sakte hain, isliye maine rate nahi badla; "
+                  "quote dukaan ke configured gold rate se banega. Koi piece banwana hai?",
+    },
+    # Rate missing / stale / out of range: say so, ask for today's rate, never estimate.
+    "rate_missing": {
+        EN: "I don't have a {karat}K gold rate on file, and I never estimate it. "
+            "What is today's {karat}K rate? Please ask the shop owner to update it "
+            "(rate job or config), then send the order again.",
+        HINGLISH: "Mere paas {karat}K ka gold rate nahi hai, aur main rate kabhi andaaze se nahi lagati. "
+                  "Aaj ka {karat}K rate kya hai? Dukaan ke owner se rate update karwaiye "
+                  "(rate job ya config), phir order dobara bhejiye.",
+    },
+    "rate_stale": {
+        EN: "The {karat}K gold rate on file ({rate}/g, set {when}) is more than {hours} h old, "
+            "and I never estimate it. What is today's {karat}K rate? Please ask the shop owner to "
+            "update it, then send the order again.",
+        HINGLISH: "File mein {karat}K ka rate ({rate}/g, {when} par set) {hours} ghante se purana hai, "
+                  "aur main rate andaaze se nahi lagati. Aaj ka {karat}K rate kya hai? Owner se rate "
+                  "update karwaiye, phir order dobara bhejiye.",
+    },
+    "rate_out_of_range": {
+        EN: "The {karat}K gold rate on file ({rate}/g, set {when}) is outside the sane range "
+            "({lo}–{hi}/g), so I won't use it, and I never estimate one. What is today's {karat}K rate? "
+            "Please ask the shop owner to correct it, then send the order again.",
+        HINGLISH: "File mein {karat}K ka rate ({rate}/g, {when} par set) sahi range ({lo}–{hi}/g) se "
+                  "bahar hai, isliye main ise use nahi karungi aur andaaza bhi nahi lagaungi. Aaj ka "
+                  "{karat}K rate kya hai? Owner se rate theek karwaiye, phir order dobara bhejiye.",
+    },
+    "rate_future": {
+        EN: "The {karat}K gold rate on file ({rate}/g) is stamped in the future ({when}), so I won't use it, "
+            "and I never estimate one. What is today's {karat}K rate? Please ask the shop owner to "
+            "update it, then send the order again.",
+        HINGLISH: "File mein {karat}K ka rate ({rate}/g) aage ki tareekh ({when}) ka hai, isliye main ise "
+                  "use nahi karungi aur andaaza bhi nahi lagaungi. Aaj ka {karat}K rate kya hai? Owner se "
+                  "rate update karwaiye, phir order dobara bhejiye.",
     },
     "rate_invalid": {
         EN: "That rate doesn't look right ({bad}). Please send it again, e.g. \"rate 22K 14730\".",

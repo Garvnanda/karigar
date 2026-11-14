@@ -47,12 +47,13 @@ def test_explicit_us_size_and_mm_still_accepted():
 
 # ---- out of scope -------------------------------------------------------------
 
+# Earrings and nose pins moved into scope in Phase 2.5 (user decision, decisions.md 2026-11-13
+# "Design catalogue"); their old cases here are now in-scope tests in test_brief_catalogue.py.
 @pytest.mark.parametrize("text,lang,nearest", [
-    ("I want a gold necklace of 20 g in 22K", EN, "pendant"),
-    ("Can you make 18K diamond earrings for 50k", EN, "pendant"),
-    ("mujhe 22K ka jhumka banana hai 10g", HINGLISH, "pendant"),
+    ("I want a gold necklace of 20 g in 22K", EN, "chain + pendant"),
+    ("mujhe 22K ka mangalsutra banana hai 10g", HINGLISH, "chain + pendant"),
     ("chandi jaisi payal sone mein chahiye 22K 15g", HINGLISH, "bangle"),
-    ("a 22K nose pin, 1 g", EN, "ring"),
+    ("a 22K maang tikka, 6 g", EN, "pendant"),
 ])
 def test_out_of_scope_explains_scope_and_offers_nearest(text, lang, nearest):
     r = B.analyse(text)
@@ -60,9 +61,9 @@ def test_out_of_scope_explains_scope_and_offers_nearest(text, lang, nearest):
     assert r.lang == lang and r.suggestion == nearest
     assert nearest in r.reply
     if lang == EN:
-        assert "rings, bangles and pendants" in r.reply
+        assert "rings, bangles, pendants, chains, coins, earrings and nose pins" in r.reply
     else:
-        assert "sirf ring, bangle aur pendant" in r.reply
+        assert "sirf ring, bangle, pendant, chain, sikka, earrings aur nose pin" in r.reply
 
 
 def test_old_chain_as_gold_source_is_not_out_of_scope():

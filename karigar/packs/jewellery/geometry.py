@@ -7,7 +7,10 @@ pendants face the camera (-Y); +Z is up.
 """
 from __future__ import annotations
 
+import hashlib
+import json
 import math
+from collections import OrderedDict
 from dataclasses import dataclass, field
 
 import bpy  # must precede bmesh
@@ -198,6 +201,12 @@ class Built:
     gems: list[bpy.types.Object] = field(default_factory=list)
     volume_mm3: float = 0.0
     dims: dict = field(default_factory=dict)
+    # Earring pair: the mirrored second earring (display/GLB). `gold` stays ONE closed
+    # solid (the casting model, cast twice); volume_mm3 counts both pieces.
+    mirror: list[bpy.types.Object] = field(default_factory=list)
+    # Metal removed by cutting the stone seats (mm^3, one piece). volume_mm3 is measured after it.
+    seat_cut_mm3: float = 0.0
+    seats_in_model: bool = True     # False: the casting body is uncut, the setter cuts the seats
 
 
 def _place(obs, m: Matrix):
@@ -347,13 +356,275 @@ def build_pendant(spec: DesignSpec, s: float) -> Built:
 BUILDERS = {"ring": build_ring, "bangle": build_bangle, "pendant": build_pendant}
 
 
+PAIR_GAP_MM = 4.0           # display gap between the two earrings of a pair
+
+
+def _mirror_copy(ob: bpy.types.Object, dx: float, name: str) -> bpy.types.Object:
+    """Copy of `ob` mirrored across the YZ plane and moved `dx` along X; normals kept outward."""
+    bm = bmesh.new()
+    bm.from_mesh(ob.data)
+    bm.transform(Matrix.Translation((dx, 0, 0)) @ Matrix.Scale(-1, 4, (1, 0, 0)) @ ob.matrix_world)
+    bmesh.ops.reverse_faces(bm, faces=bm.faces)       # a mirror flips the winding
+    return _obj_from_bm(bm, name)
+
+
+def make_pair(b: Built) -> Built:
+    """Second earring as a mirror image beside the first; weight counts both."""
+    xs = [(b.gold.matrix_world @ v.co).x for v in b.gold.data.vertices]
+    dx = 2 * max(xs) + PAIR_GAP_MM          # mirror of x is -x; shift clear of the first
+    b.mirror = [_mirror_copy(b.gold, dx, "gold_pair")] + [
+        _mirror_copy(g, dx, g.name + "_pair") for g in b.gems]
+    b.volume_mm3 *= 2
+    b.dims = {**b.dims, "pieces": 2}
+    return b
+
+
+# ------------------------------------------------------------- stone seats
+SEAT_NUDGE_MM = 0.002       # retry offset of a seat cutter (microns: no weighable change)
+SEAT_GROW = 0.003           # retry: cutter 0.3% larger (a few microns of seat clearance)
+SEAT_TURN = 0.0075          # retry: cutter turned ~0.43 deg about its axis (facets off the metal's)
+# (grow, nudge, turn) attempts, first clean one wins. A pair (earrings) is triangulated after the
+# cut so its mirror copy keeps the same triangles; a single piece tries untriangulated first
+# (triangulating some boolean results splits a sliver into non-manifold edges).
+SEAT_TRIES = ((0.0, 0.0, 0.0), (0.0, SEAT_NUDGE_MM, 0.0), (0.0, 0.0, SEAT_TURN),
+              (0.0, SEAT_NUDGE_MM, -SEAT_TURN), (SEAT_GROW, 0.0, 0.0), (SEAT_GROW, SEAT_NUDGE_MM, SEAT_TURN),
+              (0.0, 2 * SEAT_NUDGE_MM, 2 * SEAT_TURN), (2 * SEAT_GROW, 0.0, -2 * SEAT_TURN))
+
+
+def _seat_try(gold, gems, grow: float, nudge: float, turn: float, tri: bool, name: str):
+    coll = bpy.data.collections.new(name + "_seats")
+    bpy.context.scene.collection.children.link(coll)
+    for i, gm in enumerate(gems):
+        me = gm.data.copy()
+        me.transform(gm.matrix_world)
+        if grow or nudge or turn:
+            c = sum((v.co for v in me.vertices), Vector()) / max(len(me.vertices), 1)
+            off = Vector((nudge * math.sin(1.7 * i + 1), nudge * math.cos(2.3 * i + 1), nudge * 0.5))
+            me.transform(Matrix.Translation(c + off) @ Matrix.Rotation(turn, 4, "Z")
+                         @ Matrix.Scale(1 + grow, 4) @ Matrix.Translation(-c))
+        coll.objects.link(bpy.data.objects.new(f"{gm.name}_cutter", me))
+    mod = gold.modifiers.new("seats", "BOOLEAN")
+    mod.operation, mod.operand_type, mod.collection, mod.solver = "DIFFERENCE", "COLLECTION", coll, "MANIFOLD"
+    dg = bpy.context.evaluated_depsgraph_get()
+    dg.update()
+    me = bpy.data.meshes.new_from_object(gold.evaluated_get(dg))
+    gold.modifiers.remove(mod)
+    for o in list(coll.objects):
+        m = o.data
+        bpy.data.objects.remove(o, do_unlink=True)
+        bpy.data.meshes.remove(m)
+    bpy.data.collections.remove(coll)
+    if tri:
+        bm = bmesh.new()
+        bm.from_mesh(me)
+        bmesh.ops.triangulate(bm, faces=bm.faces[:], quad_method="BEAUTY", ngon_method="BEAUTY")
+        bm.to_mesh(me)
+        bm.free()
+    out = bpy.data.objects.new(name, me)
+    out.matrix_world = gold.matrix_world.copy()
+    bpy.context.scene.collection.objects.link(out)
+    return out
+
+
+def _pair_dx(ob) -> float:
+    return 2 * max((ob.matrix_world @ v.co).x for v in ob.data.vertices) + PAIR_GAP_MM
+
+
+def _seat_problems(ob, mirror: bool) -> list[str]:
+    from . import mesh_check
+    out = mesh_check.check(ob).problems()
+    if mirror and not out:          # the mirror copy exactly as make_pair will place it
+        cp = _mirror_copy(ob, _pair_dx(ob), ob.name + "_probe")
+        out = ["mirror " + p for p in mesh_check.check(cp).problems()]
+        bpy.data.objects.remove(cp, do_unlink=True)
+    return out
+
+
+def cut_seats(b: Built, mirror: bool = False) -> Built:
+    """Cut every stone's seat out of the gold (gold minus the stones' solids), so the metal the
+    solver weighs has no gold where a stone sits. volume_mm3 is always the seat-cut volume;
+    seat_cut_mm3 is the metal removed.
+
+    The cut is retried with the cutter nudged / turned / grown by microns until the cut body
+    passes the mesh check (and, for an earring pair, so does its mirror copy). The first clean
+    cut becomes the casting body. If no attempt is clean, the cut never degrades the casting:
+    the original (uncut) body is kept for the STL with `seats_in_model = False` (the setter cuts
+    the seats, as at a bench) while the weight is still the cut volume. If every boolean returns
+    empty geometry, the gold under the stones is measured another way (gold_in_stones_mm3) and
+    subtracted: gold under a stone is never weighed."""
+    if not b.gems:
+        return b
+    before = mesh_volume(b.gold)
+    name = b.gold.name
+    cut_v = None
+    # A pair is always triangulated (see SEAT_TRIES); a single piece tries untriangulated cuts
+    # first, then triangulated ones (the earring/nose families' own unions are triangulated).
+    tries = ([(t, True) for t in SEAT_TRIES] if mirror
+             else [(t, False) for t in SEAT_TRIES[:4]] + [(t, True) for t in SEAT_TRIES])
+    for k, ((grow, nudge, turn), tri) in enumerate(tries):
+        ob = _seat_try(b.gold, b.gems, grow, nudge, turn, tri, f"{name}_seat{k}")
+        if len(ob.data.polygons) == 0:          # boolean failed outright
+            bpy.data.objects.remove(ob, do_unlink=True)
+            continue
+        v = mesh_volume(ob)
+        cut_v = v if cut_v is None else cut_v
+        if not _seat_problems(ob, mirror):
+            bpy.data.objects.remove(b.gold, do_unlink=True)
+            ob.name = name
+            b.gold, b.volume_mm3 = ob, v
+            b.seat_cut_mm3 = max(0.0, before - v)
+            return b
+        bpy.data.objects.remove(ob, do_unlink=True)
+    if cut_v is None:
+        # Every DIFFERENCE came back empty: the weight must still exclude the gold under the
+        # stones, so it is measured another way (per-stone INTERSECT, else sampled).
+        cut_v = max(0.0, before - gold_in_stones_mm3(b.gold, b.gems))
+    b.volume_mm3 = cut_v                        # weight after the seats, body left uncut
+    b.seat_cut_mm3 = max(0.0, before - cut_v)
+    b.seats_in_model = False
+    return b
+
+
+OVERLAP_GRID = 28           # sampled overlap: points per axis over a stone's bounding box
+
+
+def _intersect_mm3(gold, gem):
+    """Volume of gold inside one stone (boolean INTERSECT), or None when the boolean returns
+    empty geometry (failed, or the stone does not touch the metal)."""
+    cp = bpy.data.objects.new(gold.name + "_ov", gold.data.copy())
+    cp.matrix_world = gold.matrix_world.copy()
+    bpy.context.scene.collection.objects.link(cp)
+    mod = cp.modifiers.new("ov", "BOOLEAN")
+    mod.operation, mod.object, mod.solver = "INTERSECT", gem, "MANIFOLD"
+    dg = bpy.context.evaluated_depsgraph_get()
+    dg.update()
+    me = bpy.data.meshes.new_from_object(cp.evaluated_get(dg))
+    ob = bpy.data.objects.new(gold.name + "_ovm", me)
+    ob.matrix_world = gold.matrix_world.copy()
+    bpy.context.scene.collection.objects.link(ob)
+    v = mesh_volume(ob) if len(me.polygons) else None
+    for o in (ob, cp):
+        m = o.data
+        bpy.data.objects.remove(o, do_unlink=True)
+        bpy.data.meshes.remove(m)
+    return v
+
+
+def _bvh(ob):
+    from mathutils.bvhtree import BVHTree
+    bm = bmesh.new()
+    bm.from_mesh(ob.data)
+    bm.transform(ob.matrix_world)
+    t = BVHTree.FromBMesh(bm)
+    bm.free()
+    return t
+
+
+_RAYS = (Vector((0.9134, 0.2721, 0.3027)), Vector((-0.2311, 0.9542, 0.1898)),
+         Vector((0.1567, -0.3249, 0.9327)))
+
+
+def _inside(tree, p: Vector) -> bool:
+    """Point-in-closed-mesh by ray parity, majority of three skew rays (a ray grazing an edge
+    is outvoted)."""
+    votes = 0
+    for d in _RAYS:
+        n, o = 0, p.copy()
+        while True:
+            hit, _, _, dist = tree.ray_cast(o, d)
+            if hit is None:
+                break
+            n += 1
+            o = hit + d * 1e-5
+        votes += n % 2
+    return votes >= 2
+
+
+def _sampled_overlap_mm3(gold, gem, n: int = OVERLAP_GRID) -> float:
+    """Gold inside one stone by grid sampling the stone's bounding box (both meshes closed)."""
+    tg, ts = _bvh(gold), _bvh(gem)
+    pts = [gem.matrix_world @ v.co for v in gem.data.vertices]
+    lo = Vector((min(p.x for p in pts), min(p.y for p in pts), min(p.z for p in pts)))
+    hi = Vector((max(p.x for p in pts), max(p.y for p in pts), max(p.z for p in pts)))
+    step = (hi - lo) / n
+    hits = 0
+    for i in range(n):
+        for j in range(n):
+            for k in range(n):
+                p = lo + Vector(((i + 0.5) * step.x, (j + 0.5) * step.y, (k + 0.5) * step.z))
+                if _inside(ts, p) and _inside(tg, p):
+                    hits += 1
+    return hits * step.x * step.y * step.z
+
+
+def gold_in_stones_mm3(gold, gems) -> float:
+    """Gold volume inside the stones (stones do not overlap each other): per stone a boolean
+    INTERSECT; when that returns empty geometry, a grid-sampled estimate (zero when the stone
+    really sits clear of the metal)."""
+    tot = 0.0
+    for gm in gems:
+        v = _intersect_mm3(gold, gm)
+        tot += v if v is not None else _sampled_overlap_mm3(gold, gm)
+    return tot
+
+
 def build(spec: DesignSpec, scale: float) -> Built:
-    return BUILDERS[spec.piece_type](spec, scale)
+    """Registered family (spec.family) or the original per-piece builder, then the stone
+    seats are cut out of the gold (`cut_seats`, every builder alike). An earring with
+    spec.pair is mirrored into a pair after its family builder returns one earring."""
+    if not spec.family:
+        return cut_seats(BUILDERS[spec.piece_type](spec, scale))
+    from . import families
+    fam = families.get(spec.family)
+    if fam.piece_type != spec.piece_type:
+        raise ValueError(f"family {fam.name!r} builds a {fam.piece_type}, not a {spec.piece_type}")
+    # An earring is cut as if it will be mirrored, pair or not, so one earring weighs exactly
+    # half a pair (the same cut attempt is chosen either way).
+    b = cut_seats(fam.builder(spec, scale), mirror=spec.piece_type == "earring")
+    if spec.piece_type == "earring" and spec.pair:
+        b = make_pair(b)
+    return b
+
+
+# ------------------------------------------------------------- weighing (cached)
+SEAT_CUT_VERSION = 2        # bump when the weighed geometry changes, so no stale volume is reused
+CACHE_MAX = 2048
+_VOLUMES: "OrderedDict[str, float]" = OrderedDict()
+CACHE_STATS = {"hits": 0, "builds": 0}
+
+
+def spec_hash(spec: DesignSpec, scale: float) -> str:
+    """Key of one build: the spec's canonical JSON, the scale and, for a family, which builder.
+    Same key -> same geometry -> same metal volume."""
+    builder = ""
+    if spec.family:
+        from . import families
+        fb = families.get(spec.family).builder
+        builder = f"{fb.__module__}.{fb.__qualname__}:{id(fb)}"
+    blob = json.dumps({"spec": spec.model_dump(mode="json"), "scale": repr(float(scale)),
+                       "builder": builder, "v": SEAT_CUT_VERSION}, sort_keys=True)
+    return hashlib.sha256(blob.encode()).hexdigest()
+
+
+def clear_volume_cache() -> None:
+    _VOLUMES.clear()
+    CACHE_STATS.update(hits=0, builds=0)
 
 
 def gold_volume(spec: DesignSpec, scale: float) -> float:
-    """Solver probe: build, measure, discard."""
+    """Solver probe: metal volume (mm^3, stone seats cut; a pair counts both) of the spec at
+    this scale. Cached by spec hash, so re-probing a scale (another variant, an edit, the
+    minimum-weight search) never rebuilds; a miss builds, measures and discards."""
+    key = spec_hash(spec, scale)
+    if key in _VOLUMES:
+        _VOLUMES.move_to_end(key)
+        CACHE_STATS["hits"] += 1
+        return _VOLUMES[key]
     clear_scene()
     v = build(spec, scale).volume_mm3
     clear_scene()
+    CACHE_STATS["builds"] += 1
+    _VOLUMES[key] = v
+    if len(_VOLUMES) > CACHE_MAX:
+        _VOLUMES.popitem(last=False)
     return v

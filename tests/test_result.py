@@ -72,7 +72,7 @@ class AllFailPack(DomainPack):
     """No bpy: every variant misses, so the orchestrator must pool the failures."""
     name = "allfail"
 
-    def intake(self, text, attachments=None):
+    def intake(self, text, attachments=None, sender=None):
         return Intake("brief", brief={"piece": "x"})
 
     def describe_brief(self, brief, lang="en"):
@@ -106,6 +106,6 @@ def test_needs_info_and_scope_results_validate(tmp_path):
     q = orch.handle("22K ring of 6g")
     assert q["status"] == "needs_info" and q["topics"] == ["ring_size"] and q["question"]
     s = orch.handle("I want a 22K gold necklace, 20 g")
-    assert s["status"] == "out_of_scope" and s["suggestion"] == "pendant" and s["reply"]
+    assert s["status"] == "out_of_scope" and s["suggestion"] == "chain + pendant" and s["reply"]
     for r in (q, s):
         JobResult.model_validate(r)

@@ -1,0 +1,20 @@
+{
+  "_note": "Casting numbers the weight path uses (decisions.md 'Shop numbers' and 'Phase 3'). A shop edits this file, never the code. Keys listed in 'assumed' are defaults to confirm with your caster.",
+  "as_of": "2026-11-13",
+  "density_g_cm3": {"24": 19.32, "22": 17.75, "18": 15.45, "14": 13.05},
+  "density_source": "Sobling jewellery metal-weight table (yellow alloys); 22K casting alloys range 17.45-18.24 per the Flume datasheet. Calibration absorbs a shop's own alloy.",
+  "dfm_min_mm": {"ring_shank": 1.5, "wall": 0.8, "prong_d": 0.8},
+  "dfm_source": {
+    "ring_shank": "Ganoksin, Tips for Avoiding Meltdown: 1.5 mm women's shank in high-karat gold",
+    "wall": "Stuller CAD/CAM production standards: 0.8 mm structural wall",
+    "prong_d": "Materialise gold design guide: 0.8 mm prong diameter"
+  },
+  "tolerance": {
+    "default_pct": 4.0,
+    "min_records": 3,
+    "sigma": 2.0,
+    "floor_pct": 0.5,
+    "source": "With fewer than min_records cast pieces: default_pct, the spread of 22K casting-alloy density (17.45-18.24 g/cm3, about +-2.2% around 17.75) plus about +-2% for casting and finishing loss varying around its 3% default (industry quotes 2-8%). With records: sigma x the standard deviation of the workshop's recorded loss %, never below floor_pct (scale reading and polishing)."
+  },
+  "assumed": ["tolerance"]
+}

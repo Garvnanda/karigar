@@ -1,13 +1,23 @@
 {
-  "_note": "SAMPLE VALUES for the demo. In Nonilion this lives in the room's knowledge base and the shop owner updates it daily.",
+  "_note": "Shop numbers for quotes (decisions.md 'Shop numbers'). Keys listed in 'assumed' are shown as 'assumed - confirm with your caster/CA' until the shop confirms them and removes them from the list. The gold rate itself is NOT here: it lives in data/gold_rates.json, written by the rate job (run.py rates refresh) or the owner (run.py rates set), and is read only through rates.RateSource.",
   "currency": "INR",
-  "as_of": "2026-11-11",
-  "gold_rate_per_g": {"24": 16000, "22": 14730, "18": 12060, "14": 9410},
-  "making_charge_pct": {"ring": 12, "bangle": 9, "pendant": 14},
-  "gst_pct": 3,
+  "as_of": "2026-11-13",
+  "gold_rate": {
+    "max_age_h": 24,
+    "sane_range_24k_per_g": [5000, 40000],
+    "karat_factor": {"24": 1.0, "22": 0.916, "18": 0.75, "14": 0.585},
+    "mcx_premium_per_10g": 5000,
+    "mcx_url": "https://economictimes.indiatimes.com/commoditysummary/symbol-GOLD.cms",
+    "refresh_every_h": 6
+  },
+  "making_charge_pct": {"ring": 3.5, "bangle": 3.5, "pendant": 3.5, "chain": 3.5, "coin": 3.5, "earring": 3.5, "nosepin": 3.5},
+  "gst_pct": {"gold_and_stones": 3, "making": 5},
+  "hallmark_fee_inr_per_article": 75,
+  "old_gold_deduction_pct": 2.0,
+  "casting_shrinkage_pct": 1.0,
   "stone_rate_per_ct": {"diamond": 25000, "ruby": 15000, "emerald": 12000, "sapphire": 15000},
   "stone_note": "diamond = lab-grown rate; natural stones quoted separately",
-  "exchange": {"melt_loss_pct": 2.0},
   "workshop_default_casting_loss_pct": 3.0,
-  "min_finished_weight_g": {"ring": 1.8, "bangle": 6.0, "pendant": 1.2}
+  "min_finished_weight_g": {"ring": 1.8, "bangle": 6.0, "pendant": 1.2},
+  "assumed": ["gold_rate_formula", "making_charge_pct", "gst_pct", "stone_rate_per_ct", "old_gold_deduction_pct", "casting_shrinkage_pct", "hallmark_per_article"]
 }

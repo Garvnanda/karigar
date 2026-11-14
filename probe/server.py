@@ -13,7 +13,9 @@ agents can import the same probe under different URLs and be told apart in the l
 Safety (docs/security/6.5.md): auth is checked before any body is read or parsed; unauthenticated
 requests are logged as a summary (body length only). Authenticated bodies are capped in bytes, JSON
 nodes and depth. Log entries are capped, rotated across several files, and read back from the end.
-Sockets time out; delayed/streaming replies and connections are capped.
+Sockets time out; delayed/streaming replies and connections are capped. The request line + headers
+must arrive within one overall deadline and byte budget; when the connection cap is full, the oldest
+connection still sending its request head is dropped so a real client gets the slot.
 """
 from __future__ import annotations
 
@@ -21,6 +23,7 @@ import hmac
 import json
 import os
 import re
+import socket
 import struct
 import sys
 import threading
@@ -42,6 +45,8 @@ MAX_LOG_BYTES = 10 * 1024 * 1024   # rotate the log past this ...
 LOG_KEEP = 5                       # ... keeping this many old files (.1 newest), so <= 60 MB on disk
 MAX_LOG_ENTRY = 64 * 1024          # one JSONL line; bigger entries are replaced by a truncated summary
 READ_TIMEOUT_S = 30.0              # socket timeout while reading a request (and writing a reply)
+HEADER_TIMEOUT_S = 10.0            # request line + all headers must arrive within this, in total
+MAX_HEAD_BYTES = 32 * 1024         # request line + headers; bigger -> 431 and close
 MAX_SLOW = 8                       # concurrent delayed or streaming replies; more -> 429
 MAX_CONNS = 64                     # concurrent connections; more -> 503 and close
 MAX_DELAY_S = 900.0
@@ -57,6 +62,9 @@ _ID_NAME = re.compile(r"(^|[_\-.])ids?($|[_\-.])|user|conversation|room|session|
 _AGENT_PATH = re.compile(r"^/([^/]+)/v1(?=/|$)")
 _AGENT_SLUG = re.compile(r"[a-z0-9_-]{1,32}")
 _SCHEME_VALUE = re.compile(r"(?i)\b(bearer|basic|token)\s+\S+")
+# In body text only credential-shaped values (8+ chars with a digit or token punctuation) are cut, so
+# ordinary words after "basic"/"token" in a chat message stay readable.
+_BODY_SCHEME_VALUE = re.compile(r"(?i)\b(bearer|basic|token)\s+(?=\S*[0-9_\-.=+/])\S{8,}")
 _JSON_STRING = re.compile(rb'"[^"\\]*(?:\\.[^"\\]*)*"')
 _JSON_BRACKET = re.compile(rb"[\[\]{}]")
 
@@ -144,7 +152,11 @@ def _scrub_query(query: str, secret: str) -> str:
 def _scrub_header(name: str, value: str, secret: str) -> str:
     if _is_secret(name):
         return REDACTED
-    return _cut(_SCHEME_VALUE.sub(lambda m: f"{m.group(1)} {REDACTED}", _redact_text(value, secret)))
+    return _cut(_SCHEME_VALUE.sub(_scheme_redacted, _redact_text(value, secret)))
+
+
+def _scheme_redacted(m) -> str:
+    return f"{m.group(1)} {REDACTED}"
 
 
 def scrub(value, secret: str, key: str = "", depth: int = 0):
@@ -159,11 +171,59 @@ def scrub(value, secret: str, key: str = "", depth: int = 0):
     if isinstance(value, list):
         return [scrub(v, secret, "", depth + 1) for v in value]
     if isinstance(value, str):
-        value = _redact_text(value, secret)
+        value = _BODY_SCHEME_VALUE.sub(_scheme_redacted, _redact_text(value, secret))
         if value.startswith("data:"):
             return {"data_uri": value[5:].split(";", 1)[0].split(",", 1)[0][:100], "length": len(value)}
         return _cut(value)
     return value
+
+
+class HeadTooLarge(Exception):
+    """Request line + headers over MAX_HEAD_BYTES."""
+
+
+class Evicted(ConnectionAbortedError):
+    """The server dropped this half-sent request to free a connection slot."""
+
+
+class HeadReader:
+    """Stands in for rfile while the request line and headers are read (the stdlib only calls readline()
+    there): one overall deadline for the whole head instead of a per-recv timeout (slowloris), and a byte
+    budget checked before anything joins a line (a huge header block never reaches the parser or log)."""
+
+    def __init__(self, f, sock, deadline: float, budget: int, read_timeout: float):
+        self.f, self.sock, self.deadline, self.budget, self.read_timeout = f, sock, deadline, budget, read_timeout
+        self.used = 0
+        self.evicted = False
+
+    def readline(self, limit: int = -1) -> bytes:
+        out = bytearray()
+        while limit < 0 or len(out) < limit:
+            left = self.deadline - time.monotonic()
+            if left <= 0:
+                raise TimeoutError("request line and headers not received in time")
+            try:
+                self.sock.settimeout(min(self.read_timeout, left))
+                chunk = self.f.peek(1)  # at most one recv, bounded by the time left
+            except OSError:
+                if self.evicted:
+                    raise Evicted("dropped to free a connection slot") from None
+                raise
+            if not chunk:
+                if self.evicted:
+                    raise Evicted("dropped to free a connection slot")
+                break
+            nl = chunk.find(b"\n")
+            take = len(chunk) if nl < 0 else nl + 1
+            if limit >= 0:
+                take = min(take, limit - len(out))
+            if self.used + take > self.budget:
+                raise HeadTooLarge(f"request line + headers over {self.budget} bytes")
+            out += self.f.read(take)  # already buffered: no recv
+            self.used += take
+            if out.endswith(b"\n"):
+                break
+        return bytes(out)
 
 
 class BadBody(Exception):
@@ -341,7 +401,9 @@ def split_path(path: str) -> tuple[str, str | None, str, bool]:
 
 
 class ProbeServer(ThreadingHTTPServer):
-    """ThreadingHTTPServer with a connection cap and one-line error logging (no tracebacks)."""
+    """ThreadingHTTPServer with a connection cap and one-line error logging (no tracebacks).
+    When the cap is full, the connection that has been sending its request head the longest is dropped
+    to make room; only if no connection is still sending its head is the new one refused with 503."""
     daemon_threads = True
     block_on_close = False
 
@@ -349,11 +411,36 @@ class ProbeServer(ThreadingHTTPServer):
         super().__init__(addr, handler)
         self.log = log
         self._conns = threading.BoundedSemaphore(max_conns)
+        self._reading: dict = {}  # socket -> HeadReader, oldest first: connections still sending a head
+        self._reading_lock = threading.Lock()
+
+    def reading_started(self, sock, reader: HeadReader) -> None:
+        with self._reading_lock:
+            self._reading.pop(sock, None)
+            self._reading[sock] = reader
+
+    def reading_done(self, sock) -> None:
+        with self._reading_lock:
+            self._reading.pop(sock, None)
+
+    def _evict_oldest_reader(self) -> bool:
+        with self._reading_lock:
+            if not self._reading:
+                return False
+            sock = next(iter(self._reading))
+            self._reading.pop(sock).evicted = True
+            try:
+                sock.shutdown(socket.SHUT_RDWR)  # wakes its handler thread, which then exits
+            except OSError:
+                pass
+        self.log.write({"event": "evicted", "ts": _now(), "reason": "connection_cap_full_oldest_unsent_head"})
+        return True
 
     def process_request(self, request, client_address):
         if not self._conns.acquire(blocking=False):
-            self._refuse(request)
-            return
+            if not (self._evict_oldest_reader() and self._conns.acquire(timeout=1.0)):
+                self._refuse(request)
+                return
         try:
             super().process_request(request, client_address)
         except BaseException:
@@ -389,7 +476,8 @@ class ProbeServer(ThreadingHTTPServer):
 
 def make_server(host: str, port: int, api_key: str, log_path=DEFAULT_LOG,
                 delay_s: float = 0.0, stream_lines: int = 3, read_timeout: float = READ_TIMEOUT_S,
-                max_slow: int = MAX_SLOW, max_conns: int = MAX_CONNS) -> ThreadingHTTPServer:
+                max_slow: int = MAX_SLOW, max_conns: int = MAX_CONNS,
+                header_timeout: float = HEADER_TIMEOUT_S) -> ThreadingHTTPServer:
     if not api_key:
         raise ValueError("PROBE_API_KEY is required")
     log = RequestLog(log_path)
@@ -401,6 +489,53 @@ def make_server(host: str, port: int, api_key: str, log_path=DEFAULT_LOG,
 
         def log_message(self, fmt, *args):  # our own JSONL log replaces stderr access logs
             pass
+
+        # --- request head: one deadline + a byte budget (docs/security/6.5.md N1, N2) -----
+        def handle_one_request(self):
+            self._real_rfile = self.rfile
+            reader = HeadReader(self.rfile, self.connection, time.monotonic() + header_timeout,
+                                MAX_HEAD_BYTES, read_timeout)
+            self.rfile = reader
+            self.server.reading_started(self.connection, reader)
+            try:
+                super().handle_one_request()
+            except HeadTooLarge:
+                self.close_connection = True
+                self._refuse_head()
+            except Evicted:
+                self.close_connection = True
+            finally:
+                self._end_head()
+
+        def parse_request(self):
+            try:
+                return super().parse_request()
+            finally:
+                self._end_head()  # the body is read from the real rfile, under its own deadline
+
+        def _end_head(self) -> None:
+            if isinstance(self.rfile, HeadReader):
+                self.rfile = self._real_rfile
+                self.server.reading_done(self.connection)
+                try:
+                    self.connection.settimeout(read_timeout)
+                except OSError:
+                    pass
+
+        def _refuse_head(self) -> None:
+            log.write({"event": "refused", "ts": _now(), "reason": "headers_too_large",
+                       "limit_bytes": MAX_HEAD_BYTES})
+            body = json.dumps({"error": {"message": f"Request line + headers over {MAX_HEAD_BYTES} bytes",
+                                         "type": "invalid_request_error", "param": None,
+                                         "code": "headers_too_large"}}).encode()
+            try:
+                self.connection.settimeout(0.2)
+                self.connection.sendall(b"HTTP/1.1 431 Request Header Fields Too Large\r\n"
+                                        b"Content-Type: application/json\r\nConnection: close\r\n"
+                                        b"Content-Length: " + str(len(body)).encode() + b"\r\n\r\n" + body)
+                self.connection.recv(65536)  # take some of what is still coming, so close() sends FIN
+            except OSError:
+                pass
 
         # --- helpers --------------------------------------------------------------------
         def _client_ip(self) -> str:
@@ -496,9 +631,10 @@ def make_server(host: str, port: int, api_key: str, log_path=DEFAULT_LOG,
                 "path": _cut(_redact_text(path, api_key)), "prefix": _redact_text(prefix, api_key),
                 "agent": _redact_text(agent, api_key) if agent else None,
                 "query": _scrub_query(parts.query, api_key),
-                "client_ip": self._client_ip(),
-                "forwarded_for": _cut(self.headers.get("X-Forwarded-For", "")) or None,
-                "headers": {_redact_text(k, api_key): _scrub_header(k, v, api_key) for k, v in self.headers.items()},
+                "client_ip": _redact_text(self._client_ip(), api_key),
+                "forwarded_for": _cut(_redact_text(self.headers.get("X-Forwarded-For", ""), api_key)) or None,
+                "headers": {_cut(_redact_text(k, api_key)): _scrub_header(k, v, api_key)
+                            for k, v in self.headers.items()},
                 "auth_ok": authed, "body_bytes": length if length >= 0 else None, "body": None,
             }
 

@@ -40,6 +40,11 @@ class Solved:
     binding_constraint: str = ""
     best_achievable: dict | None = None
     alternatives: list[str] = field(default_factory=list)
+    # Phase 4: manufacturability measured on the built mesh. `warnings` are warn/fail lines for
+    # the job card; `mesh_checks` the per-rule results ({rule, status, measured_mm, min_mm,
+    # location, text}).
+    warnings: list[str] = field(default_factory=list)
+    mesh_checks: list[dict] = field(default_factory=list)
 
 
 @dataclass
@@ -58,6 +63,20 @@ class Intake:
     data: dict = field(default_factory=dict)
 
 
+@dataclass
+class EditOutcome:
+    """What a pack made of an edit (Phase 6).
+
+    status "solved" -> `solved` is the re-solved version under `plan`;
+    "refused" / "needs_info" -> `reply` says why or asks; "infeasible" -> `solved` carries the
+    infeasible contract. `data` is pack-private (e.g. the patch) for `edit_report`."""
+    status: str
+    solved: Any = None
+    plan: Any = None
+    reply: str = ""
+    data: Any = None
+
+
 class DomainPack:
     name = "base"
     title = "Base"
@@ -71,8 +90,11 @@ class DomainPack:
         """Return (brief, follow_up_question). Question is set when the request is unclear."""
         raise NotImplementedError
 
-    def intake(self, text: str, attachments: list[Path] | None = None) -> Intake:
+    def intake(self, text: str, attachments: list[Path] | None = None,
+               sender: str | None = None) -> Intake:
         """Classify a message (order, question, or a non-order like a rate update).
+        `sender` is the chat identity of whoever sent it (None when unknown); packs use it
+        to decide who may change shop settings such as the gold rate.
         Default: every message is an order brief."""
         brief, question = self.parse_brief(text, attachments)
         if question:
@@ -91,11 +113,46 @@ class DomainPack:
     def solve(self, spec, plan: Plan, on_iter=None) -> Solved:
         raise NotImplementedError
 
+    def weights(self, solved: Solved, plan: Plan) -> dict[str, float]:
+        """What a result reports about the solved quantity (Phase 3): the jewellery pack gives
+        casting_g, finished_g, expected_loss_g/pct and tolerance_g/pct. Default: the value."""
+        loss = plan.detail.get("casting_loss_pct", 0.0)
+        return {"modelled_g": round(solved.value, 3),
+                "finished_g": round(solved.value * (1 - loss / 100), 3)}
+
     def deliver(self, solved: Solved, brief, plan: Plan, out_dir: Path, quality: str) -> dict[str, Path]:
         """Build final geometry, render, export production files. Returns name -> path."""
         raise NotImplementedError
 
     def quote(self, solved: Solved, brief, plan: Plan) -> dict:
+        raise NotImplementedError
+
+    # Phase 6: edits as spec patches (see core/orders.py for the store).
+    def load_brief(self, data: dict):
+        """Rebuild a brief from the order store's JSON."""
+        raise NotImplementedError
+
+    def load_spec(self, data: dict):
+        raise NotImplementedError
+
+    def parse_edit(self, text: str):
+        """An edit request (pack type; has `.pick` and `.empty`), or None when not understood."""
+        raise NotImplementedError
+
+    def pick_index(self, pick, n: int) -> int:
+        raise NotImplementedError
+
+    def edit_text(self, key: str, lang: str) -> str:
+        """Counter replies for edits: 'help' (not understood), 'which' (which variant?)."""
+        raise NotImplementedError
+
+    def apply_edit(self, spec, scale: float, modelled_g: float, request, plan: Plan,
+                   lang: str = "en", on_iter=None) -> EditOutcome:
+        raise NotImplementedError
+
+    def edit_report(self, base: dict, new_version: int, outcome: EditOutcome, brief,
+                    lang: str = "en") -> dict:
+        """v_base -> v_new: changed fields, weight and price difference, summary text."""
         raise NotImplementedError
 
 

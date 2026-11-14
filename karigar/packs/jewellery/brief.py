@@ -3,10 +3,11 @@ or ask for the blocking fields that are missing (up to three questions in one re
 
 Order of work in `analyse`:
 1. Detect the reply language (core/lang.py).
-2. Out-of-scope pieces (necklace, earrings, anklet, ...) get a scope reply + nearest piece.
+2. Out-of-scope pieces (necklace, mangalsutra, anklet, maang tikka) get a scope reply + nearest piece.
 3. Draft the fields: LLM JSON validated against `BriefDraft`, repaired once with the
    validation error, else the deterministic regex parser.
-4. Ask only for blocking fields (piece, target, size, new karat, old karat); state defaults
+4. Ask only for blocking fields (piece, target, ring/bangle size, chain length, new karat,
+   old karat); state defaults
    for the rest (metal colour, stone size). Ambiguous style words never trigger a question.
 """
 from __future__ import annotations
@@ -16,14 +17,14 @@ import re
 from dataclasses import dataclass, field
 from typing import Literal, Optional
 
-from pydantic import BaseModel, ConfigDict, Field, ValidationError
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 
 from karigar.core import llm
 from karigar.core.lang import EN, detect
 
 from . import messages as M
 from . import sizes
-from .schema import Brief, Gem, Karat, Metal, PieceType
+from .schema import STYLE_WORDS, Brief, ChainLength, Gem, Karat, Metal, PieceType, style_tags
 
 MAX_QUESTIONS = 3
 
@@ -33,10 +34,18 @@ def inr(x):
     return _inr(x)
 
 
+# First match wins, in this order: "nose ring" is a nose pin; a chain is usually the old gold
+# being exchanged, so any other piece named in the same request is the one to make
+# ("purani chain se jhumka banana").
 PIECE_WORDS = {
+    "nosepin": r"\b(nose\s*pins?|nosepins?|nose\s*studs?|nose\s*rings?|nath|nathni|laung|koka)\b",
     "ring": r"\b(ring|rings|anguthi|angoothi|solitaire)\b",
     "bangle": r"\b(bangles?|kada|kara|kangan|chudi|churi|bracelet)\b",
     "pendant": r"\b(pendant|locket)\b",
+    "coin": r"\b(coins?|sikka|sikke|sikkay)\b",
+    "earring": (r"\b(earrings?|ear\s*rings?|jhumk(?:a|i|e|as|is)|chand\s*bali|chandbalis?|kaan\s*ki\s*bali"
+                r"|baali|bali|balis|tops|studs?|ear\s*studs?)\b"),
+    "chain": r"\b(chains?)\b",
 }
 _ANY_PIECE = "|".join(f"(?:{p})" for p in PIECE_WORDS.values())
 GEM_WORDS = {
@@ -46,48 +55,69 @@ GEM_WORDS = {
 OLD_WORDS = r"\b(old|purana|purani|purane|exchange|grandm\w*|nani|dadi|mummy|mom'?s|melt|trade)\b"
 
 # (pattern, English label, nearest supported piece, is a likely old-gold source)
+# Earrings, chains, nose pins and coins are in scope since Phase 2.5 (decisions.md 2026-11-13
+# "Design catalogue"); necklace sets, mangalsutras, anklets and maang tikkas still are not.
 OUT_OF_SCOPE = [
-    (r"\b(earrings?|jhumk[aie]s?|studs?|baali|bali|kaan\s*ki)\b", "earrings", "pendant", False),
-    (r"\b(necklaces?|haar|choker|mangalsutra|chains?)\b", "necklaces or chains", "pendant", True),
+    (r"\b(necklaces?|haar|choker|mangalsutra)\b", "necklaces or mangalsutras", "chain + pendant", True),
     (r"\b(anklets?|payal|paayal|pajeb)\b", "anklets", "bangle", False),
-    (r"\b(nose\s*pins?|nath|nathni|laung)\b", "nose pins", "ring", False),
     (r"\b(maang\s*tikka|tikka)\b", "maang tikkas", "pendant", False),
 ]
 
-STYLE_WORDS = {
-    # concrete motifs the designer can match
-    "lotus": "lotus", "kamal": "lotus", "beaded": "beaded", "plain": "plain", "knife": "knife",
-    "faceted": "faceted", "coin": "coin", "flat": "flat", "floral": "floral", "flower": "floral",
-    "phool": "floral",
-    # ambiguous words: recorded, never asked about; the designer spreads 3 variants
-    "minimal": "minimal", "traditional": "traditional", "modern": "modern", "simple": "simple",
-    "classic": "classic", "contemporary": "modern", "ethnic": "traditional", "heavy": "heavy look",
-    "bold": "bold", "delicate": "delicate", "sleek": "modern",
-}
+# A style word that names a catalogue family, per piece type; first match wins.
+# "kada" names the temple kada only when no other bangle look is asked for ("beaded kada").
+FAMILY_WORDS: list[tuple[str, str, str]] = [
+    ("earring", r"\bchand\s*bali", "earring_chandbali"),
+    ("earring", r"\bjhumk(?:a|i|e|as|is)\b", "earring_jhumka"),
+    ("earring", r"\b(bali|baali|balis|hoops?)\b", "earring_bali_hoop"),
+    ("chain", r"\brope\b", "chain_rope"),
+    ("chain", r"\bcurb\b", "chain_curb"),
+    ("bangle", r"\b(rope|twisted)\b", "bangle_twisted_rope"),
+    ("bangle", r"\btemple\b", "bangle_temple_kada"),
+    ("bangle", r"^(?!.*\b(?:beaded|plain|faceted)\b).*\bkada\b", "bangle_temple_kada"),
+    ("ring", r"\b(three|3)[\s-]*stones?\b", "ring_three_stone"),
+    ("ring", r"\bhalo\b", "ring_halo_solitaire"),
+    ("ring", r"\b(butterfly|titli)\b", "ring_butterfly"),
+    ("pendant", r"\bhalo\b", "pendant_heart_halo"),
+    ("pendant", r"\b(paisley|mango|keri|kairi)\b", "pendant_paisley"),
+    ("pendant", r"\b(temple|lotus|kamal)\b", "pendant_temple_lotus"),
+    ("coin", r"\b(lotus|kamal)\b", "coin_lotus_10g"),
+]
+CHAIN_LENGTH = r"(?<!\d)(16|18|20|22|24)\s*(?:\"|''|-?\s*inch(?:es)?\b|in\b|inchi?\b)"
+
+
+def family_from_text(piece: str | None, t: str) -> str | None:
+    """The catalogue family a style word names for this piece, or None. Code only, never the LLM."""
+    for p, pat, fam in FAMILY_WORDS:
+        if p == piece and re.search(pat, t, re.S):
+            return fam
+    return None
+
 _LIGHTER = r"\b(lighter|halka|halki|halke)\b"
 
 SYSTEM = """You are Sakhi, the counter assistant of an Indian jewellery shop.
 Extract the customer's request into one JSON object. Include ONLY keys the customer actually stated; never guess:
-piece_type: "ring"|"bangle"|"pendant"; karat (new piece): 22|18|14; metal: "yellow"|"rose"|"white";
-old_gold: {weight_g, karat (24|22|18|14), tested_purity (0-1, only if a test result is given)};
+piece_type: "ring"|"bangle"|"pendant"|"chain"|"coin"|"earring"|"nosepin"; karat (new piece): 22|18|14; metal: "yellow"|"rose"|"white";
+old_gold: {weight_g, karat (24|22|18|14)};
 target_weight_g (finished weight, only if they ask for a weight and have no old gold);
 budget_inr; gem: "none"|"diamond"|"ruby"|"emerald"|"sapphire"; gem_ct;
 ring_size (Indian ring size number 1-30) or ring_inner_d_mm (only if given in mm);
 bangle_inner_d_mm (Indian bangle sizes like 2-6 mean 2 6/16 inch inner diameter);
+length_in (chain length in inches: 16|18|20|22|24);
 style: list of words like lotus, beaded, plain, knife, faceted, floral, traditional, modern.
 "22 carat" means karat 22, not gem carats. Return JSON only."""
 
 
 class OldGoldDraft(BaseModel):
-    model_config = ConfigDict(extra="ignore")
+    """No purity field: claimed/tested purity is dropped, even if the LLM sends one (security F9)."""
+    model_config = ConfigDict(extra="ignore", allow_inf_nan=False)
     weight_g: float = Field(gt=0, le=500)
     karat: Optional[Literal[24, 22, 18, 14]] = None
-    tested_purity: Optional[float] = Field(None, gt=0.3, le=1.0)
 
 
 class BriefDraft(BaseModel):
-    """What was stated, nothing filled in. The LLM output must validate against this."""
-    model_config = ConfigDict(extra="ignore")
+    """What was stated, nothing filled in. The LLM output must validate against this.
+    inf/NaN are refused (security F7); `style` keeps known tags only (security F8)."""
+    model_config = ConfigDict(extra="ignore", allow_inf_nan=False)
     piece_type: Optional[PieceType] = None
     karat: Optional[Karat] = None
     metal: Optional[Metal] = None
@@ -99,7 +129,13 @@ class BriefDraft(BaseModel):
     ring_size: Optional[int] = Field(None, ge=1, le=30)
     ring_inner_d_mm: Optional[float] = Field(None, ge=12, le=25)
     bangle_inner_d_mm: Optional[float] = Field(None, ge=45, le=75)
+    length_in: Optional[ChainLength] = None
     style: list[str] = []
+
+    @field_validator("style", mode="before")
+    @classmethod
+    def _known_styles(cls, v):
+        return style_tags(v)
 
 
 @dataclass
@@ -111,6 +147,12 @@ class BriefResult:
     questions: list[str] = field(default_factory=list)
     topics: list[str] = field(default_factory=list)
     suggestion: str | None = None     # out_of_scope: nearest supported piece
+
+
+# A number that starts where a digit run starts: never inside "12345" or right after "1.", so
+# each unit regex is tried once per number, not once per digit (security F6: 20 KB of digits
+# took 20+ s with unanchored "(\d+...)\s*unit" patterns).
+NUM = r"(?<!\d)(?<!\d\.)(\d+(?:\.\d+)?)"
 
 
 def _num(s: str) -> float:
@@ -135,7 +177,7 @@ def _regex_parse(text: str) -> dict:
     if gem_ct and _num(gem_ct.group(1)) < 6:
         d["gem_ct"] = _num(gem_ct.group(1))
         d.setdefault("gem", "diamond")
-    grams = re.search(r"(\d+(?:\.\d+)?)\s*(?:g|gm|gms|gram|grams)\b", t)
+    grams = re.search(NUM + r"\s*(?:g|gm|gms|gram|grams)\b", t)
     is_old = bool(re.search(OLD_WORDS, t))
     if grams and is_old:
         # The karat mentioned nearest the old-gold weight describes the old gold, unless it is
@@ -157,16 +199,13 @@ def _regex_parse(text: str) -> dict:
         if news:
             d["karat"] = news[0]
     lighter = re.search(_LIGHTER, t)
-    pct = re.search(r"(\d+(?:\.\d+)?)\s*%", t)
+    pct = re.search(NUM + r"\s*%", t)
     if lighter and "target_weight_g" in d:
         # "it weighs 10 g, make it 20% lighter": the grams are the current weight.
         cur = d.pop("target_weight_g")
         if pct and 0 < _num(pct.group(1)) < 90:
             d["target_weight_g"] = round(cur * (1 - _num(pct.group(1)) / 100), 2)
-    tested = re.search(r"test\w*\D{0,12}(\d{2}(?:\.\d+)?)\s*%", t)
-    if tested and "old_gold" in d:
-        d["old_gold"]["tested_purity"] = _num(tested.group(1)) / 100
-    lakh = re.search(r"(\d+(?:\.\d+)?)\s*(?:lakh|lac)", t)
+    lakh = re.search(NUM + r"\s*(?:lakh|lac)", t)
     kbud = re.search(r"(?:₹|rs\.?|inr|budget|under|within)\s*(\d[\d,]*(?:\.\d+)?)(?![\d.,])\s*(k)?\b"
                      r"(?!\s*(?:g|gm|gms|grams?|ct|cts|carat|mm)\b)", t)
     if lakh:
@@ -178,14 +217,18 @@ def _regex_parse(text: str) -> dict:
             d["metal"] = m
     if d.get("piece_type") == "bangle":
         bsize = re.search(r"\b2\s*[-./]\s*(\d{1,2})\b(?!\s*(?:g|gm|gms|grams?|ct|mm|k)\b)", t)
-        bmm = re.search(r"(\d+(?:\.\d+)?)\s*mm\b", t)
+        bmm = re.search(NUM + r"\s*mm\b", t)
         if bsize and int(bsize.group(1)) <= 15:
             d["bangle_inner_d_mm"] = sizes.bangle_inner_d_mm(int(bsize.group(1)))
         elif bmm:
             d["bangle_inner_d_mm"] = _num(bmm.group(1))
+    if d.get("piece_type") == "chain":
+        ln = re.search(CHAIN_LENGTH, t)
+        if ln:
+            d["length_in"] = int(ln.group(1))
     if d.get("piece_type") == "ring":
         us = re.search(r"\b(?:us\s*(?:size\s*)?|size\s*us\s*)(\d+(?:\.\d+)?)\b", t)
-        rmm = re.search(r"(\d+(?:\.\d+)?)\s*mm\b", t)
+        rmm = re.search(NUM + r"\s*mm\b", t)
         rsize = re.search(r"\bsize\s*(?:no\.?\s*|number\s*)?(\d+(?:\.\d+)?)", t)
         if us:
             d["ring_inner_d_mm"] = sizes.us_ring_inner_d_mm(_num(us.group(1)))
@@ -270,12 +313,15 @@ def _questions(d: BriefDraft, t: str, unreadable: list[str]) -> list[str]:
             topics.append("ring_size")
         if d.piece_type == "bangle" and d.bangle_inner_d_mm is None:
             topics.append("bangle_size")
+        if d.piece_type == "chain" and d.length_in is None:
+            topics.append("chain_length")
     if d.karat is None:
         topics.append("karat")
     if d.old_gold and d.old_gold.karat is None:
         topics.append("old_karat")
     for f in unreadable:
-        if f not in ("ring_size", "ring_inner_d_mm", "bangle_inner_d_mm", "karat", "old_gold"):
+        if f not in ("ring_size", "ring_inner_d_mm", "bangle_inner_d_mm", "length_in", "karat",
+                     "old_gold"):
             topics.append(f"unreadable:{f}")
     return topics[:MAX_QUESTIONS]
 
@@ -321,6 +367,9 @@ def analyse(text: str, attachments=None) -> BriefResult:
         return BriefResult("needs_info", lang, reply=M.join_questions(qs, lang), questions=qs, topics=topics)
 
     fields = draft.model_dump(exclude_none=True)
+    fam = family_from_text(draft.piece_type, t)    # family names come from code, never the LLM
+    if fam:
+        fields["family"] = fam
     fields["assumptions"] = _defaults(draft, lang)
     fields["lang"] = lang
     try:

@@ -44,13 +44,13 @@ from product pages, not docs. Verify it in the app (QUESTIONS.md) before the dem
 ### Unknowns about the "Other" route (answered with the probe, Phase 6.5)
 | Question | Why it matters | Answer (from probe log) |
 |---|---|---|
-| Which paths does "Test the key" call (`/models`? a tiny chat call?) | Must answer it or the import fails | _pending_ |
-| Does each call carry the full chat history, and any room / user / conversation ID? | Order state per conversation | _pending_ |
-| `stream: true`? How long does Nonilion wait for a reply? | Pipeline takes minutes; streaming could carry progress lines | _pending_ |
-| Does it render Markdown, tables, `![](url)` images, links in replies? | Renders and files shown as images or links | _pending_ |
-| Are uploaded photos sent as `image_url` parts? | Photo-to-spec (P1) | _pending_ |
-| Does it send `tools` / expect tool calls? | We ignore them, but must not error | _pending_ |
-| Can 2+ imported agents point at different base URLs on our server? | One character per agent (Sakhi, Jauhari, …) | _pending_ |
+| Which paths does "Test the key" call (`/models`? a tiny chat call?) | Must answer it or the import fails | Passed on import (2026-11-13). Exact path to confirm from `/probe/log` (`/v1/models` expected). |
+| Does each call carry the full chat history, and any room / user / conversation ID? | Order state per conversation | **Full history every call** (messages 2→4→6→8→10: system + alternating user/assistant). System prompt 1993 chars (Nonilion's + our instructions). **No room / user / conversation / sender ID** in body or headers; only per-request `X-Invocation-Id`/`X-Vercel-Id` (new each call). Order state must be derived from history. |
+| `stream: true`? How long does Nonilion wait for a reply? | Pipeline takes minutes; streaming could carry progress lines | **Always `stream: true`.** Progress lines arrive live (t=6…60 s spaced). 30 s and 60 s replies worked; 120/300 s not yet tested, so timeout ≥ 60 s, upper bound unknown. |
+| Does it render Markdown, tables, `![](url)` images, links in replies? | Renders and files shown as images or links | Markdown (bold/italic/code/link) and tables render. **Images do not render** (only the alt text "gold pixel" shows, user confirmed 2026-11-13) → renders/files go out as HTTPS links. |
+| Are uploaded photos sent as `image_url` parts? | Photo-to-spec (P1) | **No.** A photo upload arrived as text only (`image parts: 0`); the file is not forwarded to an Other agent. |
+| Does it send `tools` / expect tool calls? | We ignore them, but must not error | **Yes: 103 Nonilion tools** every call (walk_to, say_out_loud, post_room_chat, read_room_chat, kb_search, search_knowledge_base, delegate_to_agent, create_task, list_people, …). We may call them (e.g. kb_search for the rate doc, walk_to for the handover) or ignore them; must not error. |
+| Can 2+ imported agents point at different base URLs on our server? | One character per agent (Sakhi, Jauhari, …) | **Yes** (user confirmed 2026-11-13): agents imported at `/sakhi/v1` and `/karigar/v1` both answered. One service can serve both characters by base path. |
 
 ## What this means
 The Bot API doesn't exist yet, but the **Import → Other** route does the same job: Karigar runs an

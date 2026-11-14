@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from karigar.core import registry
-from karigar.packs.jewellery import pricing
+from karigar.packs.jewellery import pricing, rates
 import karigar.packs.jewellery  # noqa: F401
 
 CASES = json.loads((Path(__file__).parent / "data" / "briefs.json").read_text(encoding="utf-8"))
@@ -22,8 +22,9 @@ def test_at_least_ten_with_the_hero_scenarios():
 
 
 @pytest.mark.parametrize("case", CASES, ids=[c["id"] for c in CASES])
-def test_scripted_brief(case, tmp_gold_rates):
-    r = registry.get("jewellery").intake(case["text"])
+def test_scripted_brief(case, tmp_gold_rates, monkeypatch):
+    monkeypatch.setenv(rates.SETTERS_ENV, "owner-1")
+    r = registry.get("jewellery").intake(case["text"], sender=case.get("sender"))
     assert r.status == case["status"], (r.status, r.reply)
     assert r.lang == case["lang"]
     if case["status"] == "brief":

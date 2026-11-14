@@ -27,16 +27,36 @@ class SolveResult:
         return (self.value - self.target) / self.target * 100.0
 
 
+# Phase 3 gate: a result is accepted when it is within ACCEPT_ABS (in the solved unit, grams for
+# gold) or ACCEPT_REL of the target, whichever is tighter; the solver itself aims at rel_tol
+# (0.3%) and stops after MAX_ITER interior probes (+2 for the bounds) whatever happens.
+ACCEPT_ABS = 0.1
+ACCEPT_REL = 0.02
+MAX_ITER = 12
+
+
+def accept_window(target: float, accept_abs: float | None = ACCEPT_ABS,
+                  accept_rel: float = ACCEPT_REL) -> float:
+    w = abs(target) * accept_rel
+    return w if accept_abs is None else min(accept_abs, w)
+
+
 def solve_monotone(
     f: Callable[[float], float],
     target: float,
     lo: float,
     hi: float,
     rel_tol: float = 0.003,
-    max_iter: int = 25,
+    max_iter: int = MAX_ITER,
     on_iter: Callable[[int, float, float], None] | None = None,
+    accept_abs: float | None = ACCEPT_ABS,
+    accept_rel: float = ACCEPT_REL,
 ) -> SolveResult:
+    """Scale in [lo, hi] at which f hits target. At most max_iter + 2 evaluations of f.
+    ok results are within accept_window(target) (tighter of accept_abs and accept_rel)."""
     its: list[tuple[float, float]] = []
+    window = min(accept_window(target, accept_abs, accept_rel), abs(target) * rel_tol)
+    final = accept_window(target, accept_abs, accept_rel)
 
     def ev(s: float) -> float:
         v = f(s)
@@ -65,11 +85,12 @@ def solve_monotone(
         if not (a < s < b):
             s = 0.5 * (a + b)
         v = ev(s)
-        if abs(v - target) <= target * rel_tol:
+        if abs(v - target) <= window:
             return SolveResult(True, s, v, target, its)
         if v < target:
             a, fa = s, v
         else:
             b, fb = s, v
     s, v = min(its, key=lambda t: abs(t[1] - target))
-    return SolveResult(abs(v - target) <= target * rel_tol * 3, s, v, target, its, "no_convergence")
+    ok = abs(v - target) <= final
+    return SolveResult(ok, s, v, target, its, "" if ok else "no_convergence")

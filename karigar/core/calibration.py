@@ -32,12 +32,22 @@ class CalibrationStore:
         self._save()
         return self.loss_pct(workshop)
 
-    def loss_pct(self, workshop: str | None) -> float:
+    def losses(self, workshop: str | None) -> list[float]:
+        """Recorded casting + finishing loss % of the most recent WINDOW pieces."""
         recs = (self.data.get(workshop or "", {}) or {}).get("records", [])[-WINDOW:]
-        if not recs:
+        return [(1 - r["actual_g"] / r["designed_g"]) * 100 for r in recs]
+
+    def loss_pct(self, workshop: str | None) -> float:
+        losses = self.losses(workshop)
+        if not losses:
             return self.default_loss_pct
-        losses = [(1 - r["actual_g"] / r["designed_g"]) * 100 for r in recs]
         return sum(losses) / len(losses)
+
+    def tolerance(self, workshop: str | None) -> dict:
+        """The +- band on predicted finished weights for this workshop (core/gold.tolerance):
+        the configured default until enough pieces are recorded, then their loss spread."""
+        from .gold import tolerance
+        return tolerance(self.losses(workshop))
 
     def summary(self, workshop: str | None) -> str:
         n = len((self.data.get(workshop or "", {}) or {}).get("records", []))

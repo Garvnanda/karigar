@@ -1,0 +1,48 @@
+{
+  "_note": "Mesh manufacturability rules for one casting process (Phase 4, karigar/packs/jewellery/meshdfm.py). A shop edits this file, never the code. Thicknesses are measured on the built mesh by inward ray casts. fail < min; warn < min x (1 + warn_margin_pct/100); else pass.",
+  "process": "lost-wax casting, yellow/rose/white gold 14K-22K",
+  "as_of": "2026-11-13",
+  "min_mm": {
+    "ring_shank": 1.5,
+    "wall": 0.8,
+    "prong_d": 0.8,
+    "post_d": 0.8,
+    "setting": 0.8,
+    "chain_wire": 0.5,
+    "ornament_wall": 0.6
+  },
+  "min_source": {
+    "ring_shank": "Ganoksin, Tips for Avoiding Meltdown: 1.5 mm women's shank in high-karat gold",
+    "wall": "Stuller CAD/CAM production standards: 0.8 mm structural wall",
+    "prong_d": "Materialise gold design guide: 0.8 mm prong diameter",
+    "post_d": "Phase 3: ear posts / ear wires 0.8 mm",
+    "setting": "assumed = wall",
+    "chain_wire": "Phase 3: 0.5 mm link wire",
+    "ornament_wall": "Phase 3: 0.6 mm jhumka bell wall"
+  },
+  "family_wall": {
+    "chain_rope": "chain_wire",
+    "chain_curb": "chain_wire",
+    "earring_jhumka": "ornament_wall"
+  },
+  "claw_families": ["ring_three_stone", "ring_halo_solitaire"],
+  "warn_margin_pct": 10,
+  "measure_tolerance_pct": 4,
+  "samples_per_mm2": 6,
+  "samples_min": 1500,
+  "samples_max": 6000,
+  "chain_window_mm": 12,
+  "fill_radius_mm": 1.25,
+  "seed": 7,
+  "relax_factor": 0.85,
+  "robust_quantile": 0.02,
+  "setting_reach_mm": 1.2,
+  "soft_gold_claws": {
+    "min_karat": 22,
+    "max_stone_d_mm": 5.0,
+    "claw_d_mm": 1.0,
+    "status": "warn",
+    "_source": "assumed: 22K is soft; a claw-set stone over about 0.5 ct (5 mm) is commonly set in 18K claws or a bezel"
+  },
+  "assumed": ["setting", "robust_quantile", "setting_reach_mm", "fill_radius_mm", "soft_gold_claws", "warn_margin_pct", "measure_tolerance_pct", "relax_factor"]
+}

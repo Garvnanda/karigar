@@ -212,10 +212,21 @@ def _select_only(objs):
     bpy.context.view_layer.objects.active = objs[0]
 
 
-def export_stl(gold, path: Path) -> Path:
-    """Gold body only, in millimetres: what the wax printer / casting unit needs."""
+def shrinkage_scale(shrinkage_pct: float) -> float:
+    """STL scale factor that makes up for casting shrinkage (1.0% → ×1.01)."""
+    if not 0 <= shrinkage_pct < 10:
+        raise ValueError(f"casting shrinkage {shrinkage_pct}% is outside 0–10%")
+    return 1 + shrinkage_pct / 100
+
+
+def export_stl(gold, path: Path, shrinkage_pct: float = 0.0) -> Path:
+    """Gold body only, in millimetres: what the wax printer / casting unit needs.
+
+    Scaled up uniformly by `shrinkage_pct` (rate_card.json `casting_shrinkage_pct`, 1.0%) so the
+    cast piece shrinks back to the designed size. The scene object is not changed."""
     _select_only([gold])
-    bpy.ops.wm.stl_export(filepath=str(path), export_selected_objects=True, ascii_format=False)
+    bpy.ops.wm.stl_export(filepath=str(path), export_selected_objects=True, ascii_format=False,
+                          global_scale=shrinkage_scale(shrinkage_pct))
     return path
 
 

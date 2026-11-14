@@ -22,7 +22,7 @@ ORDERS = [
     ("impossible", "18K 1 ct diamond ring under 10k, size 12", "infeasible"),
     ("unclear", "kuch sundar sa bana do", "needs_info"),
 ]
-VARIANT_FILES = ("casting.stl", "model.glb", "job_card.json", "quote.json", "render_hero.png")
+VARIANT_FILES = ("casting.stl", "model.glb", "job_card.json", "job_card.md", "quote.json", "render_hero.png")
 
 
 @pytest.mark.parametrize("name,text,expected", ORDERS, ids=[o[0] for o in ORDERS])

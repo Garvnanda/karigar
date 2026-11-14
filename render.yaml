@@ -1,0 +1,24 @@
+# Render Blueprint for the Karigar service (Phase 7). New → Blueprint → this repo.
+# The service is stdlib-only Python: no build step (requirements.txt pulls bpy; do NOT install it here).
+# Secrets are set in the Render dashboard (sync: false = you type the value; never commit it).
+# Disk: the free plan's disk is ephemeral — a redeploy/restart forgets queued jobs and uploaded
+# files (orders themselves live in the worker's data/orders.sqlite3). docs/decisions.md 2026-11-13.
+services:
+  - type: web
+    name: karigar
+    runtime: python
+    plan: free            # use "starter" ($7) for demo day so it never sleeps
+    buildCommand: echo "karigar service has no dependencies"
+    startCommand: python -m karigar.service
+    healthCheckPath: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: KARIGAR_API_KEY        # the key Nonilion's "Other" import uses
+        sync: false
+      - key: KARIGAR_WORKER_TOKEN   # the laptop worker's token (must differ from the API key)
+        sync: false
+      - key: KARIGAR_OWNER_TOKEN    # optional: owner console (Phase 10)
+        sync: false
+      - key: KARIGAR_SERVICE_DIR
+        value: /tmp/karigar-service

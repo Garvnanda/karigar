@@ -47,32 +47,48 @@ Decision 2026-11-11 (decisions.md). User installs Blender 5.x desktop on Windows
 **Done when**:
 - [x] Candidate Blender MCP server scanned with `skill-inspector`; findings reported and approved by the user before install — official Blender Lab server, CAUTION, approved 2026-11-11 (decisions.md)
 - [x] Server registered in this project's MCP config (not global); Blender desktop version recorded in decisions.md — `.mcp.json` server `blender`; Blender 5.3.0
-- [ ] (manual) From Claude Code: build a ring from a `DesignSpec` in the live Blender scene and take a viewport screenshot
+- [x] (manual) From Claude Code: build a ring from a `DesignSpec` in the live Blender scene and take a viewport screenshot — 2026-11-13, catalogue loaded via MCP, user approved
 - [x] testing.md documents how to start Blender + the MCP addon and connect
 
 ### Phase 1 — Scope and data contracts
-**Status**: todo
+**Status**: done
 Spec §1 Brief agent, §Data contracts, Reliability table.
+Reviewer PASS 2026-11-13 (398 tests). Security F1–F9 fixed (docs/security/1.md); F10–F17 in backlog. Tests: test_brief.py, test_sizes.py, test_rates.py, test_result.py, test_scripted_briefs.py, test_claimed_purity.py, test_security_phase1.py.
 **Done when**:
 - [x] Phase 1 piece scope settled in decisions.md: ring, bangle, pendant (user, 2026-11-11)
-- [ ] Out-of-scope pieces (necklace, earrings, …) get the "explain scope + nearest supported piece" reply (test)
-- [ ] Indian ring size → inner diameter table (sizes 1–30, one cited brand chart) in `data/ring_sizes.json`; `Brief` takes `ring_size` and converts through it (test per size)
-- [ ] Replies mirror the request language: Hinglish in → Hinglish out, English in → English out (test on both)
-- [ ] "aaj ka rate 22K 14730"-style messages set the gold rate with a timestamp instead of starting an order (test)
-- [ ] Brief agent asks up to 3 questions per turn, only for blocking fields; **always asks for ring size when it's missing** (no silent 17.3 mm default); never assumes new-piece purity silently (tests)
-- [ ] Ambiguous style words ("traditional", "modern") produce 3 variants, no question (test)
-- [ ] `JobResult` Pydantic schema written by code only; infeasible results carry `{binding_constraint, best_achievable, alternatives[]}` (≥ 2 alternatives)
-- [ ] LLM output that fails validation is repaired once, then falls back to the deterministic path (test with a mocked LLM client returning bad JSON)
-- [ ] 10 scripted test briefs (including the 4 hero scenarios) all produce a valid Brief or the right question
+- [x] Out-of-scope pieces (necklace, earrings, …) get the "explain scope + nearest supported piece" reply (test)
+- [x] Indian ring size → inner diameter table (sizes 1–30, one cited brand chart) in `data/ring_sizes.json`; `Brief` takes `ring_size` and converts through it (test per size)
+- [x] Replies mirror the request language: Hinglish in → Hinglish out, English in → English out (test on both)
+- [x] "aaj ka rate 22K 14730"-style messages set the gold rate with a timestamp instead of starting an order (test)
+- [x] Brief agent asks up to 3 questions per turn, only for blocking fields; **always asks for ring size when it's missing** (no silent 17.3 mm default); never assumes new-piece purity silently (tests)
+- [x] Ambiguous style words ("traditional", "modern") produce 3 variants, no question (test)
+- [x] `JobResult` Pydantic schema written by code only; infeasible results carry `{binding_constraint, best_achievable, alternatives[]}` (≥ 2 alternatives)
+- [x] LLM output that fails validation is repaired once, then falls back to the deterministic path (test with a mocked LLM client returning bad JSON)
+- [x] 10 scripted test briefs (including the 4 hero scenarios) all produce a valid Brief or the right question
 
 ### Phase 2 — Ring families and mesh hygiene
-**Status**: todo
+**Status**: done
 Spec §3 Builder. Hero A needs a floral motif ring.
+Reviewer PASS 2026-11-13 (398 tests). Tests: test_ring_families_bpy.py, test_mesh_hygiene_bpy.py, test_designer_variants_bpy.py.
 **Done when**:
-- [ ] At least 3 ring families build: plain band (≥ 2 profiles), solitaire (4- and 6-prong), motif ring with a parametric floral top
-- [ ] Every build is watertight and manifold, with consistent normals and no loose parts (automated mesh check run on every family × 3 scales)
-- [ ] Inner diameter within ±0.05 mm of the size-table target (test per family)
-- [ ] Designer proposes 3 variants (lighter / balanced / statement) whose weights differ by ≥ 15% (test on fallback designer)
+- [x] At least 3 ring families build: plain band (≥ 2 profiles), solitaire (4- and 6-prong), motif ring with a parametric floral top
+- [x] Every build is watertight and manifold, with consistent normals and no loose parts (automated mesh check run on every family × 3 scales)
+- [x] Inner diameter within ±0.05 mm of the size-table target (test per family)
+- [x] Designer proposes 3 variants (lighter / balanced / statement) whose weights differ by ≥ 15% (test on fallback designer)
+
+### Phase 2.5 — Design catalogue: 19 original families across 7 piece types
+**Status**: todo
+User decision 2026-11-13 (decisions.md "Design catalogue"): full engine families, original designs in the best-reviewed Indian retail styles (no brand copies, no plain bands in the showcase). Every family is parametric, weight-solvable and orderable.
+Families: rings R1 floral cluster, R2 three-stone, R3 halo solitaire, R4 butterfly; pendants P1 heart halo, P2 paisley with stones, P3 layered temple lotus; chains C1 rope, C2 curb; coin K1 10 g lotus coin (raised rim, purity + weight stamp on back); bangles B1 antique temple kada, B2 twisted rope bangle, B3 leaf-vine bangle; earrings E1 flower jhumka, E2 chandbali, E3 floral cluster stud, E4 bali hoop; nose N1 flower nosepin (L-pin, tiny stone), N2 convertible screw-back stud (fits nose and ear).
+**Done when**:
+- [ ] Piece types chain, coin, earring, nosepin added to schema, brief intake (sizes: chain length in inches, bangle/ring as before, earring sold as a pair, nosepin gauge) and designer; out-of-scope reply updated to the new scope (tests)
+- [ ] Each of the 19 families builds from a `DesignSpec`; every build watertight, manifold, consistent normals, no loose parts at 3 scales (mesh check test per family)
+- [ ] Gold volume rises monotonically with scale for every family, so the solver can hit a gram target (test per family)
+- [ ] Chains: link-by-link geometry, weight scales with length; links don't intersect each other except where they interlock (test)
+- [ ] Coin: solved to its stated weight within ±0.05 g; stamp text embossed from code-supplied karat and weight (test)
+- [ ] Earrings built and weighed as a pair; posts/hooks ≥ 0.8 mm; nosepin post 0.8 mm gauge; N2 thread fits both uses (test on dimensions)
+- [ ] Designer proposes 3 variants (lighter / balanced / statement) per family, weights differ by ≥ 15% (test)
+- [x] (manual) Every family shown in the user's live Blender via MCP (decisions.md 2026-11-13) and approved; flagged designs fixed — user approved 2026-11-13 after pendants 0.9× and weight rule
 
 ### Phase 3 — Weight and solver honesty
 **Status**: todo
@@ -98,31 +114,34 @@ Spec §6. Checks run on the mesh, never on the spec. Rule values in a per-proces
 - [ ] A failed build or check retries once with optional features relaxed, then reports the failing rule (test)
 
 ### Phase 5 — Quote, gold rate and production package
-**Status**: todo
+**Status**: done
 Spec §9 Quote engine, §10 Production package, Reliability table.
+Reviewer PASS 2026-11-13 (750 tests). Rate = data/gold_rates.json via one RateSource, filled by `run.py rates refresh` (MCX + ₹5,000/10 g, decisions.md); chat rates refused (no Nonilion sender ID). Tests: test_pricing.py, test_ratesource.py, test_ratejob.py, test_rates.py, test_jobcard.py, test_stl_shrinkage_bpy.py, test_orders_e2e.py. Open for Phase 4: job card rule warnings read `solved.warnings`, not yet produced.
 **Done when**:
-- [ ] Gold rate comes through one `RateSource` (rate set in chat, else config) with a timestamp shown in every quote
-- [ ] Rate missing, outside a sane range, or older than 24 h → Karigar says so and asks for today's rate; never estimates (tests)
-- [ ] Quote = gold value + making charge (3.5%) + stones + hallmarking (₹75) + GST (3% on gold and stones, 5% on making); old-gold credit = weight × purity × rate − 2% deduction (one deduction, no separate melt loss); every line labelled with its source, assumed values marked (tests)
-- [ ] Same inputs give the same quote to the rupee (test)
-- [ ] STL is shrinkage-scaled by a configured factor (1.0% default); job card written as Markdown (renders, dimensions, size, purity, weights, stones, finishing notes, HUID reminder, rule warnings)
+- [x] Gold rate comes through one `RateSource` (rate set in chat, else config) with a timestamp shown in every quote
+- [x] Rate missing, outside a sane range, or older than 24 h → Karigar says so and asks for today's rate; never estimates (tests)
+- [x] Quote = gold value + making charge (3.5%) + stones + hallmarking (₹75) + GST (3% on gold and stones, 5% on making); old-gold credit = weight × purity × rate − 2% deduction (one deduction, no separate melt loss); every line labelled with its source, assumed values marked (tests)
+- [x] Same inputs give the same quote to the rupee (test)
+- [x] STL is shrinkage-scaled by a configured factor (1.0% default); job card written as Markdown (renders, dimensions, size, purity, weights, stones, finishing notes, HUID reminder, rule warnings)
 
 ### Phase 6 — Order store and edits as spec patches
-**Status**: todo
+**Status**: done
 Spec §11. Needed for the demo's edit step.
+Reviewer PASS 2026-11-13 (67 scoped tests; full suite 815). karigar/core/orders.py (SQLite), karigar/packs/jewellery/edits.py. Carried to Phase 7: version number allocated inside the store transaction (concurrent edits), order row saved before delivery (mark failed on export error).
 **Done when**:
-- [ ] SQLite order store holds the brief, every spec version and every output path
-- [ ] An edit is a patch to the chosen spec; solver and checks rerun on it
-- [ ] "make it 0.5 mm thinner" changes only that parameter (test diffing v1 and v2 specs)
-- [ ] "Middle one, but make the flower slightly bigger" keeps the gold target by re-solving the band (test)
-- [ ] Weight and price difference between two versions is reported
+- [x] SQLite order store holds the brief, every spec version and every output path
+- [x] An edit is a patch to the chosen spec; solver and checks rerun on it
+- [x] "make it 0.5 mm thinner" changes only that parameter (test diffing v1 and v2 specs)
+- [x] "Middle one, but make the flower slightly bigger" keeps the gold target by re-solving the band (test)
+- [x] Weight and price difference between two versions is reported
 
 ### Phase 6.5 — Nonilion probe (what does "Import → Other" actually send?)
-**Status**: todo
+**Status**: manual
 Route per decisions.md "Karigar is an OpenAI-compatible service". Small and early: its answers shape Phase 7. Can run in parallel with Phases 1–6.
+Automated items: reviewer PASS 2026-11-13 (tests/test_probe.py, 62 tests); security N1/N2/N6/N7 fixed, N3–N5 backlog (docs/security/6.5.md). Left: the two manual items.
 **Done when**:
-- [ ] `probe/` server implements `GET /v1/models` and `POST /v1/chat/completions` (streaming and non-streaming), API-key checked, and logs every request's headers and body with secrets redacted (tests)
-- [ ] Probe can delay its reply by N seconds and stream N progress lines, to measure Nonilion's timeout and streaming behaviour
+- [x] `probe/` server implements `GET /v1/models` and `POST /v1/chat/completions` (streaming and non-streaming), API-key checked, and logs every request's headers and body with secrets redacted (tests)
+- [x] Probe can delay its reply by N seconds and stream N progress lines, to measure Nonilion's timeout and streaming behaviour
 - [ ] (manual) Probe reachable over HTTPS (Render or a tunnel); imported into a Nonilion room as "Other"; "Test the key" passes
 - [ ] (manual) Every unknown in docs/nonilion.md's table answered and recorded there (history, IDs, stream, timeout, Markdown/images, uploads, tools, several agents)
 
@@ -174,6 +193,27 @@ Spec §Live demo script, §Judging map.
 - [ ] Budget check: Render plan + any GPU rental + AgentRouter usage recorded, total under $50
 - [ ] (manual) 6-minute live flow rehearsed inside Nonilion
 - [ ] (manual) 2–3 minute backup video recorded
+
+### Phase 10 — Karigar web console
+**Status**: todo
+User 2026-11-14: structure approved ("the structure of web is great"); design with the **impeccable** skill; **3D viewer wanted**: the worker exports each design as GLB from Blender, the page shows it rotatable in the browser. Preview (layout only, sample data): https://claude.ai/artifact/JJYXLKoSueCSFk2cRh5hFQ. Remaining open: audience priority (default: shop-owner tool that also demos well), build tooling (default: plain HTML/JS served by the stdlib service + one viewer library from a CDN — new dependency, approved by the user's 3D request).
+Drafted 2026-11-14 at the user's request; build only after the user approves scope. No frontend exists today (CLI + Nonilion chat only). Served by the Phase 7 service on Render (same auth, same store), so it adds no new server. Must run the `hallmark` skill (global rule). Mobile-first: shop staff use phones at the counter.
+Pages:
+1. **Orders**: list (order id, piece, karat, status, finished weight, total ₹, time); filter by status; search.
+2. **Order detail**: the brief (as parsed, with assumptions), the 3 variants side by side (renders, finished/casting weight ± tolerance, dimensions, mesh-check pass/warn/fail), quote with every line's source and "assumed" marks, job card (Markdown rendered), STL/render downloads, version history with v1→v2 diff and weight/₹ deltas, an edit box ("make it 0.5 mm thinner").
+3. **3D viewer**: rotate the chosen design in the browser (needs GLB export + a viewer library — decision below).
+4. **Catalogue**: the 19 families with renders, default weight, lighter/balanced/statement weights, and "start an order from this design".
+5. **Gold rate**: current rate per karat, timestamp, source (MCX + ₹5,000), staleness badge, "refresh now" (owner only), rate history.
+6. **Workshop / calibration**: record actual cast weight for an order → loss %, the workshop's tolerance and record count.
+7. **Try it (demo console)**: type a Hinglish request, see the Sakhi/Karigar reply stream exactly as Nonilion would — the demo backup if Nonilion is down.
+8. **System**: worker online/offline, queue depth, last job times, version.
+**Done when** (draft):
+- [ ] Every page above served by the Karigar service behind owner login (token); file links stay unguessable
+- [ ] All numbers on pages come from the order store / pricing code, never typed in the browser (test)
+- [ ] Works at phone width (360 px) and desktop; Hinglish/English labels
+- [ ] Demo console reproduces the chat flow end to end against the local service (test)
+- [ ] `hallmark` skill run; screenshots of every page in docs/
+**Open decisions (ask before building)**: (a) audience priority — shop owner tool vs judge-facing showcase; (b) 3D viewer: add GLB export + a viewer library from a CDN (new dependency) or static renders only; (c) build tooling — plain HTML/JS served by the stdlib server (no new dependency) vs a framework.
 
 ## After P0 (not yet phased)
 - **P1:** comparison table for 3 variants; photo → family + parameters with confidence; vision critic loop (≤ 2 revisions); walk-to handover into the karigar's channel; turntable GIF + technical view; weight validated against ≥ 3 real pieces.

@@ -16,10 +16,12 @@ def test_exchange_notes_flag_assumed_purity_and_melt_loss():
     assert any("Melting loss" in n for n in t.notes)
 
 
-def test_tested_purity_overrides_karat_claim():
-    t = G.target_from_exchange(10, 22, 22, 0.0, melt_loss_pct=0.0, tested_purity=0.80)
-    assert t.fine_g == pytest.approx(8.0)
-    assert not any("Assumed old purity" in n for n in t.notes)
+def test_exchange_credits_the_stated_karat_only_no_purity_override():
+    # Security F9 (user decision 2026-11-13): a claimed/tested purity never changes the credit.
+    with pytest.raises(TypeError):
+        G.target_from_exchange(10, 22, 22, 0.0, melt_loss_pct=0.0, tested_purity=0.999)
+    t = G.target_from_exchange(10, 22, 22, 0.0, melt_loss_pct=0.0)
+    assert t.fine_g == pytest.approx(9.16)
 
 
 def test_target_from_gross_adds_casting_loss():

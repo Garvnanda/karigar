@@ -1,19 +1,44 @@
 """Gold arithmetic: assay-aware targets, purity, density.
 
 Everything the solver aims at starts here. The key idea for old-gold exchange:
-the customer's old piece is worth its *fine gold after testing and melting*,
-not its gross weight. We design the new piece to carry that fine gold.
+the customer's old piece is worth its *fine gold after melting*, not its gross
+weight. We design the new piece to carry that fine gold. The old gold is credited at
+its stated karat's purity only; a claimed or tested purity never changes the number
+(security F9, user decision 2026-11-13).
 """
 from __future__ import annotations
 
+import json
+import statistics
 from dataclasses import dataclass, field
+from pathlib import Path
 
 # Fineness by karat (BIS hallmark grades).
 PURITY = {24: 0.995, 22: 0.916, 18: 0.750, 14: 0.585}
 
-# Approximate densities (g/cm^3) for yellow alloys. White/rose alloys vary by
-# recipe (roughly +/-5%); a workshop's calibration factor absorbs that error.
-DENSITY = {24: 19.32, 22: 17.8, 18: 15.5, 14: 13.1}
+# Densities, casting minimums and the weight tolerance live in a config file a shop can edit
+# (decisions.md "Shop numbers", "Phase 3"), never in code. Yellow alloys; white/rose vary by
+# recipe (roughly +/-5%) and a workshop's calibration absorbs that error.
+CASTING_FILE = Path(__file__).resolve().parents[2] / "data" / "casting.json"
+_CACHE: dict[Path, tuple[float, dict]] = {}
+
+
+def casting_config(path: Path | None = None) -> dict:
+    """data/casting.json (re-read when the file changes)."""
+    p = Path(path or CASTING_FILE)
+    mtime = p.stat().st_mtime
+    hit = _CACHE.get(p)
+    if hit is None or hit[0] != mtime:
+        _CACHE[p] = (mtime, json.loads(p.read_text(encoding="utf-8")))
+    return _CACHE[p][1]
+
+
+def density(karat: int) -> float:
+    """g/cm^3 for the karat, from the config file."""
+    d = casting_config()["density_g_cm3"]
+    if str(karat) not in d:
+        raise ValueError(f"No density configured for {karat}K; add it to {CASTING_FILE.name}")
+    return float(d[str(karat)])
 
 
 def purity(karat: int) -> float:
@@ -23,11 +48,30 @@ def purity(karat: int) -> float:
 
 
 def grams_to_mm3(grams: float, karat: int) -> float:
-    return grams / DENSITY[karat] * 1000.0
+    return grams / density(karat) * 1000.0
 
 
 def mm3_to_grams(mm3: float, karat: int) -> float:
-    return mm3 / 1000.0 * DENSITY[karat]
+    return mm3 / 1000.0 * density(karat)
+
+
+def tolerance(losses_pct: list[float] | None = None) -> dict:
+    """The +- band on a predicted finished weight, as a % of it, from code and data only.
+
+    Fewer than `min_records` recorded casting losses: the configured default (labelled assumed).
+    Otherwise `sigma` x the sample standard deviation of the recorded loss %, floored at
+    `floor_pct`. Returns {"pct", "source", "assumed"}."""
+    t = casting_config()["tolerance"]
+    losses = list(losses_pct or [])
+    if len(losses) < t["min_records"]:
+        return {"pct": float(t["default_pct"]), "assumed": True,
+                "source": f"default ±{t['default_pct']:g}% (alloy density + loss spread; "
+                          f"fewer than {t['min_records']} cast pieces recorded)"}
+    sd = statistics.stdev(losses)
+    pct = max(float(t["floor_pct"]), t["sigma"] * sd)
+    return {"pct": round(pct, 3), "assumed": False,
+            "source": f"{t['sigma']:g}σ of the loss over {len(losses)} cast pieces "
+                      f"(σ {sd:.2f}%, floor {t['floor_pct']:g}%)"}
 
 
 @dataclass
@@ -60,16 +104,13 @@ def target_from_exchange(
     new_karat: int,
     casting_loss_pct: float,
     melt_loss_pct: float = 2.0,
-    tested_purity: float | None = None,
 ) -> GoldTarget:
     """Old piece -> fine gold -> finished weight of the new piece -> modelled weight."""
-    notes = []
-    p_old = tested_purity if tested_purity is not None else purity(old_karat)
-    if tested_purity is None:
-        notes.append(
-            f"Assumed old purity {p_old:.3f} from {old_karat}K claim; "
-            "final value depends on the shop's purity test."
-        )
+    p_old = purity(old_karat)
+    notes = [
+        f"Assumed old purity {p_old:.3f} from {old_karat}K claim; "
+        "final value depends on the shop's purity test."
+    ]
     fine = old_weight_g * p_old * (1 - melt_loss_pct / 100.0)
     notes.append(f"Melting loss deducted: {melt_loss_pct:.1f}%")
     finished = fine / purity(new_karat)

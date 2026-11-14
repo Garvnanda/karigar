@@ -31,7 +31,7 @@ python3.13 -m venv venv && ./venv/bin/pip install -r requirements.txt
 
 ## How the weight solving works
 
-1. **Fine gold.** old weight × tested purity × (1 − melting loss) gives the fine gold, e.g. 18.4 g × 0.916 × 0.98 = 16.52 g.
+1. **Fine gold.** old weight × the stated karat's purity × (1 − melting loss) gives the fine gold, e.g. 18.4 g × 0.916 × 0.98 = 16.52 g.
 2. **Finished weight.** fine gold ÷ new purity gives the finished weight of the new piece (18.03 g at 22K).
 3. **Modelled weight.** finished weight ÷ (1 − workshop loss) gives the weight to model (18.59 g at 3%). The workshop loss is learned from `calibrate` records.
 4. **Solve.** The solver scales the design's cross-section (ring size stays fixed) and measures the real mesh volume × alloy density. It converges in 4–5 passes to within ±0.3%.

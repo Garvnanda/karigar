@@ -52,7 +52,64 @@ def _fixed(brief: Brief) -> dict:
         out["inner_d_mm"] = brief.ring_inner_d_mm
     elif brief.piece_type == "bangle":
         out["inner_d_mm"] = brief.bangle_inner_d_mm
+    elif brief.piece_type == "chain" and brief.length_in is not None:
+        out["length_in"] = brief.length_in
     return out
+
+
+LEGACY_PIECES = ("ring", "bangle", "pendant")   # have the original builders + fallback()
+
+
+class NoFamily(ValueError):
+    """A piece type with no registered design family (and no original builder)."""
+
+
+def family_for(brief: Brief):
+    """The catalogue family to design from: the one the customer named (if registered and of
+    this piece type); else, for the new piece types, the first registered family of the type.
+    None = use the original ring/bangle/pendant designs."""
+    from . import families
+    fam = families.FAMILIES.get(brief.family or "")
+    if fam is not None and fam.piece_type == brief.piece_type:
+        return fam
+    if brief.piece_type in LEGACY_PIECES:
+        return None
+    fams = families.for_piece(brief.piece_type)
+    if not fams:
+        raise NoFamily(f"no design family is registered for a {brief.piece_type} yet")
+    return fams[0]
+
+
+def family_variants(fam, brief: Brief, ct: float) -> list[DesignSpec]:
+    """Lighter / balanced / statement from the family's variant_axes (deterministic).
+    The brief owns karat, metal, size and chain length; a stated stone replaces the
+    family's default stone type (and its size when a carat weight is known)."""
+    fx = _fixed(brief)
+    out = []
+    for lab in LABELS:
+        f = {**fam.variant_fields(lab), **fx, "piece_type": fam.piece_type, "family": fam.name}
+        if brief.gem != "none":
+            f["gem"] = brief.gem
+            gd = _gem_d(brief, ct)
+            if gd > 0:
+                f["gem_d_mm"] = gd
+        if fam.piece_type == "coin":
+            # The back stamp states the customer's target finished weight (default 10 g); the
+            # pack re-stamps it with the plan's finished weight for exchange / budget coins.
+            f["params"] = {**f.get("params", {}), "stamp_g": float(brief.target_weight_g or COIN_STAMP_G)}
+        f.setdefault("name", fam.title)
+        out.append(DesignSpec(**f))
+    return out
+
+
+COIN_STAMP_G = 10.0     # coin stamp when the brief states no weight (decisions.md 2026-11-13, assumed)
+
+
+def deterministic(brief: Brief, ct: float) -> list[DesignSpec]:
+    """The design variants without any LLM call: the family's variants, else the fallback
+    designs. Used to measure the lightest castable piece (Hero D) reproducibly."""
+    fam = family_for(brief)
+    return family_variants(fam, brief, ct) if fam is not None else fallback(brief, ct)
 
 
 def wants_floral(brief: Brief) -> bool:
@@ -146,6 +203,9 @@ def _pick(pool: list[DesignSpec], is_llm: list[bool], weights: list[float], n: i
 
 def propose(brief: Brief, ct: float, n: int = 3,
             weigh: Optional[Callable[[DesignSpec], float]] = None) -> list[DesignSpec]:
+    fam = family_for(brief)
+    if fam is not None:            # catalogue families: deterministic variants, no LLM numbers
+        return _label(family_variants(fam, brief, ct)[:n])
     fb = fallback(brief, ct)
     raw = llm.complete_json(SYSTEM.format(n=n), brief.model_dump_json() +
                             f"\nStone diameter if any: {_gem_d(brief, ct)} mm")

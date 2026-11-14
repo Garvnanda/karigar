@@ -26,6 +26,7 @@ class Infeasible(BaseModel):
 
 class VariantResult(BaseModel):
     variant: str
+    version: Optional[int] = None       # the order store's version number (Phase 6)
     weights: dict[str, float] = {}      # modelled_g, finished_g
     files: dict[str, str] = {}
     quote: dict = {}
@@ -46,6 +47,7 @@ class JobResult(BaseModel):
     results: list[VariantResult] = []
     rates: Optional[dict] = None         # rate_set: {"rates": {karat: rate}, "set_at": iso}
     suggestion: Optional[str] = None     # out_of_scope: nearest supported piece
+    edit: Optional[dict] = None          # Phase 6 edit: from/to version, changed fields, weight Δ, price Δ
 
     @model_validator(mode="after")
     def _status_fields(self):
