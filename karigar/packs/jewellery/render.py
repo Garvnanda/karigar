@@ -97,7 +97,7 @@ def _sweep(S):
         bm.faces.new((a[0], a[1], b[1], b[0]))
     ob = _obj_from_bm(bm, "backdrop")
     m, p = _principled("backdrop")
-    p.inputs["Base Color"].default_value = (0.9, 0.88, 0.85, 1)
+    p.inputs["Base Color"].default_value = (0.035, 0.008, 0.014, 1)   # the brand's wine (pitch deck), linear
     p.inputs["Roughness"].default_value = 0.85
     ob.data.materials.append(m)
 
@@ -241,3 +241,12 @@ def export_glb(objs, path: Path) -> Path:
     for o, loc, sc in saved:
         o.location, o.scale = loc, sc
     return path
+
+
+def dress_pair(originals, mirrors) -> None:
+    """Give an earring pair's mirrored copies their originals' materials (gold, then each stone),
+    so the GLB shows two gold earrings. The copies are made in `geometry.make_pair` before staging."""
+    for src, dst in zip(originals, mirrors):
+        dst.data.materials.clear()
+        for m in src.data.materials:
+            dst.data.materials.append(m)

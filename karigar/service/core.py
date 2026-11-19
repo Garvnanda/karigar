@@ -99,7 +99,7 @@ class KarigarService:
                           "Tell me what you'd like made: the piece, karat, weight or budget, and size.")
         key = convo.ref_in_history(messages) or self._first_key(messages, len(users))
         return self.continue_conversation(key, users[-1], idem=convo.idem_key(key, messages),
-                                          agent=agent)
+                                          agent=agent, channel="nonilion")
 
     def _first_key(self, messages, n_users: int) -> str:
         """Derived key for a history without our ref (convo.py): salted when an identical
@@ -112,12 +112,12 @@ class KarigarService:
         return convo.derived_key(messages, 50)
 
     def start_order(self, text: str, conversation: str | None = None, idem: str | None = None,
-                    agent: str = "karigar") -> Ticket:
+                    agent: str = "karigar", channel: str = "api") -> Ticket:
         key = conversation or ("K-" + os.urandom(8).hex())
-        return self.continue_conversation(key, text, idem=idem, agent=agent, new_order=True)
+        return self.continue_conversation(key, text, idem=idem, agent=agent, new_order=True, channel=channel)
 
     def continue_conversation(self, conversation: str, text: str, idem: str | None = None,
-                              agent: str = "karigar", new_order: bool = False) -> Ticket:
+                              agent: str = "karigar", new_order: bool = False, channel: str = "api") -> Ticket:
         text = str(text)[:convo.MAX_TEXT]
         self.jobs.reap(self.render_timeout_s)
         if idem is not None:
@@ -133,7 +133,7 @@ class KarigarService:
                 self.jobs.add_message(idem, conversation, last.job_id)
             log_stage("request", event="service", conv=conversation, job=last.job_id, fetch=True)
             return Ticket(conversation, last.job_id, agent)
-        payload = {"text": text, "conversation": conversation}
+        payload = {"text": text, "conversation": conversation, "channel": channel}
         prev = None if new_order else self.jobs.latest_order_for_conv(conversation)
         if prev is not None and prev.result and prev.result.get("status") == "done":
             payload["order_id"] = prev.order_id
@@ -282,6 +282,18 @@ class KarigarService:
     def system(self) -> dict:
         seen = self.jobs.worker_seen()
         return {"worker_online": self.worker_online(), "worker_last_seen": seen, **self.jobs.counts()}
+
+    def activity(self, limit: int = 40) -> list[dict]:
+        """Recent requests with where they came from (nonilion chat, studio, api), for the owner's
+        Nonilion page. Text is the customer's own message, shown as data."""
+        out = []
+        for j in self.jobs.recent(limit):
+            res = j.result or j.partial or {}
+            out.append({"job_id": j.job_id, "channel": j.payload.get("channel", "api"), "agent": j.agent,
+                        "kind": j.kind, "status": j.status, "result": res.get("status"), "order_id": j.order_id,
+                        "text": str(j.payload.get("text", ""))[:200], "created": j.created,
+                        "designs": len(res.get("results") or [])})
+        return out
 
     # ------------------------------------------------------------------ worker side
     def claim(self) -> dict | None:

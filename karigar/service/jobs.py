@@ -220,6 +220,11 @@ class JobStore:
                             " ORDER BY updated DESC, rowid DESC LIMIT 1", (kind,)).fetchone()
         return _row_job(r) if r else None
 
+    def recent(self, limit: int = 40) -> list[Job]:
+        with self._tx() as con:
+            rows = con.execute("SELECT * FROM jobs ORDER BY created DESC, rowid DESC LIMIT ?", (limit,)).fetchall()
+        return [_row_job(r) for r in rows]
+
     def counts(self) -> dict:
         with self._tx() as con:
             rows = con.execute("SELECT status, COUNT(*) AS n FROM jobs GROUP BY status").fetchall()

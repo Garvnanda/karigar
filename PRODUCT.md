@@ -26,7 +26,7 @@ Every number shown (weight, price, rate, dimension) comes from code and data, ne
 - Planned 3D viewer: the worker exports GLB from Blender (Phase 10).
 
 ## Brand Commitments
-- Colours pinned by the user: ink #1C1B19, gold #E2B04A, warm off-white #FAFAF7.
+- Colours: the pitch deck (ppt.pdf): wine #1D0A10 ground, antique gold, warm cream text (user, 2026-11-14; supersedes the earlier off-white pin).
 - Feel: showroom luxury (user, 2026-11-14).
 
 ## Evidence on Hand

@@ -396,6 +396,7 @@ class JewelleryPack(DomainPack):
         }
         c, S = render.stage(b.gold, b.gems, spec.metal, spec.karat, spec.gem,
                             float_up=spec.piece_type == "pendant")
+        render.dress_pair([b.gold, *b.gems], b.mirror)
         files["glb"] = render.export_glb([b.gold, *b.gems, *b.mirror], out_dir / "model.glb")
         files.update(render.render_views(c, S, out_dir, quality))
         renders = {k: v for k, v in files.items() if k.startswith("render")}

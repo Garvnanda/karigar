@@ -103,3 +103,6 @@ Two processes: the **service** (Render; stdlib only: `karigar/service/{http,core
 
 ## Simulation (Phase 8.5)
 `python -m sim.run`: `sim/users.py` seeded users → `pack.intake` → `pack.plan` → every Nth brief `pack.propose` + `pack.solve` (mesh checks) → pass bar (docs/user-sim-report.md). Temp dirs only.
+
+## Customer studio (2026-11-14)
+`GET /studio/` serves `studio/` (no key). `studio.js` (hash routes): `#/` intro → `#/design/<step>` (piece, style, karat, metal, stone, size, gold, review; draft kept in localStorage) → `POST /shop/designs {form}` → `karigar/service/shop.py:Shop.start` (`request_text(form)` → `KarigarService.start_order` in a fresh `S-…` conversation; code stored in `shop_codes`) → `#/o/<code>` polls `GET /shop/orders/<code>` (`Shop.view`: latest job of that conversation) → a question: `POST …/answer` (marks the question delivered, continues the conversation with the chosen option) → designs (tray = the version's GLB) → `#/pay/<code>/<v>` → `POST …/checkout` (`purchases` table) → receipt. `#/orders` lists the codes this device remembers. The owner console's placed orders come from `GET /api/purchases` (`Shop.purchases`, with weights/files from the view). Shop jobs of action `set_rate` / `refresh_rate` / `calibrate` / `snapshot` go to `worker.shop_action`.

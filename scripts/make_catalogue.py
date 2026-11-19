@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from karigar.core import gold as G  # noqa: E402
-from karigar.packs.jewellery import geometry  # noqa: E402
+from karigar.packs.jewellery import geometry, render  # noqa: E402
 from karigar.packs.jewellery.designer import LABELS  # noqa: E402
 from karigar.packs.jewellery.families import CATALOGUE, FAMILIES  # noqa: E402
 from karigar.packs.jewellery.schema import DesignSpec  # noqa: E402
@@ -33,11 +33,24 @@ def main() -> None:
         except Exception as e:   # one family failing must not hide the rest
             row["error"] = f"{type(e).__name__}: {e}"[:200]
         row["default_g"] = round(G.mm3_to_grams(geometry.gold_volume(spec, 1.0), spec.karat), 2)
+        if "--pictures" in sys.argv:   # studio/assets/<family>.png + .glb (draft render, ~3 s each)
+            geometry.clear_scene()
+            b = geometry.build(spec, 1.0)
+            c, S = render.stage(b.gold, b.gems, spec.metal, spec.karat, spec.gem,
+                                float_up=spec.piece_type == "pendant")
+            assets = ROOT / "studio" / "assets"
+            assets.mkdir(parents=True, exist_ok=True)
+            render.dress_pair([b.gold, *b.gems], b.mirror)
+            render.export_glb([b.gold, *b.gems, *b.mirror], assets / f"{name}.glb")
+            shots = render.render_views(c, S, assets / "_tmp", "draft")
+            Path(shots["render_hero"]).replace(assets / f"{name}.png")
+            row["picture"], row["model"] = f"assets/{name}.png", f"assets/{name}.glb"
         out.append(row)
         geometry.clear_scene()
-    p = ROOT / "console" / "catalogue.json"
-    p.write_text(json.dumps({"families": out}, indent=1))
-    print(f"wrote {p} ({len(out)} families)")
+    for p in (ROOT / "console" / "catalogue.json", ROOT / "studio" / "catalogue.json"):
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(json.dumps({"families": out}, indent=1))
+        print(f"wrote {p} ({len(out)} families)")
 
 
 if __name__ == "__main__":

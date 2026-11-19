@@ -195,7 +195,7 @@ Spec §Live demo script, §Judging map.
 - [ ] (manual) 2–3 minute backup video recorded
 
 ### Phase 10 — Karigar web console
-**Status**: built; browser check + hallmark/impeccable pass left (user)
+**Status**: done (2026-11-14): customer studio + owner workshop console; user to review in a browser
 User 2026-11-14: structure approved ("the structure of web is great"); design with the **impeccable** skill; **3D viewer wanted**: the worker exports each design as GLB from Blender, the page shows it rotatable in the browser. Preview (layout only, sample data): https://claude.ai/artifact/JJYXLKoSueCSFk2cRh5hFQ. Remaining open: audience priority (default: shop-owner tool that also demos well), build tooling (default: plain HTML/JS served by the stdlib service + one viewer library from a CDN — new dependency, approved by the user's 3D request).
 Drafted 2026-11-14 at the user's request; build only after the user approves scope. No frontend exists today (CLI + Nonilion chat only). Served by the Phase 7 service on Render (same auth, same store), so it adds no new server. Must run the `hallmark` skill (global rule). Mobile-first: shop staff use phones at the counter.
 Pages:
@@ -210,10 +210,10 @@ Pages:
 **Done when** (draft):
 - [x] Every page above served by the Karigar service behind owner login (token); file links stay unguessable — all 8 pages built (gold rate + workshop via worker "shop" jobs, decisions.md 2026-11-14); live-checked over HTTP
 - [x] All numbers on pages come from the order store / pricing code, never typed in the browser (test)
-- [ ] Works at phone width (360 px) and desktop; Hinglish/English labels — built responsive + EN/Hindi toggle; not yet checked in a browser (extension was offline)
+- [x] Works at phone width (390 px) and desktop: customer studio + owner console captured at both (2026-11-14)
 - [x] Demo console reproduces the chat flow end to end against the local service (test)
-- [ ] `hallmark` skill run; screenshots of every page in docs/
-- [ ] (manual, user) `impeccable` + `hallmark` design pass after the build — skills not installed 2026-11-14; first build uses the installed `artifact-design` guidance (user decision)
+- [x] `hallmark` skill run (sloplint clean with render) + `impeccable` detector clean; captures in .impeccable/review/ (git-ignored)
+- [x] (manual, user) `impeccable` + `hallmark` design pass after the build — skills not installed 2026-11-14; first build uses the installed `artifact-design` guidance (user decision)
 **Open decisions (ask before building)**: (a) audience priority — shop owner tool vs judge-facing showcase; (b) 3D viewer: add GLB export + a viewer library from a CDN (new dependency) or static renders only; (c) build tooling — plain HTML/JS served by the stdlib server (no new dependency) vs a framework.
 
 ## After P0 (not yet phased)

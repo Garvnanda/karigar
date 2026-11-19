@@ -168,6 +168,15 @@ def shop_action(p: dict, workshop: str | None, calibration=None, rate_source=Non
     from ..core.calibration import CalibrationStore
     from ..packs.jewellery import ratejob, rates
     out: dict = {}
+    if p.get("action") == "set_rate":   # the owner, from the console; same range check as `run.py rates set`
+        src0 = rate_source or rates.RateSource()
+        new = {int(k): float(v) for k, v in p["rates"].items()}
+        bad = [f"{k}K" for k, v in new.items() if not src0.sane_range(k)[0] <= v <= src0.sane_range(k)[1]]
+        if bad:
+            out["set"] = {"ok": False, "message": f"{', '.join(bad)} outside the sane range; nothing saved."}
+        else:
+            src0.store.set(new, source="manual (owner console)")
+            out["set"] = {"ok": True, "message": "Saved " + ", ".join(f"{k}K ₹{v:g}/g" for k, v in sorted(new.items(), reverse=True)) + "."}
     if p.get("action") == "refresh_rate":
         r = (refresh or ratejob.refresh)()
         out["refresh"] = {"ok": bool(r.ok), "message": r.message}

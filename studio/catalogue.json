@@ -1,0 +1,270 @@
+{
+ "families": [
+  {
+   "family": "ring_floral_cluster",
+   "title": "Floral Cluster Ring",
+   "piece_type": "ring",
+   "karat": 22,
+   "weights_g": {
+    "lighter": 3.1,
+    "balanced": 3.96,
+    "statement": 5.15
+   },
+   "default_g": 3.96,
+   "picture": "assets/ring_floral_cluster.png",
+   "model": "assets/ring_floral_cluster.glb"
+  },
+  {
+   "family": "ring_three_stone",
+   "title": "Three-Stone Ring",
+   "piece_type": "ring",
+   "karat": 22,
+   "weights_g": {
+    "lighter": 2.83,
+    "balanced": 3.71,
+    "statement": 4.94
+   },
+   "default_g": 3.71,
+   "picture": "assets/ring_three_stone.png",
+   "model": "assets/ring_three_stone.glb"
+  },
+  {
+   "family": "ring_halo_solitaire",
+   "title": "Halo Solitaire Ring",
+   "piece_type": "ring",
+   "karat": 22,
+   "weights_g": {
+    "lighter": 2.73,
+    "balanced": 3.52,
+    "statement": 4.63
+   },
+   "default_g": 3.52,
+   "picture": "assets/ring_halo_solitaire.png",
+   "model": "assets/ring_halo_solitaire.glb"
+  },
+  {
+   "family": "ring_butterfly",
+   "title": "Butterfly Ring",
+   "piece_type": "ring",
+   "karat": 22,
+   "weights_g": {
+    "lighter": 2.46,
+    "balanced": 3.21,
+    "statement": 4.09
+   },
+   "default_g": 3.21,
+   "picture": "assets/ring_butterfly.png",
+   "model": "assets/ring_butterfly.glb"
+  },
+  {
+   "family": "pendant_heart_halo",
+   "title": "Heart Halo Pendant",
+   "piece_type": "pendant",
+   "karat": 22,
+   "weights_g": {
+    "lighter": 2.49,
+    "balanced": 3.76,
+    "statement": 5.41
+   },
+   "default_g": 3.76,
+   "picture": "assets/pendant_heart_halo.png",
+   "model": "assets/pendant_heart_halo.glb"
+  },
+  {
+   "family": "pendant_paisley",
+   "title": "Paisley Pendant",
+   "piece_type": "pendant",
+   "karat": 22,
+   "weights_g": {
+    "lighter": 2.83,
+    "balanced": 3.61,
+    "statement": 4.52
+   },
+   "default_g": 3.61,
+   "picture": "assets/pendant_paisley.png",
+   "model": "assets/pendant_paisley.glb"
+  },
+  {
+   "family": "pendant_temple_lotus",
+   "title": "Temple Lotus Pendant",
+   "piece_type": "pendant",
+   "karat": 22,
+   "weights_g": {
+    "lighter": 5.03,
+    "balanced": 6.94,
+    "statement": 9.25
+   },
+   "default_g": 6.94,
+   "picture": "assets/pendant_temple_lotus.png",
+   "model": "assets/pendant_temple_lotus.glb"
+  },
+  {
+   "family": "chain_rope",
+   "title": "Rope Chain",
+   "piece_type": "chain",
+   "karat": 22,
+   "weights_g": {
+    "lighter": 10.06,
+    "balanced": 15.67,
+    "statement": 26.43
+   },
+   "default_g": 15.67,
+   "picture": "assets/chain_rope.png",
+   "model": "assets/chain_rope.glb"
+  },
+  {
+   "family": "chain_curb",
+   "title": "Curb Chain",
+   "piece_type": "chain",
+   "karat": 22,
+   "weights_g": {
+    "lighter": 10.11,
+    "balanced": 15.75,
+    "statement": 26.79
+   },
+   "default_g": 15.75,
+   "picture": "assets/chain_curb.png",
+   "model": "assets/chain_curb.glb"
+  },
+  {
+   "family": "coin_lotus_10g",
+   "title": "Lotus Coin",
+   "piece_type": "coin",
+   "karat": 22,
+   "weights_g": {
+    "lighter": 6.92,
+    "balanced": 10.01,
+    "statement": 13.94
+   },
+   "default_g": 10.01,
+   "picture": "assets/coin_lotus_10g.png",
+   "model": "assets/coin_lotus_10g.glb"
+  },
+  {
+   "family": "bangle_temple_kada",
+   "title": "Temple Kada",
+   "piece_type": "bangle",
+   "karat": 22,
+   "weights_g": {
+    "lighter": 22.77,
+    "balanced": 34.04,
+    "statement": 47.72
+   },
+   "default_g": 34.04,
+   "picture": "assets/bangle_temple_kada.png",
+   "model": "assets/bangle_temple_kada.glb"
+  },
+  {
+   "family": "bangle_twisted_rope",
+   "title": "Twisted Rope Bangle",
+   "piece_type": "bangle",
+   "karat": 22,
+   "weights_g": {
+    "lighter": 13.36,
+    "balanced": 18.67,
+    "statement": 24.94
+   },
+   "default_g": 18.67,
+   "picture": "assets/bangle_twisted_rope.png",
+   "model": "assets/bangle_twisted_rope.glb"
+  },
+  {
+   "family": "bangle_leaf_vine",
+   "title": "Leaf Vine Bangle",
+   "piece_type": "bangle",
+   "karat": 22,
+   "weights_g": {
+    "lighter": 12.43,
+    "balanced": 18.35,
+    "statement": 25.42
+   },
+   "default_g": 18.35,
+   "picture": "assets/bangle_leaf_vine.png",
+   "model": "assets/bangle_leaf_vine.glb"
+  },
+  {
+   "family": "earring_jhumka",
+   "title": "Phool Jhumka",
+   "piece_type": "earring",
+   "karat": 22,
+   "weights_g": {
+    "lighter": 6.23,
+    "balanced": 8.97,
+    "statement": 13.26
+   },
+   "default_g": 8.97,
+   "picture": "assets/earring_jhumka.png",
+   "model": "assets/earring_jhumka.glb"
+  },
+  {
+   "family": "earring_chandbali",
+   "title": "Chandbali",
+   "piece_type": "earring",
+   "karat": 22,
+   "weights_g": {
+    "lighter": 5.43,
+    "balanced": 7.24,
+    "statement": 9.31
+   },
+   "default_g": 7.24,
+   "picture": "assets/earring_chandbali.png",
+   "model": "assets/earring_chandbali.glb"
+  },
+  {
+   "family": "earring_floral_stud",
+   "title": "Phool Stud",
+   "piece_type": "earring",
+   "karat": 22,
+   "weights_g": {
+    "lighter": 1.45,
+    "balanced": 1.92,
+    "statement": 2.96
+   },
+   "default_g": 1.92,
+   "picture": "assets/earring_floral_stud.png",
+   "model": "assets/earring_floral_stud.glb"
+  },
+  {
+   "family": "earring_bali_hoop",
+   "title": "Bali",
+   "piece_type": "earring",
+   "karat": 22,
+   "weights_g": {
+    "lighter": 3.12,
+    "balanced": 4.53,
+    "statement": 6.32
+   },
+   "default_g": 4.53,
+   "picture": "assets/earring_bali_hoop.png",
+   "model": "assets/earring_bali_hoop.glb"
+  },
+  {
+   "family": "nosepin_flower",
+   "title": "Phool Nosepin",
+   "piece_type": "nosepin",
+   "karat": 22,
+   "weights_g": {
+    "lighter": 0.19,
+    "balanced": 0.23,
+    "statement": 0.3
+   },
+   "default_g": 0.23,
+   "picture": "assets/nosepin_flower.png",
+   "model": "assets/nosepin_flower.glb"
+  },
+  {
+   "family": "nosepin_convertible_stud",
+   "title": "Convertible Stud",
+   "piece_type": "nosepin",
+   "karat": 22,
+   "weights_g": {
+    "lighter": 0.16,
+    "balanced": 0.23,
+    "statement": 0.35
+   },
+   "default_g": 0.23,
+   "picture": "assets/nosepin_convertible_stud.png",
+   "model": "assets/nosepin_convertible_stud.glb"
+  }
+ ]
+}

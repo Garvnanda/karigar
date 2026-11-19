@@ -78,7 +78,7 @@ def test_console_routes_need_the_owner_token(svc, worker, tmp_path):
 
 
 def test_demo_console_chat_flow_end_to_end_over_http(svc, tmp_path):
-    """What console/app.js does in "Try it": question → answer → designs, over the real server."""
+    """The chat flow over HTTP (studio and Nonilion share it): question → answer → designs, over the real server."""
     srv = make_server("127.0.0.1", 0, svc, "api-key-1", "worker-tok-1", owner_token="owner-tok-1")
     threading.Thread(target=srv.serve_forever, daemon=True).start()
     base = f"http://127.0.0.1:{srv.server_address[1]}"
@@ -147,3 +147,33 @@ def test_shop_api_validates_calibration_input(svc, tmp_path):
         assert post({"action": "snapshot"}) == 202
     finally:
         srv.shutdown()
+
+
+def test_owner_sets_the_gold_rate_in_range_only(svc, tmp_path, monkeypatch):
+    from karigar.packs.jewellery import rates
+    from karigar.service import worker as W
+    store = rates.GoldRateStore(tmp_path / "r.json")
+    real = W.shop_action
+    monkeypatch.setattr(W, "shop_action", lambda p, ws: real(p, ws, rate_source=rates.RateSource(store)))
+    w = Worker(LocalClient(svc), out_dir=tmp_path / "out", quality="draft",
+               orchestrator_factory=make_factory(Script()), sleep=lambda s: None)
+    svc.shop("set_rate", rates={"22": 1})
+    run(w)
+    assert svc.shop_state()["set"]["ok"] is False and store.load() == {}
+    svc.shop("set_rate", rates={"22": 13000, "24": 14200})
+    run(w)
+    st = svc.shop_state()
+    assert st["set"]["ok"] and next(r for r in st["rates"] if r["karat"] == 22)["per_g"] == 13000
+    assert store.load()["22"]["source"] == "manual (owner console)"
+
+
+def test_activity_names_the_channel_of_each_request(svc, worker):
+    from karigar.service.shop import Shop
+    svc.chat([{"role": "system", "content": "room"}, {"role": "user", "content": "22K ring 5g size 12"}], "sakhi")
+    svc.start_order("22K ring 5g size 12")
+    Shop(svc).start({"piece": "coin", "style": "", "karat": 22, "metal": "yellow", "gem": "none",
+                     "target": {"kind": "weight", "grams": 10}})
+    run(worker)
+    chans = {a["channel"]: a for a in svc.activity()}
+    assert set(chans) == {"nonilion", "api", "studio"}
+    assert chans["nonilion"]["agent"] == "sakhi" and chans["nonilion"]["designs"] == 3

@@ -20,7 +20,8 @@ The LLM never produces a number. Weights come from the mesh, prices from the rat
 | **Edits** | "Middle one, but make the flower slightly bigger" changes only the flower and re-solves the band so the gold stays the same. "1 g halka karo" reports the weight and ₹ difference |
 | **Learns the workshop** | Record actual cast weights, and the workshop's loss % and ± tolerance are learned from them |
 | **Lives in Nonilion** | Two agents, **Sakhi** (counter) and **Karigar** (workshop), imported as OpenAI-compatible endpoints. A thin service on Render queues jobs, and a Blender worker on the laptop polls it. No tunnel is needed |
-| **Owner console** | A web page with orders, a rotatable 3D model of every design, quote lines, a catalogue and a "Try it" chat for when Nonilion is down |
+| **Customer studio** | Tap-only design flow (only grams are typed): piece, style with real renders, karat, colour, stone, size, gold. Then three designs in 3D, a demo checkout and My orders |
+| **Workshop console** | For the owner: placed orders with the finished-weight entry that calibrates the workshop, the gold rate (refresh or set by hand), and every request |
 
 ## How the weight solving works
 
@@ -48,14 +49,16 @@ uv venv --python 3.13 venv && VIRTUAL_ENV=venv uv pip install -r requirements.tx
 
 Each order writes `out/ORD-…/v1..v3/`: `render_hero.png`, `casting.stl` (gold only, +1% shrinkage), `model.glb`, `job_card.md` / `.json` and `quote.json`. Every order and version is also saved in `data/orders.sqlite3`.
 
-**Service + worker + console locally:**
+**Service + worker + studio locally:** customer studio at `http://localhost:8080/studio/`, owner console at `/console/`.
+
+**Commands:**
 ```bash
 export KARIGAR_API_KEY=… KARIGAR_WORKER_TOKEN=… KARIGAR_OWNER_TOKEN=… KARIGAR_SERVICE_URL=http://127.0.0.1:8080
 ./venv/bin/python run.py serve &      # stdlib only: OpenAI-compatible /v1, /sakhi/v1, /karigar/v1, JSON /api, /console/
 ./venv/bin/python run.py worker       # bpy + optional claude CLI: claims jobs, builds, uploads
 # open http://localhost:8080/console/ and sign in with KARIGAR_OWNER_TOKEN
 ```
-Deploying to Render and importing into Nonilion: [docs/nonilion-setup.md](docs/nonilion-setup.md), [docs/testing.md](docs/testing.md).
+Deploying to Render, the three keys (owner / API / worker), importing into Nonilion and the 6-minute show: [docs/demo-guide.md](docs/demo-guide.md).
 
 **LLM (optional)**: AgentRouter through the official `claude` CLI (`.env`: `AGENTROUTER_API_KEY`). It only shapes briefs and design ideas, always with a deterministic fallback.
 
@@ -76,7 +79,8 @@ karigar/core/            domain-free engine: orchestrator, solver, gold maths, c
 karigar/packs/jewellery/ brief (Sakhi), pricing + rates (Jauhari), designer (Naqqash), geometry + families/ (19 designs),
                          meshdfm (mesh checks), edits, render, job card
 karigar/service/         Render service (stdlib) + worker
-console/                 owner web console (static; data from /api)
+studio/                  customer studio (static; data from /shop; assets/ = renders + GLB per design)
+console/                 owner workshop console (static; data from /api, owner token)
 probe/                   Phase 6.5 Nonilion probe
 sim/                     1,000-user simulation (docs/user-sim-report.md)
 nonilion/                agent instruction texts

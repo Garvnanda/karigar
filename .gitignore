@@ -42,3 +42,6 @@ probe/requests.jsonl.1
 
 # Phase 7 service runtime data (jobs DB + uploaded files)
 data/service/
+.hallmark/shots/
+.impeccable/review/
+studio/assets/_tmp/

@@ -20,9 +20,10 @@ Updated 2026-11-14. Read this first when resuming.
 | 8 Nonilion room | automated done (setup doc, instruction texts, injection tests) | user: import Sakhi + Karigar, live room checks |
 | 8.5 Sim + security | sim pass (docs/user-sim-report.md), backlog cleared | user: security-breaker full run (skill not installed here) |
 | 9 Demo readiness | demo inputs listed + tested, weight proof, budget | user: rehearse 6-min flow, record backup video |
-| 10 Web console | all 8 pages built, API tested, live-checked over HTTP | user: look in a browser (phone + desktop), `impeccable` + `hallmark` pass, screenshots into docs/ |
+| 10 Web console | rebuilt 2026-11-14: customer studio (/studio/) + owner workshop console (/console/), impeccable + hallmark, sloplint clean | user: review in a browser |
 
 ## Repo state
 - Never committed by Claude (user commits). New since af89194: `sim/`, `console/`, `nonilion/`, `scripts/make_catalogue.py`, `docs/{nonilion-setup,user-sim-report,weight-proof}.md`, `.gitattributes`, tests `test_injection_phase8.py`, `test_security_backlog.py`, `test_weight_proof_bpy.py`, `test_console_api.py`.
 - Gate: `.claude/test-command`. Last full run 2026-11-14: 1110 passed, 0 failed (12 min 53 s).
+- Demo + deploy steps for the user: docs/demo-guide.md (2026-11-14).
 - `data/gold_rates.json` was refreshed from MCX on 2026-11-14 (real rate, git-ignored).

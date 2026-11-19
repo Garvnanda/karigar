@@ -10,7 +10,9 @@
     "balanced": 3.96,
     "statement": 5.15
    },
-   "default_g": 3.96
+   "default_g": 3.96,
+   "picture": "assets/ring_floral_cluster.png",
+   "model": "assets/ring_floral_cluster.glb"
   },
   {
    "family": "ring_three_stone",
@@ -22,7 +24,9 @@
     "balanced": 3.71,
     "statement": 4.94
    },
-   "default_g": 3.71
+   "default_g": 3.71,
+   "picture": "assets/ring_three_stone.png",
+   "model": "assets/ring_three_stone.glb"
   },
   {
    "family": "ring_halo_solitaire",
@@ -34,7 +38,9 @@
     "balanced": 3.52,
     "statement": 4.63
    },
-   "default_g": 3.52
+   "default_g": 3.52,
+   "picture": "assets/ring_halo_solitaire.png",
+   "model": "assets/ring_halo_solitaire.glb"
   },
   {
    "family": "ring_butterfly",
@@ -46,7 +52,9 @@
     "balanced": 3.21,
     "statement": 4.09
    },
-   "default_g": 3.21
+   "default_g": 3.21,
+   "picture": "assets/ring_butterfly.png",
+   "model": "assets/ring_butterfly.glb"
   },
   {
    "family": "pendant_heart_halo",
@@ -58,7 +66,9 @@
     "balanced": 3.76,
     "statement": 5.41
    },
-   "default_g": 3.76
+   "default_g": 3.76,
+   "picture": "assets/pendant_heart_halo.png",
+   "model": "assets/pendant_heart_halo.glb"
   },
   {
    "family": "pendant_paisley",
@@ -70,7 +80,9 @@
     "balanced": 3.61,
     "statement": 4.52
    },
-   "default_g": 3.61
+   "default_g": 3.61,
+   "picture": "assets/pendant_paisley.png",
+   "model": "assets/pendant_paisley.glb"
   },
   {
    "family": "pendant_temple_lotus",
@@ -82,7 +94,9 @@
     "balanced": 6.94,
     "statement": 9.25
    },
-   "default_g": 6.94
+   "default_g": 6.94,
+   "picture": "assets/pendant_temple_lotus.png",
+   "model": "assets/pendant_temple_lotus.glb"
   },
   {
    "family": "chain_rope",
@@ -94,7 +108,9 @@
     "balanced": 15.67,
     "statement": 26.43
    },
-   "default_g": 15.67
+   "default_g": 15.67,
+   "picture": "assets/chain_rope.png",
+   "model": "assets/chain_rope.glb"
   },
   {
    "family": "chain_curb",
@@ -106,7 +122,9 @@
     "balanced": 15.75,
     "statement": 26.79
    },
-   "default_g": 15.75
+   "default_g": 15.75,
+   "picture": "assets/chain_curb.png",
+   "model": "assets/chain_curb.glb"
   },
   {
    "family": "coin_lotus_10g",
@@ -118,7 +136,9 @@
     "balanced": 10.01,
     "statement": 13.94
    },
-   "default_g": 10.01
+   "default_g": 10.01,
+   "picture": "assets/coin_lotus_10g.png",
+   "model": "assets/coin_lotus_10g.glb"
   },
   {
    "family": "bangle_temple_kada",
@@ -130,7 +150,9 @@
     "balanced": 34.04,
     "statement": 47.72
    },
-   "default_g": 34.04
+   "default_g": 34.04,
+   "picture": "assets/bangle_temple_kada.png",
+   "model": "assets/bangle_temple_kada.glb"
   },
   {
    "family": "bangle_twisted_rope",
@@ -142,7 +164,9 @@
     "balanced": 18.67,
     "statement": 24.94
    },
-   "default_g": 18.67
+   "default_g": 18.67,
+   "picture": "assets/bangle_twisted_rope.png",
+   "model": "assets/bangle_twisted_rope.glb"
   },
   {
    "family": "bangle_leaf_vine",
@@ -154,7 +178,9 @@
     "balanced": 18.35,
     "statement": 25.42
    },
-   "default_g": 18.35
+   "default_g": 18.35,
+   "picture": "assets/bangle_leaf_vine.png",
+   "model": "assets/bangle_leaf_vine.glb"
   },
   {
    "family": "earring_jhumka",
@@ -166,7 +192,9 @@
     "balanced": 8.97,
     "statement": 13.26
    },
-   "default_g": 8.97
+   "default_g": 8.97,
+   "picture": "assets/earring_jhumka.png",
+   "model": "assets/earring_jhumka.glb"
   },
   {
    "family": "earring_chandbali",
@@ -178,7 +206,9 @@
     "balanced": 7.24,
     "statement": 9.31
    },
-   "default_g": 7.24
+   "default_g": 7.24,
+   "picture": "assets/earring_chandbali.png",
+   "model": "assets/earring_chandbali.glb"
   },
   {
    "family": "earring_floral_stud",
@@ -190,7 +220,9 @@
     "balanced": 1.92,
     "statement": 2.96
    },
-   "default_g": 1.92
+   "default_g": 1.92,
+   "picture": "assets/earring_floral_stud.png",
+   "model": "assets/earring_floral_stud.glb"
   },
   {
    "family": "earring_bali_hoop",
@@ -202,7 +234,9 @@
     "balanced": 4.53,
     "statement": 6.32
    },
-   "default_g": 4.53
+   "default_g": 4.53,
+   "picture": "assets/earring_bali_hoop.png",
+   "model": "assets/earring_bali_hoop.glb"
   },
   {
    "family": "nosepin_flower",
@@ -214,7 +248,9 @@
     "balanced": 0.23,
     "statement": 0.3
    },
-   "default_g": 0.23
+   "default_g": 0.23,
+   "picture": "assets/nosepin_flower.png",
+   "model": "assets/nosepin_flower.glb"
   },
   {
    "family": "nosepin_convertible_stud",
@@ -226,7 +262,9 @@
     "balanced": 0.23,
     "statement": 0.35
    },
-   "default_g": 0.23
+   "default_g": 0.23,
+   "picture": "assets/nosepin_convertible_stud.png",
+   "model": "assets/nosepin_convertible_stud.glb"
   }
  ]
 }
